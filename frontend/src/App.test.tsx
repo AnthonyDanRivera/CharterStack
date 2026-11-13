@@ -127,10 +127,10 @@ test('landing page has one Made by block linking the portfolio in a new tab', as
   expect(external[0]).toHaveAttribute('href', 'https://anthonydanrivera.com')
   expect(external[0]).toHaveAttribute('target', '_blank')
   expect(external[0].getAttribute('rel')).toContain('noopener')
-  expect(screen.getByText('Software developer.')).toBeInTheDocument()
+  expect(screen.getByText('Freelance web developer.')).toBeInTheDocument()
   expect(
     screen.getByText(
-      /software developer who started as a dispatcher and now works as a logistics planner/,
+      /freelance web developer who started as a dispatcher and now also works as a logistics planner/,
     ),
   ).toBeInTheDocument()
 })
