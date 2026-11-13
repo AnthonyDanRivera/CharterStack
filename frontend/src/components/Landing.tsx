@@ -28,51 +28,62 @@ const STACK: { title: string; text: string }[] = [
   },
 ]
 
-/** The page before login: what CharterStack is, how it's built, and Try the demo. */
+/** The page before login: what CharterStack is, how it's built, and who made it. */
 export default function Landing() {
   const login = useDemoLogin()
+  const start = () => login.mutate()
+  const starting = login.isPending
 
   return (
     <div className="lp">
-      <header className="lp-bar">
-        <Logo />
-      </header>
-
-      <section className="lp-hero">
-        <div className="lp-hero-inner">
-          <h1>A TMS for charter bus companies.</h1>
-          <p className="lp-lead">
-            Book a trip and it lands on the dispatch board, one row per bus. Assign drivers and
-            buses, stamp report times, and export the day to Excel.
-          </p>
-          <button
-            type="button"
-            className="lp-cta"
-            onClick={() => login.mutate()}
-            disabled={login.isPending}
-          >
-            {login.isPending ? 'Starting…' : 'Try the demo'}
-          </button>
-          <p className="lp-note">
-            No sign-up. You get a private copy of the sample data that resets after 24 hours.
-          </p>
-          {login.isError && (
-            <p className="lp-error" role="alert">
-              {errorMessages(login.error).join(' ')}
-            </p>
-          )}
+      <nav className="lp-nav" aria-label="Page">
+        <div className="lp-nav-inner">
+          <Logo />
+          <div className="lp-nav-links">
+            <a href="#stack">How it&rsquo;s built</a>
+            <a href="#made-by">Made by</a>
+            <button type="button" className="lp-btn lp-btn-sm" onClick={start} disabled={starting}>
+              Try the demo
+            </button>
+          </div>
         </div>
-      </section>
+      </nav>
+
+      <header className="lp-hero">
+        <h1>
+          A <span className="lp-accent">TMS</span> for charter bus companies.
+        </h1>
+        <p className="lp-lead">
+          Book a trip and it lands on the dispatch board, one row per bus. Assign drivers and buses,
+          stamp report times, and export the day to Excel.
+        </p>
+        <div className="lp-actions">
+          <button type="button" className="lp-btn" onClick={start} disabled={starting}>
+            {starting ? 'Starting…' : 'Try the demo'}
+          </button>
+          <a className="lp-btn lp-btn-ghost" href="#stack">
+            How it&rsquo;s built
+          </a>
+        </div>
+        <p className="lp-note">
+          No sign-up. You get a private copy of the sample data that resets after 24 hours.
+        </p>
+        {login.isError && (
+          <p className="lp-error" role="alert">
+            {errorMessages(login.error).join(' ')}
+          </p>
+        )}
+      </header>
 
       <div className="lp-shot">
         <img src="/dispatch-board.jpg" alt="The dispatch board with today's trips" />
       </div>
 
-      <section className="lp-stack" aria-labelledby="lp-stack-title">
-        <h2 id="lp-stack-title">How it&rsquo;s built</h2>
+      <section className="lp-section" id="stack" aria-labelledby="stack-title">
+        <h2 id="stack-title">How it&rsquo;s built</h2>
         <div className="lp-grid">
           {STACK.map((item) => (
-            <div key={item.title} className="lp-item">
+            <div key={item.title} className="lp-card">
               <h3>{item.title}</h3>
               <p>{item.text}</p>
             </div>
@@ -80,25 +91,36 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="lp-made" aria-labelledby="lp-made-name">
-        <p className="lp-made-label">Made by</p>
-        <div className="lp-made-card">
+      <section className="lp-section" id="made-by" aria-labelledby="made-by-name">
+        <p className="lp-eyebrow">Made by</p>
+        <div className="lp-made">
           <span className="lp-avatar" aria-hidden="true">
             AR
           </span>
-          <div className="lp-made-body">
-            <h2 id="lp-made-name">Anthony Rivera</h2>
-            <p className="lp-made-tagline">Charter dispatcher turned developer.</p>
-            <p>
-              Hi, I&rsquo;m Anthony. I spent years working a charter dispatch board, so I built the
-              one I wanted to use.
+          <div>
+            <h2 id="made-by-name">Anthony Rivera</h2>
+            <p className="lp-made-tagline">Logistics planner turned developer.</p>
+            <p className="lp-made-text">
+              Hi, I&rsquo;m Anthony. I planned charter bus operations as a logistics planner,
+              matching trips, buses and drivers every day, so I built the planning tool I wanted to
+              use.
             </p>
-            <a className="lp-made-link" href={SITE} target="_blank" rel="noopener noreferrer">
+            <a
+              className="lp-btn lp-btn-ghost lp-btn-sm"
+              href={SITE}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Visit my portfolio
             </a>
           </div>
         </div>
       </section>
+
+      <footer className="lp-foot">
+        <Logo size={18} />
+        <span>Django REST Framework · React · TypeScript · PostgreSQL</span>
+      </footer>
     </div>
   )
 }

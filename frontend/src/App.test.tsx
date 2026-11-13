@@ -102,7 +102,8 @@ function renderApp() {
 
 test('landing page without a session', async () => {
   renderApp()
-  expect(await screen.findByRole('button', { name: 'Try the demo' })).toBeInTheDocument()
+  // One in the nav, one in the hero.
+  expect(await screen.findAllByRole('button', { name: 'Try the demo' })).toHaveLength(2)
   expect(
     screen.getByText(
       'No sign-up. You get a private copy of the sample data that resets after 24 hours.',
@@ -112,23 +113,28 @@ test('landing page without a session', async () => {
 
 test('landing page has one Made by block linking the portfolio in a new tab', async () => {
   renderApp()
-  await screen.findByRole('button', { name: 'Try the demo' })
+  await screen.findAllByRole('button', { name: 'Try the demo' })
   expect(
     screen.getByRole('heading', { name: 'A TMS for charter bus companies.' }),
   ).toBeInTheDocument()
-  expect(screen.getByText('Made by')).toBeInTheDocument()
+  expect(screen.getByText('Made by', { selector: '.lp-eyebrow' })).toBeInTheDocument()
   expect(screen.getAllByText(/Anthony Rivera/)).toHaveLength(1)
-  const links = screen.getAllByRole('link')
-  expect(links).toHaveLength(1)
-  expect(links[0]).toHaveTextContent('Visit my portfolio')
-  expect(links[0]).toHaveAttribute('href', 'https://anthonydanrivera.com')
-  expect(links[0]).toHaveAttribute('target', '_blank')
-  expect(links[0].getAttribute('rel')).toContain('noopener')
+  const external = screen
+    .getAllByRole('link')
+    .filter((l) => l.getAttribute('href')?.startsWith('http'))
+  expect(external).toHaveLength(1)
+  expect(external[0]).toHaveTextContent('Visit my portfolio')
+  expect(external[0]).toHaveAttribute('href', 'https://anthonydanrivera.com')
+  expect(external[0]).toHaveAttribute('target', '_blank')
+  expect(external[0].getAttribute('rel')).toContain('noopener')
+  expect(screen.getByText('Logistics planner turned developer.')).toBeInTheDocument()
+  expect(screen.queryByText(/dispatcher/i)).toBeNull()
 })
 
 test('Try the demo creates a session and shows the app frame', async () => {
   renderApp()
-  await userEvent.click(await screen.findByRole('button', { name: 'Try the demo' }))
+  const [tryDemo] = await screen.findAllByRole('button', { name: 'Try the demo' })
+  await userEvent.click(tryDemo)
   expect(await screen.findByRole('button', { name: /Dispatch board/ })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: /Booking/ })).toBeInTheDocument()
   expect(screen.getByText('DEMO-8F3K2')).toBeInTheDocument()
