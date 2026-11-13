@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Contract, Location, Reference } from '../api/types'
 import Dash from '../components/Dash'
 import Icon from '../components/Icon'
@@ -15,6 +16,7 @@ type Props = {
   onDelete: () => void
   onOpenOnBoard: () => void
   deleting: boolean
+  lookup: ReactNode
 }
 
 /** Read-only contract with Insert, Edit, Delete (three clicks) and Open on board. */
@@ -80,6 +82,7 @@ export default function ContractView(props: Props) {
           >
             Open on board
           </button>
+          {props.lookup}
         </div>
       </div>
 

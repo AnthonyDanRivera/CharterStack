@@ -4,8 +4,8 @@
   width: 300px;
   max-width: 100%;
 }
-.booking-sbar .lookup {
-  margin-left: auto;
+.ct-actions .lookup {
+  margin-left: 6px;
 }
 .lookup label {
   font-size: 12px;

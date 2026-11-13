@@ -170,6 +170,14 @@ export function useContracts(p: ContractParams) {
   })
 }
 
+/** Every contract in the sandbox (no date or status filter), for keeping one open. */
+export function useAllContracts() {
+  return useQuery({
+    queryKey: ['contracts', 'all'],
+    queryFn: () => api<ContractList>('/api/contracts/'),
+  })
+}
+
 export function useContract(id: number | null) {
   return useQuery({
     queryKey: ['contract', id],

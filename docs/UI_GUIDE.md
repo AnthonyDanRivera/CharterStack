@@ -153,10 +153,10 @@ See `design/screenshots/02-booking-contract-view.png` and `03-booking-contract-f
    - Cancelled rows are greyed and struck through (except the status word).
    - Click a row to open the contract below; the open row has the dark 2px outline.
    - Empty state: "No contracts match these dates, filter or search."
-3. **Status bar under the table:** **12** contracts · **10** booked · **1** quotes · **1** cancelled · **$18,600.00** balance due (cancelled and balance numbers in red), and on the right the **Contract lookup** label with a 130px input (placeholder "e.g. 24817"); "No contract 99999 found." appears beside it in orange when there is no match.
+3. **Status bar under the table:** **12** contracts · **10** booked · **1** quotes · **1** cancelled · **$18,600.00** balance due (cancelled and balance numbers in red).
 
 ### Contract surface — view mode
-Header row: "Contract **24817**" (number in monospace bold) with the status as small grey text beside it (red when cancelled). Buttons on the right: **+ Insert contract** (secondary), **Edit contract** (primary), **Delete contract** (three-click, rule R10), **Open on board** (switches tab and selects the contract's first unit).
+Header row: "Contract **24817**" (number in monospace bold) with the status as small grey text beside it (red when cancelled). Buttons on the right: **+ Insert contract** (secondary), **Edit contract** (primary), **Delete contract** (three-click, rule R10), **Open on board** (switches tab and selects the contract's first unit), then the **Contract lookup** label with a 130px input (placeholder "e.g. 24817"); "No contract 99999 found." appears beside it in orange when there is no match.
 
 Below, read-only sections. Each section has a small blue title, and each field is a small grey label above a light grey read-only box. Five fields per row.
 
@@ -172,7 +172,7 @@ Below, read-only sections. Each section has a small blue title, and each field i
 | Dispatch | Single-bus contracts: Driver, Driver phone, Report time, Actual report, Bus, Confirmation. Multi-bus: a one-line note "This contract has 2 buses (24823-1 to 24823-2 on the dispatch board). Driver, bus and report details are set per bus there." |
 | Dispatch notes | One box (no dash when empty) |
 
-When nothing has been picked yet, the first contract in the list opens automatically (also after the open contract is deleted). Only when the list is empty: "Pick a contract from the list, or look one up, to see it here." and an Insert contract button.
+A contract is always open. On first visit it is the first contract in the list (or, if the dates and filter show none, the lowest-numbered contract in the sandbox). Deleting the open contract opens the next contract by number, or the previous one if it was the highest. Only when the sandbox has no contracts at all: "Pick a contract from the list, or look one up, to see it here." and an Insert contract button.
 
 ### Contract surface — form mode (Insert / Edit)
 Title "Insert contract" or "Edit contract 24817". Same sections and order as view mode, minus Dispatch and Dispatch notes, with inputs instead of boxes. Required fields have a red asterisk after the label.

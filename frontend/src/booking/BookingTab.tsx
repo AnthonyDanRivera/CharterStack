@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { errorMessages } from '../api/client'
-import { useContract, useContracts, useDeleteContract, useReference } from '../api/hooks'
-import type { Contract, ContractFilter } from '../api/types'
+import {
+  useAllContracts,
+  useContract,
+  useContracts,
+  useDeleteContract,
+  useReference,
+} from '../api/hooks'
+import type { Contract, ContractFilter, ContractRow } from '../api/types'
 import DateRangeControl, { type DateRange } from '../components/DateRangeControl'
 import Icon from '../components/Icon'
 import MenuButton from '../components/MenuButton'
@@ -35,9 +41,12 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
   const [mode, setMode] = useState<Mode>({ kind: 'view' })
   const [deleted, setDeleted] = useState<number[]>([])
   const list = useContracts({ start: range.start, end: range.end, status: filter, q })
-  // Until the user picks one, show the first contract in the list so the page is never empty.
-  // Skip ones just deleted, in case the list hasn't refetched yet.
-  const openId = currentId ?? list.data?.results.find((c) => !deleted.includes(c.id))?.id ?? null
+  const all = useAllContracts()
+  // A contract is always open: the one picked, else the first in the list, else the
+  // lowest-numbered in the sandbox. Skip ones just deleted while the lists refetch.
+  const live = (rows: ContractRow[] | undefined) => rows?.find((c) => !deleted.includes(c.id))
+  const byNumber = [...(all.data?.results ?? [])].sort((a, b) => a.number - b.number)
+  const openId = currentId ?? live(list.data?.results)?.id ?? live(byNumber)?.id ?? null
   const contract = useContract(openId)
   const reference = useReference()
   const remove = useDeleteContract()
@@ -104,11 +113,12 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
             remove.mutate(c.id, {
               onSuccess: () => {
                 setDeleted((d) => [...d, c.id])
-                setCurrentId(null)
+                setCurrentId(nextByNumber(byNumber, c.number)?.id ?? null)
               },
             })
           }
           onOpenOnBoard={() => onOpenOnBoard(c.units[0]?.id ?? null, c.begin_date)}
+          lookup={<ContractLookup onFound={open} />}
         />
         {remove.isError && <p className="state error">{errorMessages(remove.error).join(' ')}</p>}
       </>
@@ -163,10 +173,15 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
           <span className="cnt">
             <b className="red">{fmtMoney(summary?.balance_due ?? '0')}</b> balance due
           </span>
-          <ContractLookup onFound={open} />
         </div>
       </div>
       <div className="surface ct-surface">{surface()}</div>
     </>
   )
+}
+
+/** After deleting `number`, open the next contract by number, or the previous if it was last. */
+function nextByNumber(sorted: ContractRow[], number: number): ContractRow | undefined {
+  const others = sorted.filter((c) => c.number !== number)
+  return others.find((c) => c.number > number) ?? others[others.length - 1]
 }

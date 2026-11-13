@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import BookingTab from './BookingTab'
 
@@ -59,17 +60,18 @@ const detail = (id: number, number: number) => ({
   units: [],
 })
 
-let results: ReturnType<typeof row>[] = []
+let system: ReturnType<typeof row>[] = [] // every contract in the sandbox
+let listed: ReturnType<typeof row>[] | null = null // what the filtered list shows (null = all)
 
 beforeEach(() => {
-  results = [row(1, 24811), row(2, 24814)]
+  system = [row(1, 24811), row(2, 24814), row(3, 24817)]
+  listed = null
   vi.stubGlobal(
     'fetch',
-    vi.fn((url: string) => {
+    vi.fn((url: string, init: RequestInit = {}) => {
       const json = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body)))
-      if (url.startsWith('/api/reference/')) return json(REFERENCE)
-      if (url.startsWith('/api/contracts/?') || url === '/api/contracts/')
-        return json({
+      const page = (results: ReturnType<typeof row>[]) =>
+        json({
           results,
           summary: {
             count: results.length,
@@ -79,9 +81,18 @@ beforeEach(() => {
             balance_due: '0.00',
           },
         })
+      if (url.startsWith('/api/reference/')) return json(REFERENCE)
+      if (url === '/api/contracts/') return page(system)
+      if (url.startsWith('/api/contracts/?')) return page(listed ?? system)
       const m = url.match(/\/api\/contracts\/(\d+)\//)
       if (m) {
-        const hit = results.find((r) => r.id === Number(m[1]))
+        const id = Number(m[1])
+        if (init.method === 'DELETE') {
+          system = system.filter((r) => r.id !== id)
+          if (listed) listed = listed.filter((r) => r.id !== id)
+          return Promise.resolve(new Response(null, { status: 204 }))
+        }
+        const hit = system.find((r) => r.id === id)
         if (hit) return json(detail(hit.id, hit.number))
       }
       return Promise.resolve(new Response('{"detail":"Not found."}', { status: 404 }))
@@ -104,24 +115,70 @@ function renderTab() {
   )
 }
 
+const heading = (number: number) =>
+  screen.findByRole('heading', { name: new RegExp('Contract\\s*' + number) })
+
+async function deleteOpenContract() {
+  const user = userEvent.setup()
+  await user.click(screen.getByRole('button', { name: 'Delete contract' }))
+  await user.click(screen.getByRole('button', { name: 'Confirm delete?' }))
+  await user.click(screen.getByRole('button', { name: /Yes, permanently delete/ }))
+}
+
 test('the first contract in the list opens by default', async () => {
   renderTab()
-  const heading = await screen.findByRole('heading', { name: /Contract\s*24811/ })
-  expect(heading).toBeInTheDocument()
+  expect(await heading(24811)).toBeInTheDocument()
   expect(screen.queryByText(/Pick a contract from the list/)).not.toBeInTheDocument()
 })
 
-test('with an empty list the pick-a-contract message shows', async () => {
-  results = []
+test('a contract stays open even when the dates and filter list none', async () => {
+  listed = []
+  renderTab()
+  expect(await heading(24811)).toBeInTheDocument()
+  expect(screen.getByText('No contracts match these dates, filter or search.')).toBeInTheDocument()
+})
+
+test('the pick-a-contract message shows only when the sandbox has no contracts', async () => {
+  system = []
   renderTab()
   expect(await screen.findByText(/Pick a contract from the list/)).toBeInTheDocument()
 })
 
-test('search sits in the toolbar and contract lookup in the status bar', async () => {
+test('deleting the open contract opens the next one by number', async () => {
   renderTab()
+  await heading(24811)
+  await userEvent.click(screen.getByRole('button', { name: '24814' }))
+  await heading(24814)
+  await deleteOpenContract()
+  expect(await heading(24817)).toBeInTheDocument()
+})
+
+test('deleting the highest-numbered contract opens the previous one', async () => {
+  renderTab()
+  await heading(24811)
+  await userEvent.click(screen.getByRole('button', { name: '24817' }))
+  await heading(24817)
+  await deleteOpenContract()
+  expect(await heading(24814)).toBeInTheDocument()
+})
+
+test('deleting the last contract shows the pick-a-contract message', async () => {
+  system = [row(1, 24811)]
+  renderTab()
+  await heading(24811)
+  await deleteOpenContract()
+  expect(await screen.findByText(/Pick a contract from the list/)).toBeInTheDocument()
+})
+
+test('search sits in the toolbar and contract lookup after Open on board', async () => {
+  renderTab()
+  await heading(24811)
   const toolbar = screen.getByRole('region', { name: 'Toolbar' })
   expect(within(toolbar).getByRole('searchbox', { name: 'Search contracts' })).toBeInTheDocument()
-  expect(within(toolbar).queryByLabelText('Contract lookup')).not.toBeInTheDocument()
-  const status = screen.getByRole('status')
-  expect(within(status).getByLabelText('Contract lookup')).toBeInTheDocument()
+  expect(within(screen.getByRole('status')).queryByLabelText('Contract lookup')).toBeNull()
+  const openOnBoard = screen.getByRole('button', { name: 'Open on board' })
+  const lookup = screen.getByLabelText('Contract lookup')
+  expect(
+    openOnBoard.compareDocumentPosition(lookup) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy()
 })
