@@ -197,6 +197,7 @@ class Contract(models.Model):
 
     @property
     def is_cancelled(self) -> bool:
+        """R07: a cancelled contract stays on record."""
         return self.status == self.Status.CANCELLED
 
     @property
@@ -243,6 +244,7 @@ class Contract(models.Model):
 
     @property
     def is_multi_day(self) -> bool:
+        """R25/R26: a trip that returns on a later day (an "away" trip)."""
         return self.return_date > self.begin_date
 
 
@@ -295,6 +297,7 @@ class TripUnit(models.Model):
         super().save(*args, **kwargs)
 
     def clean(self) -> None:
+        """Sandbox isolation: a unit always has its contract's owner (DEMO_SANDBOX.md)."""
         super().clean()
         if self.contract_id and self.owner_id and self.contract.owner_id != self.owner_id:
             raise ValidationError("A unit must have the same owner as its contract.")

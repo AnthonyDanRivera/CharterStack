@@ -7,8 +7,10 @@ dependencies = [
     "django>=5.2,<6",
     "djangorestframework>=3.18.3",
     "drf-spectacular>=0.30.0",
+    "gunicorn>=27.0.1",
     "openpyxl>=3.1.5",
     "psycopg[binary]>=3.3.9",
+    "whitenoise>=6.12.0",
 ]
 
 [dependency-groups]
@@ -22,6 +24,8 @@ dev = [
 DJANGO_SETTINGS_MODULE = "config.settings"
 python_files = ["test_*.py"]
 addopts = "-q"
+# WhiteNoise warns that staticfiles/ is missing until collectstatic runs (deploy only).
+filterwarnings = ["ignore:No directory at:UserWarning"]
 
 [tool.ruff]
 line-length = 100

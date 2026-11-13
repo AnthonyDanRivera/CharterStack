@@ -67,3 +67,24 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+
+  docker:
+    name: Production image builds and serves the app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build image
+        run: docker build -t charterstack:ci .
+      - name: Start against SQLite and check health, app shell and admin
+        run: |
+          docker run -d --name app -p 8000:8000 \
+            -e SECRET_KEY=ci-only -e DEBUG=false -e SECURE_SSL_REDIRECT=false \
+            -e ALLOWED_HOSTS=localhost -e DATABASE_URL=sqlite:////tmp/ci.sqlite3 \
+            charterstack:ci
+          for i in $(seq 1 30); do curl -fs http://localhost:8000/api/health/ && break; sleep 2; done
+          curl -fs http://localhost:8000/api/health/
+          curl -fs http://localhost:8000/ | grep -q '<div id="root">'
+          curl -fs -o /dev/null http://localhost:8000/admin/login/
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs app

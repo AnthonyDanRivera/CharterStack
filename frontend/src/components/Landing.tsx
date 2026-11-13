@@ -17,7 +17,7 @@ export default function Landing() {
           contracts; dispatch assigns drivers and buses, stamps report and on-location times, and
           confirms each trip.
         </p>
-        <img src="/dispatch-board.png" alt="The dispatch board with today's trips" />
+        <img src="/dispatch-board.jpg" alt="The dispatch board with today's trips" />
         <button
           type="button"
           className="btn"

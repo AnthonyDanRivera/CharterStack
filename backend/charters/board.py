@@ -64,6 +64,7 @@ def effective_status(unit: TripUnit) -> str:
 
 
 def is_cancelled(unit: TripUnit) -> bool:
+    """R07/R29: cancelled for counts, either on its own or through its contract."""
     return effective_status(unit) == TripUnit.Status.CANCELLED
 
 
@@ -85,12 +86,14 @@ def place_line(location: str, address: str, city: str, state: str, zip_code: str
 
 
 def pickup_line(c: Contract) -> str:
+    """Board Pickup column, also searched by R28."""
     return place_line(
         c.pickup_location, c.pickup_address, c.pickup_city, c.pickup_state, c.pickup_zip
     )
 
 
 def destination_line(c: Contract) -> str:
+    """Board Destination column, also searched by R28."""
     return place_line(c.dest_location, c.dest_address, c.dest_city, c.dest_state, c.dest_zip)
 
 

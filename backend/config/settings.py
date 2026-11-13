@@ -35,6 +35,10 @@ if not SECRET_KEY:
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "http://localhost:5173")
+# Render sets this to the service's public hostname; trust it automatically.
+if RENDER_HOST := os.environ.get("RENDER_EXTERNAL_HOSTNAME"):
+    ALLOWED_HOSTS.append(RENDER_HOST)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -42,6 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # Let WhiteNoise serve static files under runserver too, exactly as in production.
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_spectacular",
@@ -50,6 +56,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Serves Django's static files and the built React app (frontend/dist).
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -101,6 +109,34 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        )
+    },
+}
+
+# In production Django serves the built React app: WhiteNoise serves
+# frontend/dist at the site root (index.html for "/"). In development Vite
+# serves it on :5173 instead, so a missing dist folder is fine.
+FRONTEND_DIST = Path(os.environ.get("FRONTEND_DIST", BASE_DIR.parent / "frontend" / "dist"))
+if FRONTEND_DIST.is_dir():
+    WHITENOISE_ROOT = FRONTEND_DIST
+    WHITENOISE_INDEX_FILE = True
+
+
+def _immutable_file(path: str, url: str) -> bool:
+    """Vite's hashed bundles (/assets/index-abc123.js) can be cached forever."""
+    return url.startswith("/assets/") or (
+        url.startswith(f"/{STATIC_URL}") and ".min." not in url and len(url.split(".")) > 2
+    )
+
+
+WHITENOISE_IMMUTABLE_FILE_TEST = _immutable_file
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -146,6 +182,11 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", default=True)
+    # The platform health check may call over plain HTTP inside the network.
+    SECURE_REDIRECT_EXEMPT = [r"^api/health/$"]
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Demo sandbox (docs/DEMO_SANDBOX.md). The session cookie lasts as long as the sandbox.
 DEMO_SANDBOX_HOURS = 24

@@ -1,0 +1,51 @@
+# Render Blueprint: one web service, one daily cron job, one PostgreSQL database.
+# Fixed-price plans, one instance, no autoscaling (docs/DEMO_SANDBOX.md).
+# Check plan names against Render's current pricing page before applying.
+services:
+  - type: web
+    name: charterstack
+    runtime: docker
+    plan: starter
+    numInstances: 1
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: charterstack-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: NUM_PROXIES
+        value: "1"
+      - key: DEMO_SERVER_NAME
+        value: render-1
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+
+  - type: cron
+    name: charterstack-cleanup
+    runtime: docker
+    plan: starter
+    schedule: "0 8 * * *" # daily, 08:00 UTC
+    dockerCommand: python manage.py cleanup_demo
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: charterstack-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+
+databases:
+  - name: charterstack-db
+    plan: basic-256mb
+    databaseName: charterstack
+    user: charterstack

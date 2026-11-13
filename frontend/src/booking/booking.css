@@ -175,6 +175,9 @@
 .full {
   grid-column: 1 / -1;
 }
+.fs > .fld {
+  clear: both;
+}
 .fld > label,
 .rl {
   font-size: 11px;
