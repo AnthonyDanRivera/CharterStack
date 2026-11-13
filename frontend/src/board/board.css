@@ -400,15 +400,28 @@
   color: var(--blue-text);
   font-weight: 600;
 }
+/* Pressed status buttons: solid dark color, white text (both pass 4.5:1 contrast). */
 .bgroup .st-onloc[data-on='true'] {
-  background: var(--row-onloc);
-  border-color: #7dbf8d;
+  background: #2e7d4f;
+  border-color: #256b42;
+  color: #fff;
   font-weight: 600;
 }
+.bgroup .st-onloc[data-on='true']:hover {
+  background: #256b42;
+}
 .bgroup .st-cxl[data-on='true'] {
-  background: var(--row-cancelled);
-  border-color: #e2877c;
+  background: #b3261e;
+  border-color: #981f18;
+  color: #fff;
   font-weight: 600;
+}
+.bgroup .st-cxl[data-on='true']:hover {
+  background: #981f18;
+}
+.bgroup .st-onloc[data-on='true'] .sw,
+.bgroup .st-cxl[data-on='true'] .sw {
+  border-color: rgba(255, 255, 255, 0.7);
 }
 .bgroup .tdel[data-armed='2'] {
   background: #fbe1de;

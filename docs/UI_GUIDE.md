@@ -113,8 +113,8 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 ### Action bar (under the table)
 Left group, all disabled when no row is selected:
 - **Reported** (clock icon) — toggles the actual report stamp; label becomes "Reported 05:28" and the button tints blue when set.
-- **On location** (green swatch) — toggles; button tints green when on.
-- **Cancelled** (red swatch) — toggles; button tints red when on.
+- **On location** (green swatch) — toggles; when on, the button turns solid dark green `#2E7D4F` with white text.
+- **Cancelled** (red swatch) — toggles; when on, the button turns solid dark red `#B3261E` with white text.
 - **Duplicate** (copy icon).
 - **Delete duplicate** (trash icon) — enabled only for a selected duplicate; first click turns it red and reads "Click again to delete".
 - Separator, then **Export to Excel** (file icon) — downloads `CharterStack-board-YYYY-MM-DD.xlsx` with the rows currently shown, in the current column order and sort, bold frozen header row with filters. Blank driver/bus/initials export as `Unassigned`, `Needed`, `Pending`.
