@@ -54,31 +54,34 @@ A **Contract** is what sales books. A **TripUnit** is one bus on that contract a
 
 ## Run it locally
 
-_Claude Code: fill this in during Phase 0 and keep it current._
+Requirements: [uv](https://docs.astral.sh/uv/) (installs Python 3.12 for you) and Node.js 22 or newer.
 
 ```bash
-# backend
+# backend (first terminal)
 cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py seed_reference
-python manage.py runserver
+uv sync                                  # creates .venv with Python 3.12 + dependencies
+uv run python manage.py migrate
+uv run python manage.py runserver        # API on http://localhost:8000
 
 # frontend (second terminal)
 cd frontend
 npm install
-npm run dev
+npm run dev                              # app on http://localhost:5173, proxies /api to :8000
 ```
 
-Open http://localhost:5173 and click **Try the demo**.
+Open http://localhost:5173. Health check: http://localhost:8000/api/health/. API docs: http://localhost:8000/api/docs/.
+
+Local development uses SQLite with no setup. To use PostgreSQL, set `DATABASE_URL` (see [backend/.env.example](backend/.env.example)).
 
 ## Tests
 
 ```bash
-cd backend && pytest
-cd frontend && npm test
+cd backend && uv run pytest
+cd backend && uv run ruff check . && uv run ruff format --check .
+cd frontend && npm test && npm run lint && npm run build
 ```
+
+GitHub Actions runs all of these on every push, with the backend tests against PostgreSQL.
 
 Every business rule in [docs/BUSINESS_RULES.md](docs/BUSINESS_RULES.md) has a named test, and sandbox isolation has its own test suite.
 

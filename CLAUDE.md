@@ -13,15 +13,19 @@ CharterStack is a charter-bus dispatch board and booking app: a portfolio projec
 Django 5 + Django REST Framework + PostgreSQL (SQLite locally) · drf-spectacular · pytest-django · React + Vite + TypeScript · TanStack Query · Vitest · GitHub Actions.
 
 ## Commands
-Backend (from `backend/`):
-- `python manage.py runserver` — API on :8000
-- `python manage.py migrate && python manage.py seed_reference`
-- `pytest` — all backend tests
-- `ruff check . && ruff format --check .`
+Backend (from `backend/`, Python 3.12 managed by uv — prefix commands with `uv run`):
+- `uv sync` — install dependencies into `.venv`
+- `uv run python manage.py runserver` — API on :8000
+- `uv run python manage.py migrate && uv run python manage.py seed_reference` (`seed_reference` arrives in Phase 1)
+- `uv run pytest` — all backend tests
+- `uv run ruff check . && uv run ruff format --check .`
+- `uv add <pkg>` / `uv add --dev <pkg>` — add a dependency (updates `pyproject.toml` and `uv.lock`)
 
 Frontend (from `frontend/`):
 - `npm run dev` — app on :5173, proxies `/api` to :8000
-- `npm test` · `npm run lint` · `npm run build`
+- `npm test` · `npm run lint` (ESLint + Prettier check) · `npm run format` · `npm run build`
+
+CI: `.github/workflows/ci.yml` runs backend lint + tests (against PostgreSQL) and frontend lint + tests + build on every push.
 
 Keep this section accurate when commands change.
 
