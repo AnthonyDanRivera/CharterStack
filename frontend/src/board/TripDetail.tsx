@@ -35,12 +35,13 @@ export default function TripDetail({ unitId }: { unitId: number | null }) {
   return (
     <section className="detail" aria-label="Trip detail">
       <div className="detail-cols">
+        {/* Sibling keys must differ; the unit id resets each panel when the selection changes. */}
         <TripInfo
-          key={unit.data.id}
+          key={`info-${unit.data.id}`}
           unit={unit.data}
           onNotes={(notes) => patch.mutate({ id: unit.data.id, patch: { dispatch_notes: notes } })}
         />
-        <AssignPanel key={unit.data.id} unit={unit.data} reference={reference.data} />
+        <AssignPanel key={`assign-${unit.data.id}`} unit={unit.data} reference={reference.data} />
       </div>
     </section>
   )
