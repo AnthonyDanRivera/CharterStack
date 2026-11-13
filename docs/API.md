@@ -142,7 +142,7 @@ Response:
   "counts": { "trips": 6, "need_driver_or_bus": 3, "pending_confirmation": 4 },
   "refreshed_at": "2026-11-12T21:04:37-05:00",
   "rows": [{
-    "id": 77, "contract_id": 31, "display_number": "24817", "is_duplicate": false,
+    "id": 77, "contract_id": 31, "contract_number": 24817, "display_number": "24817", "is_duplicate": false,
     "day_label": "1/1", "is_multi_day": false, "terminal": "NJ",
     "begin_date": "2026-11-09", "start_time": "07:15", "spot_time": "06:45",
     "report_time": null, "actual_report_time": null, "actual_report_late": false, "on_location_time": null,
@@ -158,32 +158,32 @@ Response:
   }]
 }
 ```
-`status` is the effective status: `cancelled` when the contract is cancelled (rule R07).
+`status` is the effective status: `cancelled` when the contract is cancelled (rule R07). Quotes never appear. `refreshed_at` is in the `X-Timezone` zone. `start`/`end` default to today in that zone; one alone means a single day; `end` before `start`, an unknown `view` or an unknown `sort` key is 400. Rows come back in the requested sort (default: contract number, regular units, then duplicates).
 
 ### `GET /api/units/{id}/`
-One unit with everything the Trip information and Assign panels need: the board row fields plus `passengers`, `contact_name`, `contact_phone`, `info`, `itinerary`, `requested_driver`, `bus_count`, and the unit's saved `driver`, `bus`, `report_time`.
+One unit with everything the Trip information and Assign panels need: the board row fields plus `passengers`, `contact_name`, `contact_phone`, `info`, `itinerary`, `requested_driver` (id) and `requested_driver_name`, `bus_count`, and the unit's saved `driver_id` and `bus_id` (the row's `driver` / `bus` are display values: name and bus number). Its `day_label` is for today.
 
 ### `PATCH /api/units/{id}/`
-Updates dispatch fields. Any subset of: `driver` (id or null), `bus` (id or null), `report_time`, `confirm_initials`, `dispatch_notes`. The server normalizes initials and manages `confirmed_at` (rule R22). Response is the unit plus:
+Updates dispatch fields. Any subset of: `driver` (id or null), `bus` (id or null), `report_time` (loose input as in R02; `""` or null clears it; bad input is 400 `{"report_time": ["Enter a valid time"]}`), `confirm_initials`, `dispatch_notes`. The server normalizes initials and manages `confirmed_at` (rule R22). Response is the unit plus:
 ```json
 { "warnings": ["Bus #3108 seats 35; this group has 48 passengers."] }
 ```
 Warnings never block the save (rule R18).
 
 ### `GET /api/units/{id}/check/?bus=6`
-Returns the same `warnings` for a bus choice **before** saving, so the note can show as soon as the dropdown changes.
+Returns `{"warnings": [...]}` for a bus choice **before** saving, so the note can show as soon as the dropdown changes. No `bus` (or an unknown one) returns no warnings.
 
 ### Unit actions
 All return the updated unit.
 - `POST /api/units/{id}/reported/` — toggle actual report stamp (rule R19). Optional body `{"clear": true}` for the × button.
 - `POST /api/units/{id}/on-location/` — toggle (rule R20).
 - `POST /api/units/{id}/cancel/` — toggle (rule R21).
-- `POST /api/units/{id}/duplicate/` — returns the **new** duplicate unit, 201 (rule R16).
-- `DELETE /api/units/{id}/` — only for duplicates; 400 for regular units.
+- `POST /api/units/{id}/duplicate/` — returns the **new** duplicate unit, 201 (rule R16). More than 20 duplicates on one contract: 400 `{"detail": "Demo limit reached."}`.
+- `DELETE /api/units/{id}/` — only for duplicates, 204; 400 `{"detail": "Only duplicates can be deleted."}` for regular units.
 
 Stamps use the server clock converted to the visitor's time zone. The frontend sends its IANA time zone in an `X-Timezone` header (for example `America/New_York`); default is `America/New_York`.
 
 ### `GET /api/board/export.xlsx`
-Same query parameters as `/api/board/`, plus `columns` (comma-separated column keys in display order). Returns an Excel file built with openpyxl: bold, frozen header row with auto-filter, column widths proportional to the board's, blank driver/bus/initials written as `Unassigned` / `Needed` / `Pending`. Filename `CharterStack-board-{start}.xlsx`.
+Same query parameters as `/api/board/`, plus `columns` (comma-separated column keys in display order; omitted = all, unknown key = 400) and optional `widths` (px, same order, so resized columns export at their board width). Returns an Excel file built with openpyxl: bold, frozen header row with auto-filter, column widths proportional to the board's, blank driver/bus/initials written as `Unassigned` / `Needed` / `Pending`. Filename `CharterStack-board-{start}.xlsx`.
 
 Column keys: `contract, day, terminal, beginDate, startTime, reportTime, actualReport, spotTime, onLocAt, org, pickup, dest, group, driver, busNum, sizeReq, returnDate, returnTime, confInit, confAt, driverPhone, hasNotes, notesText`.

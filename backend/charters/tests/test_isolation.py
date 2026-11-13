@@ -192,3 +192,46 @@ def test_contract_search_and_summary_only_cover_own_rows(a_and_b):
     data = a.get("/api/contracts/", {"q": "only in b"}).json()
     assert data["results"] == []
     assert data["summary"]["count"] == 0
+
+
+@pytest.mark.parametrize(
+    ("method", "path"),
+    [
+        ("get", ""),
+        ("patch", ""),
+        ("delete", ""),
+        ("get", "check/"),
+        ("post", "reported/"),
+        ("post", "on-location/"),
+        ("post", "cancel/"),
+        ("post", "duplicate/"),
+    ],
+)
+def test_unit_endpoints_return_404_for_other_owner(a_and_b, b_rows, method, path):
+    a, _, _, _ = a_and_b
+    _, unit = b_rows
+    before = TripUnit.objects.filter(contract=unit.contract).count()
+    response = getattr(a, method)(
+        f"/api/units/{unit.pk}/{path}",
+        data={"dispatch_notes": "x"} if method == "patch" else {},
+        content_type="application/json",
+    )
+    assert response.status_code == 404
+    unit.refresh_from_db()
+    assert (unit.dispatch_notes, unit.status, unit.actual_report_time) == ("", "", None)
+    assert TripUnit.objects.filter(contract=unit.contract).count() == before
+
+
+def test_board_and_export_only_show_own_units(a_and_b):
+    from io import BytesIO
+
+    from openpyxl import load_workbook
+
+    a, a_user, _, b_user = a_and_b
+    Contract.objects.filter(owner_id=b_user).update(organization="Only In B")
+    data = a.get("/api/board/", {"view": "all"}).json()
+    own = set(TripUnit.objects.filter(owner_id=a_user).values_list("id", flat=True))
+    assert {r["id"] for r in data["rows"]} <= own
+    assert a.get("/api/board/", {"q": "only in b"}).json()["rows"] == []
+    ws = load_workbook(BytesIO(a.get("/api/board/export.xlsx", {"q": "only in b"}).content)).active
+    assert ws.max_row == 1

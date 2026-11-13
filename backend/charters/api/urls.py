@@ -2,10 +2,12 @@ from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from . import views
+from .board import UnitViewSet, board_export, board_view
 from .contracts import ContractViewSet
 
 router = SimpleRouter()
 router.register("contracts", ContractViewSet, basename="contract")
+router.register("units", UnitViewSet, basename="unit")
 
 urlpatterns = [
     path("health/", views.health, name="health"),
@@ -14,5 +16,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("reference/", views.reference, name="reference"),
     path("zip/<str:zip_code>/", views.zip_lookup, name="zip"),
+    path("board/", board_view, name="board"),
+    path("board/export.xlsx", board_export, name="board-export"),
     path("", include(router.urls)),
 ]

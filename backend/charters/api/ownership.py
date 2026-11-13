@@ -7,7 +7,7 @@ for the request: 404 on detail routes and actions, "does not exist" on input.
 """
 
 from django.db import models
-from rest_framework import serializers, viewsets
+from rest_framework import mixins, serializers, viewsets
 
 
 def owned(model: type[models.Model], user) -> models.QuerySet:
@@ -17,8 +17,8 @@ def owned(model: type[models.Model], user) -> models.QuerySet:
     return model.objects.filter(owner=user)
 
 
-class OwnedModelViewSet(viewsets.ModelViewSet):
-    """ModelViewSet scoped to `request.user`.
+class OwnedGenericViewSet(viewsets.GenericViewSet):
+    """GenericViewSet scoped to `request.user`.
 
     Subclasses set `model` instead of `queryset`, so there is no unfiltered
     queryset to forget about. To add select_related and so on, override
@@ -31,6 +31,21 @@ class OwnedModelViewSet(viewsets.ModelViewSet):
         return owned(self.model, self.request.user)
 
     def perform_create(self, serializer) -> None:
+        serializer.save(owner=self.request.user)
+
+
+class OwnedModelViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    OwnedGenericViewSet,
+):
+    """Full CRUD, scoped to `request.user`. Pick mixins on OwnedGenericViewSet for less."""
+
+    def perform_create(self, serializer) -> None:
+        # Restated: CreateModelMixin comes first in the MRO and would otherwise win.
         serializer.save(owner=self.request.user)
 
 

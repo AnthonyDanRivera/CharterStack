@@ -40,7 +40,7 @@ Keep this section accurate when commands change.
 
 ## Conventions
 - Python: ruff defaults, type hints on service functions, docstrings on anything implementing a business rule (mention the rule ID).
-- Put multi-step logic in `charters/services.py`; keep views and serializers thin. Money parsing/formatting is in `charters/money.py`; per-row computed values (balance, payment status, display number) are model properties in `charters/models.py`.
+- Put multi-step logic in `charters/services.py` (booking, sandbox) or `charters/board.py` (dispatch board, unit actions, export); keep views and serializers thin. Money parsing/formatting is in `charters/money.py`; per-row computed values (balance, payment status, display number) are model properties in `charters/models.py`.
 - API field names are `snake_case`. Frontend types mirror the API shapes in `docs/API.md`.
 - React: function components, one component per file, colocated CSS modules or a single `tokens.css` + component CSS. No UI library; the look is custom and small.
 - Server state through TanStack Query; UI state (open popovers, column order, widths) in component state, with column order and widths persisted to localStorage.
