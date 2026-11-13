@@ -40,10 +40,10 @@ export default function Landing() {
 
       <section className="lp-hero">
         <div className="lp-hero-inner">
-          <h1>Booking and dispatch for a charter bus company.</h1>
+          <h1>A TMS for charter bus companies.</h1>
           <p className="lp-lead">
-            Book a trip and it shows up on the dispatch board, one row per bus. Assign drivers and
-            buses, stamp report and on-location times, and export the day to Excel.
+            Book a trip and it lands on the dispatch board, one row per bus. Assign drivers and
+            buses, stamp report times, and export the day to Excel.
           </p>
           <button
             type="button"
@@ -80,12 +80,25 @@ export default function Landing() {
         </div>
       </section>
 
-      <footer className="lp-foot">
-        <span>Built by Anthony Rivera, a former charter dispatcher.</span>
-        <a href={SITE} target="_blank" rel="noopener noreferrer">
-          anthonydanrivera.com
-        </a>
-      </footer>
+      <section className="lp-made" aria-labelledby="lp-made-name">
+        <p className="lp-made-label">Made by</p>
+        <div className="lp-made-card">
+          <span className="lp-avatar" aria-hidden="true">
+            AR
+          </span>
+          <div className="lp-made-body">
+            <h2 id="lp-made-name">Anthony Rivera</h2>
+            <p className="lp-made-tagline">Charter dispatcher turned developer.</p>
+            <p>
+              Hi, I&rsquo;m Anthony. I spent years working a charter dispatch board, so I built the
+              one I wanted to use.
+            </p>
+            <a className="lp-made-link" href={SITE} target="_blank" rel="noopener noreferrer">
+              Visit my portfolio
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
