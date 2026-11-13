@@ -25,8 +25,8 @@ A dense, desktop internal tool: closer to a real TMS than a modern marketing app
 | Red (warnings, Unassigned, Needed, counts) | `#C0261B` |
 | Row: selected | 2px inset outline `#3A424D` |
 | Row: duplicate | background `#E2EDFC` |
-| Row: on location | background `#DFF3E3` |
-| Row: cancelled | background `#FBE1DE` |
+| Row: on location | solid dark green `#2E7D4F`, white text (same as the pressed On location button) |
+| Row: cancelled | solid dark red `#B3261E`, white text (same as the pressed Cancelled button) |
 | Capacity/lift note | text `#8F3B06` on `#FDEBDD` |
 | Inputs and buttons | height 30px (toolbar buttons 28px), radius 4px, border `#BFC7D1` |
 
@@ -107,7 +107,7 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 - Row text is regular weight (only the contract number, WC, and the red Unassigned/Needed labels stand out).
 - Clicking anywhere in a row selects it, including empty cells. Focusing the Initials input also selects the row.
 - Selected row: dark 2px inset outline, no fill change. Hover: very light grey.
-- Row backgrounds by state: duplicate = light blue; on location = light green; cancelled = light red. Status color wins over duplicate color.
+- Row backgrounds by state: duplicate = light blue; on location = dark green with white text; cancelled = dark red with white text. Status color wins over duplicate color. On those dark rows, labels that are red elsewhere (Unassigned, Needed, a late actual report) turn bold white, secondary grey text turns translucent white, the initials input stays white, and a selected row gets a white inset outline instead of the dark one.
 - Empty state: "No trips match these dates or search."
 
 ### Action bar (under the table)

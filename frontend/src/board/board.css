@@ -234,23 +234,57 @@
 .row[data-dup='true']:hover {
   background: #d6e5fa;
 }
+/* On location and Cancelled rows: solid dark color with white text, like the
+   pressed status buttons. */
 .row[data-status='onloc'] {
   background: var(--row-onloc);
 }
 .row[data-status='onloc']:hover {
-  background: #d2edd8;
+  background: #286f46;
 }
 .row[data-status='onloc'][data-selected='true'] {
-  background: #cdebd4;
+  background: #256b42;
 }
 .row[data-status='cancelled'] {
   background: var(--row-cancelled);
 }
 .row[data-status='cancelled']:hover {
-  background: #f7d3cf;
+  background: #a5231c;
 }
 .row[data-status='cancelled'][data-selected='true'] {
-  background: #f5cdc8;
+  background: #981f18;
+}
+.row[data-status] > div {
+  color: #fff;
+  border-right-color: rgba(255, 255, 255, 0.18);
+}
+.row[data-status] > div:has(+ .split) {
+  border-right-color: rgba(255, 255, 255, 0.35);
+}
+.row[data-status] .c-contract,
+.row[data-status] .onloc-time {
+  color: #fff;
+}
+.row[data-status] .needed,
+.row[data-status] .actual[data-late='true'] {
+  color: #fff;
+  font-weight: 700;
+}
+.row[data-status] .seats,
+.row[data-status] .dash,
+.row[data-status] .ntext,
+.row[data-status] .actclr {
+  color: rgba(255, 255, 255, 0.78);
+}
+.row[data-status] .actclr:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+/* The dark selection outline would vanish on these rows; use white instead. */
+.row[data-status][data-selected='true'] {
+  box-shadow:
+    inset 0 0 0 2px #fff,
+    inset 0 0 0 3px rgba(0, 0, 0, 0.35);
 }
 .needed {
   color: var(--red);
