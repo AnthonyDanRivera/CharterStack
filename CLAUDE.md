@@ -17,6 +17,7 @@ Backend (from `backend/`, Python 3.12 managed by uv — prefix commands with `uv
 - `uv sync` — install dependencies into `.venv`
 - `uv run python manage.py runserver` — API on :8000
 - `uv run python manage.py migrate && uv run python manage.py seed_reference` — schema plus reference data (idempotent)
+- `uv run python manage.py cleanup_demo` — delete demo sandboxes older than 24 hours
 - `uv run pytest` — all backend tests
 - `uv run ruff check . && uv run ruff format --check .`
 - `uv add <pkg>` / `uv add --dev <pkg>` — add a dependency (updates `pyproject.toml` and `uv.lock`)
@@ -30,7 +31,7 @@ CI: `.github/workflows/ci.yml` runs backend lint + tests (against PostgreSQL) an
 Keep this section accurate when commands change.
 
 ## Rules that must not be broken
-1. **Sandbox isolation.** Every query on `Contract` or `TripUnit` filters by `owner=request.user`. Use `OwnedModelViewSet`. Never write `Contract.objects.all()` or `.get(pk=...)` in a view. Another owner's object returns 404.
+1. **Sandbox isolation.** Every query on `Contract` or `TripUnit` filters by `owner=request.user`. Use `OwnedModelViewSet` (set `model`, not `queryset`) and `OwnedPrimaryKeyRelatedField` from `charters/api/ownership.py`. Add every new owned endpoint to `charters/tests/test_isolation.py`. Never write `Contract.objects.all()` or `.get(pk=...)` in a view. Another owner's object returns 404.
 2. **Business rules live in Django.** Payment status, balance, effective status, display numbers, warnings, counts, day labels and time normalization are computed in the backend and tested with pytest. React displays what the API returns.
 3. **Every rule in `docs/BUSINESS_RULES.md` has a test** named with its ID, for example `test_r12_payment_status_deposit_paid`.
 4. **24-hour times everywhere.** `HH:MM`. No AM/PM in UI, API or exports.

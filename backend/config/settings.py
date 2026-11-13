@@ -116,6 +116,18 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # docs/DEMO_SANDBOX.md safeguards. Exceeding a rate returns 429.
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "30/min",
+        "user": "120/min",
+        "demo_login": "5/hour",
+    },
+    # Proxies in front of Django, so throttles read the client IP from X-Forwarded-For.
+    "NUM_PROXIES": int(os.environ["NUM_PROXIES"]) if os.environ.get("NUM_PROXIES") else None,
 }
 
 SPECTACULAR_SETTINGS = {
@@ -131,6 +143,11 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Demo sandbox (docs/DEMO_SANDBOX.md). The session cookie lasts as long as the sandbox.
+DEMO_SANDBOX_HOURS = 24
+SESSION_COOKIE_AGE = DEMO_SANDBOX_HOURS * 60 * 60
+DEMO_SERVER_NAME = os.environ.get("DEMO_SERVER_NAME", "demo-server")
 
 # Sample and reference data (docs/DEMO_SANDBOX.md). Lives at the repo root, next to backend/.
 SEED_FILE = Path(os.environ.get("SEED_FILE", BASE_DIR.parent / "seed" / "seed_demo.json"))

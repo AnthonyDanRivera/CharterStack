@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Bus, Contract, Driver, Terminal, TripUnit, ZipCode
+from .models import Bus, Contract, DemoSession, Driver, Terminal, TripUnit, ZipCode
+
+
+@admin.register(DemoSession)
+class DemoSessionAdmin(admin.ModelAdmin):
+    list_display = ["short_id", "user", "created_at"]
+    readonly_fields = ["short_id", "user", "created_at", "ip_hash"]
+    list_select_related = ["user"]
 
 
 @admin.register(Terminal)

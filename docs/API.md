@@ -14,17 +14,17 @@ Conventions:
 ## Session
 
 ### `POST /api/demo-login/`
-Creates a demo user and sandbox, logs the browser in, returns the session info. No body. Throttled per IP (see `DEMO_SANDBOX.md`).
+Creates a demo user and sandbox, logs the browser in, returns the session info with 201. No body. If the browser already has a live demo session, returns that session with 200 instead of creating a new one. Requires the CSRF token like every other POST (call `GET /api/session/` first; it sets the `csrftoken` cookie). Throttled per IP (see `DEMO_SANDBOX.md`). The sandbox's dates are shifted to today in the `X-Timezone` zone.
 
 ```json
 { "user": "Demo User", "session_id": "DEMO-8F3K2", "started_at": "2026-11-12T21:04:37-05:00", "server": "demo-server" }
 ```
 
 ### `GET /api/session/`
-Returns the same object for the current session, or 401 when not logged in. The React app calls this on load to decide between the landing page and the app.
+Returns the same object for the current session, or 401 `{"detail": "Not logged in."}` when not logged in. The React app calls this on load to decide between the landing page and the app. Always sets the `csrftoken` cookie. `started_at` is in the `X-Timezone` zone.
 
 ### `POST /api/logout/`
-Ends the session. The sandbox is left for the cleanup job.
+Ends the session. 204. The sandbox is left for the cleanup job.
 
 ### `GET /api/health/`
 `{"status": "ok"}`. For uptime checks.

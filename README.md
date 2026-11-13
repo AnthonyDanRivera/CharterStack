@@ -64,6 +64,7 @@ uv run python manage.py migrate
 uv run python manage.py seed_reference   # terminals, drivers, buses, ZIP codes (safe to re-run)
 uv run python manage.py createsuperuser  # optional: to browse reference data at /admin/
 uv run python manage.py runserver        # API on http://localhost:8000
+uv run python manage.py cleanup_demo     # deletes demo sandboxes older than 24 h (daily cron in production)
 
 # frontend (second terminal)
 cd frontend

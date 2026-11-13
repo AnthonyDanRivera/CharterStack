@@ -59,3 +59,34 @@ def make_unit():
         )
 
     return _make
+
+
+@pytest.fixture(autouse=True)
+def _clear_throttle_cache():
+    """Throttle counters live in the cache; reset them so tests don't throttle each other."""
+    from django.core.cache import cache
+
+    cache.clear()
+    yield
+    cache.clear()
+
+
+@pytest.fixture
+def reference(db):
+    from charters.services import seed_reference
+
+    seed_reference()
+
+
+@pytest.fixture
+def demo_client(reference):
+    """Return a factory: each call gives a fresh browser logged into its own sandbox."""
+    from django.test import Client
+
+    def _make(**headers) -> Client:
+        client = Client(headers=headers)
+        response = client.post("/api/demo-login/")
+        assert response.status_code == 201, response.content
+        return client
+
+    return _make

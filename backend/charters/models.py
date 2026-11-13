@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import F, Q
+from django.utils import timezone
 
 from .money import format_money
 
@@ -310,3 +311,26 @@ class TripUnit(models.Model):
         if self.contract.bus_count > 1:
             return f"{number}-{self.unit_number}"
         return str(number)
+
+
+# ---------------------------------------------------------------------------
+# Demo sandbox
+# ---------------------------------------------------------------------------
+
+
+class DemoSession(models.Model):
+    """One visitor's sandbox: a throwaway user plus when it started (DEMO_SANDBOX.md)."""
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="demo_session"
+    )
+    short_id = models.CharField(max_length=10, unique=True)  # DEMO-8F3K2
+    # A default rather than auto_now_add so tests can create expired sessions.
+    created_at = models.DateTimeField(default=timezone.now, db_index=True)
+    ip_hash = models.CharField(max_length=64, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return self.short_id
