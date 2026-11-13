@@ -33,8 +33,12 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
   const [q, setQ] = useState('')
   const [currentId, setCurrentId] = useState<number | null>(null)
   const [mode, setMode] = useState<Mode>({ kind: 'view' })
+  const [deleted, setDeleted] = useState<number[]>([])
   const list = useContracts({ start: range.start, end: range.end, status: filter, q })
-  const contract = useContract(currentId)
+  // Until the user picks one, show the first contract in the list so the page is never empty.
+  // Skip ones just deleted, in case the list hasn't refetched yet.
+  const openId = currentId ?? list.data?.results.find((c) => !deleted.includes(c.id))?.id ?? null
+  const contract = useContract(openId)
   const reference = useReference()
   const remove = useDeleteContract()
 
@@ -57,7 +61,7 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
           onCancel={() => setMode({ kind: 'view' })}
         />
       )
-    if (currentId === null)
+    if (openId === null)
       return (
         <div className="ct-empty">
           <p>Pick a contract from the list, or look one up, to see it here.</p>
@@ -96,7 +100,14 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
           deleting={remove.isPending}
           onInsert={() => setMode({ kind: 'insert' })}
           onEdit={() => setMode({ kind: 'edit' })}
-          onDelete={() => remove.mutate(c.id, { onSuccess: () => setCurrentId(null) })}
+          onDelete={() =>
+            remove.mutate(c.id, {
+              onSuccess: () => {
+                setDeleted((d) => [...d, c.id])
+                setCurrentId(null)
+              },
+            })
+          }
           onOpenOnBoard={() => onOpenOnBoard(c.units[0]?.id ?? null, c.begin_date)}
         />
         {remove.isError && <p className="state error">{errorMessages(remove.error).join(' ')}</p>}
@@ -112,7 +123,17 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
           <span className="tsep" aria-hidden="true" />
           <MenuButton value={filter} options={FILTERS} onChange={setFilter} />
           <span className="tsep" aria-hidden="true" />
-          <ContractLookup onFound={open} />
+          <label htmlFor="ct-search" className="sr">
+            Search contracts
+          </label>
+          <input
+            id="ct-search"
+            type="search"
+            className="field ct-search"
+            placeholder="Search contract, org, group, contact…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
         </section>
         {list.isError && !list.data ? (
           <p className="state error">
@@ -122,7 +143,7 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
             </button>
           </p>
         ) : list.data ? (
-          <ContractTable data={list.data} currentId={currentId} onOpen={open} />
+          <ContractTable data={list.data} currentId={openId} onOpen={open} />
         ) : (
           <p className="state">Loading contracts…</p>
         )}
@@ -142,17 +163,7 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
           <span className="cnt">
             <b className="red">{fmtMoney(summary?.balance_due ?? '0')}</b> balance due
           </span>
-          <label htmlFor="ct-search" className="sr">
-            Search contracts
-          </label>
-          <input
-            id="ct-search"
-            type="search"
-            className="field search"
-            placeholder="Search contract, org, group, contact…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
+          <ContractLookup onFound={open} />
         </div>
       </div>
       <div className="surface ct-surface">{surface()}</div>

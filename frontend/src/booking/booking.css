@@ -1,5 +1,12 @@
 /* Booking tab: contract list, contract view and form. Final prototype values. */
 
+.tbar .ct-search {
+  width: 300px;
+  max-width: 100%;
+}
+.booking-sbar .lookup {
+  margin-left: auto;
+}
 .lookup label {
   font-size: 12px;
   font-weight: 600;

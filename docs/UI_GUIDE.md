@@ -146,14 +146,14 @@ Two panels side by side: Trip information (about 75% width) and Assign driver & 
 See `design/screenshots/02-booking-contract-view.png` and `03-booking-contract-form.png`. Both screenshots show only the top of the contract; the sections further down are listed below. Two stacked surfaces of the same width: the contract list, then the contract.
 
 ### Contract list surface
-1. **Toolbar:** the same ‹ Start/End date › Today controls as the board (same shared range), separator, **All contracts ▾** filter (All contracts, Active contracts, Booked, Quotes, Cancelled), separator, **Contract lookup** label with a 130px input (placeholder "e.g. 24817"); "No contract 99999 found." appears beside it in orange when there is no match.
+1. **Toolbar:** the same ‹ Start/End date › Today controls as the board (same shared range), separator, **All contracts ▾** filter (All contracts, Active contracts, Booked, Quotes, Cancelled), separator, then a 300px search box, placeholder "Search contract, org, group, contact…". (Search and Contract lookup swapped places from the prototype: search filters the list right above it, lookup jumps to one contract.)
 2. **Table** (max height about 260px, scrolls): Contract # (monospace, black) · Status · Begin (`11/09/2026 07:15`) · Organization · Group · Route (`Union City → Jersey City`) · Buses · Total · Balance · Payment. Money columns are right-aligned.
    - Status is plain colored text, not a badge: **Booked** blue `#1F5FBF`, **Quote** amber `#8F5A06`, **Cancelled** red `#C0261B`.
    - Payment text: Paid in full green `#1B5530`, Deposit paid / Partially paid amber, Unpaid red, all semi-bold.
    - Cancelled rows are greyed and struck through (except the status word).
    - Click a row to open the contract below; the open row has the dark 2px outline.
    - Empty state: "No contracts match these dates, filter or search."
-3. **Status bar under the table:** **12** contracts · **10** booked · **1** quotes · **1** cancelled · **$18,600.00** balance due (cancelled and balance numbers in red), and a search box on the right, placeholder "Search contract, org, group, contact…".
+3. **Status bar under the table:** **12** contracts · **10** booked · **1** quotes · **1** cancelled · **$18,600.00** balance due (cancelled and balance numbers in red), and on the right the **Contract lookup** label with a 130px input (placeholder "e.g. 24817"); "No contract 99999 found." appears beside it in orange when there is no match.
 
 ### Contract surface — view mode
 Header row: "Contract **24817**" (number in monospace bold) with the status as small grey text beside it (red when cancelled). Buttons on the right: **+ Insert contract** (secondary), **Edit contract** (primary), **Delete contract** (three-click, rule R10), **Open on board** (switches tab and selects the contract's first unit).
@@ -172,7 +172,7 @@ Below, read-only sections. Each section has a small blue title, and each field i
 | Dispatch | Single-bus contracts: Driver, Driver phone, Report time, Actual report, Bus, Confirmation. Multi-bus: a one-line note "This contract has 2 buses (24823-1 to 24823-2 on the dispatch board). Driver, bus and report details are set per bus there." |
 | Dispatch notes | One box (no dash when empty) |
 
-With no contract open: "Pick a contract from the list, or look one up, to see it here." and an Insert contract button.
+When nothing has been picked yet, the first contract in the list opens automatically (also after the open contract is deleted). Only when the list is empty: "Pick a contract from the list, or look one up, to see it here." and an Insert contract button.
 
 ### Contract surface — form mode (Insert / Edit)
 Title "Insert contract" or "Edit contract 24817". Same sections and order as view mode, minus Dispatch and Dispatch notes, with inputs instead of boxes. Required fields have a red asterisk after the label.
