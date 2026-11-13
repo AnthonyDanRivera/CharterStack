@@ -25,8 +25,8 @@ A dense, desktop internal tool: closer to a real TMS than a modern marketing app
 | Red (warnings, Unassigned, Needed, counts) | `#C0261B` |
 | Row: selected | 2px inset outline `#3A424D` |
 | Row: duplicate | background `#E2EDFC` |
-| Row: on location | solid dark green `#2E7D4F`, white text (same as the pressed On location button) |
-| Row: cancelled | solid dark red `#B3261E`, white text (same as the pressed Cancelled button) |
+| Row: on location | solid dark green `#2E7D4F`, white text |
+| Row: cancelled | solid dark red `#B3261E`, white text |
 | Capacity/lift note | text `#8F3B06` on `#FDEBDD` |
 | Inputs and buttons | height 30px (toolbar buttons 28px), radius 4px, border `#BFC7D1` |
 
@@ -113,8 +113,8 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 ### Action bar (under the table)
 Left group, all disabled when no row is selected:
 - **Reported** (clock icon) — toggles the actual report stamp; label becomes "Reported 05:28" and the button tints blue when set.
-- **On location** (green swatch) — toggles; when on, the button turns solid dark green `#2E7D4F` with white text.
-- **Cancelled** (red swatch) — toggles; when on, the button turns solid dark red `#B3261E` with white text.
+- **On location** (green swatch) — toggles; button tints light green `#DFF3E3` when on.
+- **Cancelled** (red swatch) — toggles; button tints light red `#FBE1DE` when on.
 - **Duplicate** (copy icon).
 - **Delete duplicate** (trash icon) — enabled only for a selected duplicate; first click turns it red and reads "Click again to delete".
 - Separator, then **Export to Excel** (file icon) — downloads `CharterStack-board-YYYY-MM-DD.xlsx` with the rows currently shown, in the current column order and sort, bold frozen header row with filters. Blank driver/bus/initials export as `Unassigned`, `Needed`, `Pending`.
