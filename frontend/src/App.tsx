@@ -1,25 +1,21 @@
-import { useQuery } from '@tanstack/react-query'
+import { useSession } from './api/hooks'
+import AppFrame from './components/AppFrame'
+import Landing from './components/Landing'
+import './styles/tokens.css'
+import './styles/app.css'
 
-type Health = { status: string }
-
-async function fetchHealth(): Promise<Health> {
-  const response = await fetch('/api/health/')
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
-  return response.json() as Promise<Health>
-}
-
-// Phase 0 placeholder. Replaced by the real app shell in Phase 5.
+/** Landing page without a session; the app with one. */
 export default function App() {
-  const health = useQuery({ queryKey: ['health'], queryFn: fetchHealth })
-
-  let apiText = 'checking...'
-  if (health.isError) apiText = 'unreachable'
-  else if (health.data) apiText = health.data.status
-
-  return (
-    <main>
-      <h1>CharterStack</h1>
-      <p>API: {apiText}</p>
-    </main>
-  )
+  const session = useSession()
+  if (session.isPending) return <p className="state">Loading…</p>
+  if (session.isError)
+    return (
+      <p className="state error">
+        Couldn&apos;t reach the server.
+        <button type="button" className="linkbtn" onClick={() => session.refetch()}>
+          Retry
+        </button>
+      </p>
+    )
+  return session.data ? <AppFrame session={session.data} /> : <Landing />
 }

@@ -1,0 +1,40 @@
+/* Design tokens from docs/UI_GUIDE.md. */
+:root {
+  --font: 'Segoe UI', Tahoma, Arial, sans-serif;
+  --mono: Consolas, 'Courier New', monospace;
+
+  --page-bg: #eef1f5;
+  --surface: #ffffff;
+  --surface-border: #cdd4dc;
+  --toolbar-bg: #f7f8fa;
+  --header-row-bg: #f3f5f8;
+  --app-header: #1f3a5f;
+
+  --text: #1b1f24;
+  --text-2: #4a525d;
+  --text-muted: #5b6470;
+  --text-dash: #8e97a3;
+  --label: #2c323a;
+  --label-2: #3a424d;
+
+  --blue: #2f6bc0;
+  --blue-hover: #2759a3;
+  --blue-text: #1a4c8c;
+  --blue-booked: #1f5fbf;
+  --red: #c0261b;
+  --amber: #8f5a06;
+  --green: #1b5530;
+
+  --row-selected: #3a424d;
+  --row-dup: #e2edfc;
+  --row-onloc: #dff3e3;
+  --row-cancelled: #fbe1de;
+  --note-text: #8f3b06;
+  --note-bg: #fdebdd;
+
+  --input-border: #bfc7d1;
+  --line: #dde2e8;
+  --line-soft: #eaedf1;
+  --box-bg: #f7f8fa;
+  --ro-bg: #f6f8fa;
+}

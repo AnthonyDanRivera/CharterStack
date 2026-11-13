@@ -25,6 +25,7 @@ Backend (from `backend/`, Python 3.12 managed by uv — prefix commands with `uv
 Frontend (from `frontend/`):
 - `npm run dev` — app on :5173, proxies `/api` to :8000
 - `npm test` · `npm run lint` (ESLint + Prettier check) · `npm run format` · `npm run build`
+- Windows: if Vitest says "failed to find the current suite", the shell's drive letter is lowercase (`c:\...`). Run it from `C:\...` (e.g. PowerShell `Set-Location C:\Users\...\frontend`). CI is unaffected.
 
 CI: `.github/workflows/ci.yml` runs backend lint + tests (against PostgreSQL) and frontend lint + tests + build on every push.
 

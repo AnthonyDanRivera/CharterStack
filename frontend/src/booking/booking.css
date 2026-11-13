@@ -1,0 +1,295 @@
+/* Booking tab: contract list, contract view and form. Final prototype values. */
+
+.lookup label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--label-2);
+  margin-right: 4px;
+}
+.lookup .field {
+  width: 130px;
+  padding: 3px 8px;
+}
+.notfound {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--note-text);
+  margin-left: 6px;
+}
+.ctwrap {
+  background: #fff;
+  max-height: 260px;
+  overflow: auto;
+}
+.ctable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  color: var(--text);
+}
+.ctable th {
+  position: sticky;
+  top: 0;
+  background: var(--toolbar-bg);
+  text-align: left;
+  font-weight: 600;
+  color: var(--label-2);
+  padding: 6px 8px;
+  border-bottom: 1px solid #d0d7df;
+  white-space: nowrap;
+}
+.ctable td {
+  padding: 5px 8px;
+  border-bottom: 1px solid #e6e9ee;
+  vertical-align: middle;
+}
+.ctable .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ctable tbody tr {
+  cursor: pointer;
+}
+.ctable tbody tr:hover {
+  background: #f1f6fd;
+}
+.ctable tbody tr[data-current='true'] {
+  box-shadow: inset 0 0 0 2px var(--row-selected);
+}
+.ctable tbody tr[data-cs='cancelled'] td {
+  color: #7a828c;
+}
+.ctable tbody tr[data-cs='cancelled'] td:not(:nth-child(2)) {
+  text-decoration: line-through;
+}
+.ctlink {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--mono);
+}
+.cst {
+  color: var(--text);
+}
+.ctable .cst[data-cs='booked'] {
+  color: var(--blue-booked);
+}
+.cst[data-cs='quote'] {
+  color: var(--amber);
+}
+.cst[data-cs='cancelled'] {
+  color: var(--red);
+}
+.pay {
+  font-weight: 600;
+}
+.pay[data-tone='ok'] {
+  color: var(--green);
+}
+.pay[data-tone='part'] {
+  color: var(--amber);
+}
+.pay[data-tone='warn'] {
+  color: var(--red);
+}
+.booking-sbar {
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+}
+
+/* Contract surface */
+.ct-surface {
+  padding: 12px 20px 20px;
+}
+.ct-empty {
+  padding: 16px 0;
+  color: var(--text-muted);
+}
+.ct-empty p {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+}
+.ct-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e3e7ec;
+}
+.ct-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.ct-head h2 .mono {
+  font-weight: 700;
+}
+.ct-head h2 .cst {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+.ct-head h2 .cst[data-cs='cancelled'] {
+  color: var(--red);
+}
+.ct-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fs {
+  border: 0;
+  border-top: 1px solid #e3e7ec;
+  margin: 12px 0 0;
+  padding: 10px 0 0;
+  min-width: 0;
+}
+.ct-head + .fs {
+  border-top: 0;
+}
+.lg {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--blue-text);
+}
+.fgrid {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 8px 12px;
+}
+.fgrid.five {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.full {
+  grid-column: 1 / -1;
+}
+.fld > label,
+.rl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--label-2);
+}
+.req {
+  color: var(--red);
+}
+.ro {
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--ro-bg);
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+.ro.mono {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.ro.pre,
+.ro.itin {
+  white-space: pre-wrap;
+}
+.ro.itin {
+  clear: both;
+  min-height: 56px;
+}
+.ro.county {
+  font-weight: 500;
+}
+.ro.county[data-tone='warn'] {
+  color: var(--note-text);
+  background: #fdf3ec;
+  border-color: #f0cdb4;
+}
+.sub {
+  clear: both;
+  margin: 8px 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+.multi-note {
+  clear: both;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--label);
+}
+.form-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* Time combobox */
+.combo {
+  position: relative;
+}
+.combo .field {
+  padding-right: 30px;
+}
+.combobtn {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 28px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 4px 4px 0;
+}
+.combobtn:hover {
+  background: #eef2f6;
+  color: var(--text);
+}
+.combolist {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.14);
+  padding: 3px 0;
+}
+.comboopt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  font-size: 12.5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: var(--text);
+}
+.comboopt:hover,
+.comboopt[data-hl='true'] {
+  background: #eaf1fc;
+}
+.comboopt[data-sel='true'] {
+  font-weight: 600;
+  color: var(--blue-text);
+}
