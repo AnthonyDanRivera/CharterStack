@@ -110,6 +110,20 @@ test('landing page without a session', async () => {
   ).toBeInTheDocument()
 })
 
+test('landing page links to the builder site in a new tab', async () => {
+  renderApp()
+  await screen.findByRole('button', { name: 'Try the demo' })
+  expect(screen.getByRole('heading', { name: 'Built by Anthony Rivera' })).toBeInTheDocument()
+  const links = screen.getAllByRole('link')
+  expect(links.length).toBeGreaterThan(0)
+  for (const link of links) {
+    expect(link).toHaveAttribute('href', 'https://anthonydanrivera.com')
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
+  }
+  expect(screen.getByRole('link', { name: 'About me' })).toBeInTheDocument()
+})
+
 test('Try the demo creates a session and shows the app frame', async () => {
   renderApp()
   await userEvent.click(await screen.findByRole('button', { name: 'Try the demo' }))

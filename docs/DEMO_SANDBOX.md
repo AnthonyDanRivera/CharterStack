@@ -4,7 +4,7 @@ There are no real accounts. A visitor clicks one button and gets a private, temp
 
 ## Flow
 
-1. The visitor opens the site. React calls `GET /api/session/`. With no session, it shows the **landing page**: the CharterStack name, two sentences about what it is, a screenshot, and one primary button, **Try the demo**. A small line under it: "No sign-up. You get a private copy of the sample data that resets after 24 hours."
+1. The visitor opens the site. React calls `GET /api/session/`. With no session, it shows the **landing page**: a navy hero with the headline "A dispatch board, built by a dispatcher.", two sentences about what it is, the primary button **Try the demo** and an **About me** link to anthonydanrivera.com. A small line under the button: "No sign-up. You get a private copy of the sample data that resets after 24 hours." Below: a framed screenshot of the board, three short feature columns (Booking, Dispatch board, Private sandbox), a "Built by Anthony Rivera" section with the story from the README and a link to anthonydanrivera.com, and a footer with the tech stack. Links to the personal site open in a new tab.
 2. The button calls `POST /api/demo-login/`. The server:
    1. Creates a Django `User` with a random username such as `demo_8f3k2` and an unusable password.
    2. Creates a `DemoSession` row: `user`, `short_id` (`DEMO-8F3K2`), `created_at`, `ip_hash`.

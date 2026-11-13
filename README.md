@@ -176,4 +176,4 @@ Every business rule in [docs/BUSINESS_RULES.md](docs/BUSINESS_RULES.md) has a na
 
 ## Author
 
-Anthony Rivera — _add portfolio and LinkedIn links_
+Anthony Rivera · [anthonydanrivera.com](https://anthonydanrivera.com)
