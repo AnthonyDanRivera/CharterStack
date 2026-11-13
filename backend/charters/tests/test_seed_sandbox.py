@@ -54,7 +54,8 @@ def test_times_money_and_status_copied(sandbox):
 def test_counties_filled_from_zip_lookup(sandbox):
     _, c = sandbox
     assert (c[24811].pickup_county, c[24811].dest_county) == ("Hudson County", "Lehigh County")
-    assert c[24841].dest_county == ""  # 18042 is not in the lookup
+    assert c[24841].dest_county == "Northampton County"
+    assert c[24844].pickup_county == "Hudson County"
 
 
 def test_unit1_gets_seeded_dispatch_data(sandbox):

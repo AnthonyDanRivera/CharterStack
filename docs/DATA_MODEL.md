@@ -37,7 +37,7 @@ erDiagram
 | `is_active` | BooleanField, default True | |
 
 ### ZipCode (optional table; a JSON constant is also acceptable)
-`zip` → `city`, `state`, `county`. Used to auto-fill city, state and county in the booking form. The 39 sample ZIPs are in `seed/seed_demo.json` under `zip_lookup`.
+`zip` → `city`, `state`, `county`. Used to auto-fill city, state and county in the booking form. The 41 sample ZIPs are in `seed/seed_demo.json` under `zip_lookup`.
 
 ## Visitor-owned data
 
@@ -65,7 +65,7 @@ One charter booking. Shown in Booking. Never shown directly on the board; its tr
 | `pickup_county` | CharField, blank | Filled from the ZIP lookup; read-only in the form |
 | `dest_location`, `dest_address`, `dest_city`, `dest_state`, `dest_zip`, `dest_county` | same as pickup | |
 | `itinerary` | TextField, blank | Free text, one stop per line |
-| `bus_count` | PositiveSmallIntegerField, default 1 | Required, 1 to 20 |
+| `bus_count` | PositiveSmallIntegerField, default 1 | Required, at least 1. No upper limit on the number of buses. |
 | `terminal` | FK → Terminal | Required |
 | `size_requirement` | CharField choices | One of the 8 size options below |
 | `requested_driver` | FK → Driver, null | Optional |

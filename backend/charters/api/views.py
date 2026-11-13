@@ -11,13 +11,14 @@ from rest_framework.decorators import (
     permission_classes,
     throttle_classes,
 )
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import BaseThrottle
 
-from charters.models import DemoSession
-from charters.services import create_demo_session
+from charters.models import Bus, Contract, DemoSession, Driver, Terminal, ZipCode
+from charters.services import create_demo_session, load_seed
 from charters.timeutil import request_timezone
 
 from .throttles import DemoLoginThrottle
@@ -118,3 +119,63 @@ def session(request: Request) -> Response:
 def logout_view(request: Request) -> Response:
     logout(request._request)
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(
+    summary="Reference data for dropdowns",
+    description="Terminals, active drivers and buses, size options, states and cities by state.",
+    responses=inline_serializer(
+        "Reference",
+        {
+            "terminals": serializers.ListField(child=serializers.DictField()),
+            "drivers": serializers.ListField(child=serializers.DictField()),
+            "buses": serializers.ListField(child=serializers.DictField()),
+            "size_options": serializers.ListField(child=serializers.CharField()),
+            "states": serializers.ListField(child=serializers.DictField()),
+            "cities": serializers.DictField(child=serializers.ListField()),
+        },
+    ),
+)
+@api_view(["GET"])
+def reference(request: Request) -> Response:
+    cities: dict[str, list[str]] = {}
+    for state, city in ZipCode.objects.values_list("state", "city").distinct():
+        cities.setdefault(state, []).append(city)
+    return Response(
+        {
+            "terminals": list(Terminal.objects.values("code", "name")),
+            "drivers": list(Driver.objects.filter(is_active=True).values("id", "name", "phone")),
+            "buses": list(
+                Bus.objects.filter(is_active=True).values(
+                    "id", "number", "seats", "model", "has_wc_lift"
+                )
+            ),
+            "size_options": list(Contract.Size.values),
+            "states": load_seed()["states"],
+            "cities": {state: sorted(set(names)) for state, names in sorted(cities.items())},
+        }
+    )
+
+
+@extend_schema(
+    summary="ZIP lookup",
+    description="R09: city, state and county for a known ZIP, or 404.",
+    responses={
+        200: inline_serializer(
+            "Zip",
+            {
+                "zip": serializers.CharField(),
+                "city": serializers.CharField(),
+                "state": serializers.CharField(),
+                "county": serializers.CharField(),
+            },
+        ),
+        404: OpenApiResponse(description="Unknown ZIP"),
+    },
+)
+@api_view(["GET"])
+def zip_lookup(request: Request, zip_code: str) -> Response:
+    hit = ZipCode.objects.filter(zip=zip_code).values("zip", "city", "state", "county").first()
+    if hit is None:
+        raise NotFound("County not found")
+    return Response(hit)

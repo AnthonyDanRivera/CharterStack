@@ -58,7 +58,7 @@ def test_cleanup_never_touches_reference_data(reference):
     make_demo("demo_old02", hours_old=30)
     cleanup_demo()
     counts = [m.objects.count() for m in (Terminal, Driver, Bus, ZipCode)]
-    assert counts == [5, 10, 8, 39]
+    assert counts == [5, 10, 8, 41]
 
 
 @pytest.mark.django_db

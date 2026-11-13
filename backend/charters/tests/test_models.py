@@ -104,10 +104,13 @@ def test_contract_number_unique_per_owner_only(make_contract, terminal):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("bus_count", [0, 21])
-def test_bus_count_out_of_range_rejected(make_contract, bus_count):
+def test_bus_count_zero_rejected(make_contract):
     with pytest.raises(IntegrityError), transaction.atomic():
-        make_contract(bus_count=bus_count)
+        make_contract(bus_count=0)
+
+
+def test_bus_count_has_no_upper_limit(make_contract):
+    assert make_contract(bus_count=50).bus_count == 50
 
 
 @pytest.mark.django_db

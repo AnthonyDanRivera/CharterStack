@@ -16,6 +16,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import transaction
+from django.db.models import CharField, Max, Q, QuerySet
+from django.db.models.functions import Cast
 from django.utils import timezone
 
 from .models import Bus, Contract, DemoSession, Driver, Terminal, TripUnit, ZipCode
@@ -257,3 +259,138 @@ def cleanup_demo(now: dt.datetime | None = None) -> int:
     count = expired.count()
     expired.delete()
     return count
+
+
+# ---------------------------------------------------------------------------
+# Contracts (Booking)
+# ---------------------------------------------------------------------------
+
+MAX_CONTRACTS_PER_OWNER = 200
+FIRST_CONTRACT_NUMBER = 24811  # the sample data's first number
+
+_LOOKUP_RE = re.compile(r"^(\d{1,7})(?:-D?\d{1,3})?$", re.IGNORECASE)
+
+
+def next_contract_number(owner: AbstractBaseUser) -> int:
+    """R06: the highest existing number for this owner + 1."""
+    highest = Contract.objects.filter(owner=owner).aggregate(n=Max("number"))["n"]
+    return (highest or FIRST_CONTRACT_NUMBER - 1) + 1
+
+
+def contract_limit_reached(owner: AbstractBaseUser) -> bool:
+    """Demo safeguard: at most 200 contracts per sandbox (DEMO_SANDBOX.md)."""
+    return Contract.objects.filter(owner=owner).count() >= MAX_CONTRACTS_PER_OWNER
+
+
+def zip_county(zip_code: str) -> str:
+    """R09: county comes only from the ZIP lookup."""
+    if not zip_code:
+        return ""
+    return ZipCode.objects.filter(zip=zip_code).values_list("county", flat=True).first() or ""
+
+
+def _apply_counties(contract: Contract, changed: dict[str, Any]) -> None:
+    for prefix in ("pickup", "dest"):
+        if f"{prefix}_zip" in changed or contract.pk is None:
+            setattr(contract, f"{prefix}_county", zip_county(getattr(contract, f"{prefix}_zip")))
+
+
+def sync_units(contract: Contract) -> None:
+    """R14: keep regular units equal to bus_count.
+
+    Raising bus_count adds units at the end; lowering it removes the
+    highest-numbered regular units first. Duplicates are never touched.
+    """
+    regular = list(contract.units.filter(is_duplicate=False).order_by("unit_number"))
+    if len(regular) < contract.bus_count:
+        start = (regular[-1].unit_number if regular else 0) + 1
+        TripUnit.objects.bulk_create(
+            TripUnit(owner_id=contract.owner_id, contract=contract, unit_number=n)
+            for n in range(start, start + contract.bus_count - len(regular))
+        )
+    elif len(regular) > contract.bus_count:
+        extra = [u.pk for u in regular[contract.bus_count :]]
+        TripUnit.objects.filter(pk__in=extra).delete()
+
+
+@transaction.atomic
+def create_contract(owner: AbstractBaseUser, data: dict[str, Any]) -> Contract:
+    """Create a contract with a server-assigned number (R06) and its units (R14)."""
+    contract = Contract(owner=owner, **data)
+    _apply_counties(contract, data)
+    # Lock this owner's rows so two simultaneous inserts can't take the same number.
+    list(Contract.objects.select_for_update().filter(owner=owner).values_list("pk", flat=True))
+    contract.number = next_contract_number(owner)
+    contract.save()
+    sync_units(contract)
+    return contract
+
+
+@transaction.atomic
+def update_contract(contract: Contract, data: dict[str, Any]) -> Contract:
+    """Apply a (partial) update; a bus_count change adds or removes units (R14)."""
+    for field, value in data.items():
+        setattr(contract, field, value)
+    _apply_counties(contract, data)
+    contract.save()
+    if "bus_count" in data:
+        sync_units(contract)
+    return contract
+
+
+def filter_contracts(
+    qs: QuerySet[Contract],
+    start: dt.date | None = None,
+    end: dt.date | None = None,
+    status: str = "all",
+    q: str = "",
+) -> QuerySet[Contract]:
+    """Booking list filters.
+
+    R24: a contract is in range when [begin_date, return_date] overlaps [start, end].
+    R32: status filter all / active (not cancelled) / booked / quote / cancelled.
+    R28: search over number, organization, group, contact name, phone, pickup and
+    destination city and location name (case-insensitive substring).
+    """
+    if start and end:
+        qs = qs.filter(begin_date__lte=end, return_date__gte=start)
+    if status == "active":
+        qs = qs.exclude(status=Contract.Status.CANCELLED)
+    elif status in {"booked", "quote", "cancelled"}:
+        qs = qs.filter(status=status)
+    q = q.strip()
+    if q:
+        qs = qs.annotate(number_text=Cast("number", CharField())).filter(
+            Q(number_text__icontains=q)
+            | Q(organization__icontains=q)
+            | Q(group_name__icontains=q)
+            | Q(contact_name__icontains=q)
+            | Q(contact_phone__icontains=q)
+            | Q(pickup_city__icontains=q)
+            | Q(dest_city__icontains=q)
+            | Q(pickup_location__icontains=q)
+            | Q(dest_location__icontains=q)
+        )
+    return qs
+
+
+def contract_summary(contracts: list[Contract]) -> dict[str, Any]:
+    """R33: counts and total balance due over the listed contracts.
+
+    Cancelled contracts contribute $0 (their balance_due is 0, R12).
+    """
+    return {
+        "count": len(contracts),
+        "booked": sum(c.status == Contract.Status.BOOKED for c in contracts),
+        "quotes": sum(c.status == Contract.Status.QUOTE for c in contracts),
+        "cancelled": sum(c.status == Contract.Status.CANCELLED for c in contracts),
+        "balance_due": sum((c.balance_due for c in contracts), Decimal("0.00")),
+    }
+
+
+def lookup_contract(qs: QuerySet[Contract], typed: str) -> Contract | None:
+    """R31: resolve `24817`, `24823-2` or `24817-D1` to its contract, or None."""
+    m = _LOOKUP_RE.match(typed.strip())
+    if not m:
+        return None
+    return qs.filter(number=int(m.group(1))).first()

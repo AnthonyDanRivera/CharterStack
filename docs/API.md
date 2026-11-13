@@ -45,16 +45,20 @@ One call that returns everything the dropdowns need:
 }
 ```
 
+Drivers and buses are active ones only. `states` comes from the seed; `cities` is every city in the ZIP lookup, grouped by state and sorted.
+
 ### `GET /api/zip/{zip}/`
-`{"zip": "07087", "city": "Union City", "state": "NJ", "county": "Hudson County"}` or 404.
+`{"zip": "07087", "city": "Union City", "state": "NJ", "county": "Hudson County"}` or 404 `{"detail": "County not found"}`.
 
 ## Contracts (Booking)
 
 ### `GET /api/contracts/`
 Query parameters:
-- `start`, `end` — date range; returns contracts whose begin–return span overlaps it.
-- `status` — `all` (default), `active`, `booked`, `quote`, `cancelled`.
+- `start`, `end` — date range; returns contracts whose begin–return span overlaps it. Omit both for every contract; one alone means that single day. `end` before `start` is 400.
+- `status` — `all` (default), `active`, `booked`, `quote`, `cancelled`. Anything else is 400.
 - `q` — search text (rule R28).
+
+Ordered by begin date, then contract number. No pagination (a sandbox holds at most 200 contracts).
 
 Response:
 ```json
@@ -64,14 +68,27 @@ Response:
     "begin_date": "2026-11-09", "start_time": "07:15",
     "organization": "Union City Public Schools", "group_name": "9th Grade Biology",
     "pickup_city": "Union City", "dest_city": "Jersey City", "bus_count": 1,
-    "total_price": "950.00", "balance_due": "950.00", "payment_status": "Unpaid"
+    "total_price": "950.00", "balance_due": "950.00", "payment_status": "Unpaid", "payment_tone": "warn"
   }],
   "summary": { "count": 12, "booked": 10, "quotes": 1, "cancelled": 1, "balance_due": "18600.00" }
 }
 ```
 
 ### `POST /api/contracts/`
-Creates a contract and its units (rule R14). The server assigns `number`. Body: every writable field of the contract detail below. Returns 201 with the detail.
+Creates a contract and its units (rule R14). The server assigns `number`; a `number` in the body is ignored. Body: every writable field of the contract detail below. Returns 201 with the detail.
+
+Input rules:
+- Times accept loose typing (rule R02): `730`, `7:30`, `7p`. `return_time` accepts `null`, `"ow"` or `"one way"` for One way.
+- Money accepts `1200`, `1,200`, `$1,200.00` (rule R13). Blank `deposit_required` / `total_paid` mean 0.
+- `pickup` / `destination`: `county` is read-only and always comes from the ZIP lookup (rule R09). A known `zip` fills `city` and `state` when they are not sent.
+- `terminal` is the code (`"NJ"`); `requested_driver` is a driver id or `null`.
+- More than 200 contracts in a sandbox: 400 `{"non_field_errors": ["Demo limit reached."]}`.
+
+Validation errors use the prototype's form messages, keyed by field. Location errors are nested:
+```json
+{ "start_time": ["Start time isn’t a valid time. Try something like 07:15."],
+  "pickup": { "city": ["Pick the pickup state and city."], "address": ["Enter the pickup address."] } }
+```
 
 ### `GET /api/contracts/{id}/`
 Full contract:
@@ -85,16 +102,16 @@ Full contract:
   "pickup": { "location": "Union City High School", "address": "2500 Kennedy Blvd", "city": "Union City", "state": "NJ", "zip": "07087", "county": "Hudson County" },
   "destination": { "location": "Liberty Science Center", "address": "222 Jersey City Blvd", "city": "Jersey City", "state": "NJ", "zip": "07305", "county": "Hudson County" },
   "itinerary": "", "bus_count": 1, "terminal": "NJ", "size_requirement": "56-pax coach",
-  "requested_driver": null, "info": "Driver checks in at the main office on arrival. No food or drink on the bus.",
+  "requested_driver": null, "requested_driver_name": null, "info": "Driver checks in at the main office on arrival. No food or drink on the bus.",
   "total_price": "950.00", "deposit_required": "0.00", "total_paid": "0.00",
   "balance_due": "950.00", "payment_status": "Unpaid", "payment_tone": "warn",
-  "units": [{ "id": 77, "display_number": "24817", "driver": null, "bus": null, "report_time": null, "actual_report_time": null, "confirm_initials": "", "confirmed_at": null, "dispatch_notes": "" }]
+  "units": [{ "id": 77, "display_number": "24817", "is_duplicate": false, "driver": null, "driver_phone": null, "bus": null, "report_time": null, "actual_report_time": null, "confirm_initials": "", "confirmed_at": null, "dispatch_notes": "" }]
 }
 ```
-`payment_tone` is one of `ok`, `part`, `warn`, `none` and drives the text color.
+`payment_tone` is one of `ok`, `part`, `warn`, `none` and drives the text color. In `units`, `driver` is the driver's name and `bus` the bus number (display values); regular units come first, then duplicates. `confirmed_at` is in the `X-Timezone` zone.
 
 ### `PATCH /api/contracts/{id}/`
-Partial update. Changing `bus_count` adds or removes units (rule R14). Returns the detail.
+Partial update. Changing `bus_count` adds or removes units (rule R14). Cross-field checks (R04, R05, R13) use the saved values for fields not sent. Returns the detail. `PUT` is not supported (405).
 
 ### `DELETE /api/contracts/{id}/`
 Deletes the contract and its units. 204.
@@ -103,7 +120,11 @@ Deletes the contract and its units. 204.
 `{"number": 24845}` — shown read-only in the insert form.
 
 ### `GET /api/contracts/lookup/?number=24823-2`
-Resolves a typed number (digits, `D`, `-`) to a contract: `{"id": 35}` or 404 (rule R31).
+Resolves a typed number (digits, `D`, `-`) to a contract: `{"id": 35}` or 404 `{"detail": "No contract 99999 found."}` (rule R31).
+
+### `GET /api/contracts/pricing/?total_price=2900&deposit_required=600&total_paid=600&status=booked`
+Balance due and payment status for **unsaved** form values, so the form's read-only Pricing boxes update live without React computing rule R12:
+`{"balance_due": "2300.00", "payment_status": "Deposit paid", "payment_tone": "part"}`. A blank `total_price` returns `{"balance_due": null, "payment_status": "—", "payment_tone": "none"}`.
 
 ## Board (Dispatch)
 

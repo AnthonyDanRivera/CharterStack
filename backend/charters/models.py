@@ -9,7 +9,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
@@ -17,7 +17,6 @@ from django.utils import timezone
 from .money import format_money
 
 TEXT_LIMIT = 2000  # itinerary, info, dispatch notes (DEMO_SANDBOX.md safeguards)
-MAX_BUSES = 20
 
 # ---------------------------------------------------------------------------
 # Reference data
@@ -132,9 +131,7 @@ class Contract(models.Model):
     dest_county = models.CharField(max_length=60, blank=True)
 
     itinerary = models.TextField(max_length=TEXT_LIMIT, blank=True)
-    bus_count = models.PositiveSmallIntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(MAX_BUSES)]
-    )
+    bus_count = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1)])
     terminal = models.ForeignKey(Terminal, on_delete=models.PROTECT, related_name="contracts")
     size_requirement = models.CharField(max_length=24, choices=Size.choices)
     requested_driver = models.ForeignKey(
@@ -169,8 +166,8 @@ class Contract(models.Model):
             models.UniqueConstraint(fields=["owner", "number"], name="contract_number_per_owner"),
             models.CheckConstraint(condition=Q(passengers__gte=1), name="contract_passengers_min"),
             models.CheckConstraint(
-                condition=Q(bus_count__gte=1, bus_count__lte=MAX_BUSES),
-                name="contract_bus_count_range",
+                condition=Q(bus_count__gte=1),
+                name="contract_bus_count_min",
             ),
             # R13: amounts are 0 or more and the deposit never exceeds the price.
             models.CheckConstraint(

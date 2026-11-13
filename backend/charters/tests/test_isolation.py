@@ -142,3 +142,53 @@ def test_service_creates_separate_sandboxes(reference):
     assert one.user != two.user
     assert one.ip_hash == two.ip_hash != "1.1.1.1"
     assert Contract.objects.filter(owner=one.user).count() == 12
+
+
+# ---------------------------------------------------------------------------
+# Real endpoints. Add each new owned endpoint here as it is built.
+# ---------------------------------------------------------------------------
+
+
+def test_contract_list_only_shows_own_contracts(a_and_b):
+    a, a_user, _, _ = a_and_b
+    ids = {row["id"] for row in a.get("/api/contracts/").json()["results"]}
+    assert ids == set(Contract.objects.filter(owner_id=a_user).values_list("id", flat=True))
+
+
+@pytest.mark.parametrize("method", ["get", "patch", "delete"])
+def test_contract_detail_of_other_owner_returns_404(a_and_b, b_rows, method):
+    a, _, _, _ = a_and_b
+    contract, _ = b_rows
+    response = getattr(a, method)(
+        f"/api/contracts/{contract.pk}/",
+        data={"organization": "x"},
+        content_type="application/json",
+    )
+    assert response.status_code == 404
+    contract.refresh_from_db()
+    assert contract.organization != "x"
+
+
+def test_contract_lookup_never_finds_other_owners_contract(a_and_b, b_rows):
+    a, a_user, b, _ = a_and_b
+    contract, _ = b_rows
+    Contract.objects.filter(pk=contract.pk).update(number=55555)
+    assert b.get("/api/contracts/lookup/", {"number": "55555"}).status_code == 200
+    assert a.get("/api/contracts/lookup/", {"number": "55555"}).status_code == 404
+    own = a.get("/api/contracts/lookup/", {"number": "24817"}).json()["id"]
+    assert Contract.objects.get(pk=own).owner_id == int(a_user)
+
+
+def test_next_number_and_create_are_per_owner(a_and_b):
+    a, a_user, b, b_user = a_and_b
+    Contract.objects.filter(owner_id=b_user, number=24844).update(number=30000)
+    assert b.get("/api/contracts/next-number/").json() == {"number": 30001}
+    assert a.get("/api/contracts/next-number/").json() == {"number": 24845}
+
+
+def test_contract_search_and_summary_only_cover_own_rows(a_and_b):
+    a, _, _, b_user = a_and_b
+    Contract.objects.filter(owner_id=b_user, number=24817).update(organization="Only In B")
+    data = a.get("/api/contracts/", {"q": "only in b"}).json()
+    assert data["results"] == []
+    assert data["summary"]["count"] == 0

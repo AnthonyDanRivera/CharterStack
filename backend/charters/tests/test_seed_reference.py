@@ -12,7 +12,7 @@ def test_seed_reference_loads_all_reference_data():
     assert list(Terminal.objects.values_list("code", flat=True)) == ["CT", "MA", "NJ", "NY", "PA"]
     assert Driver.objects.count() == 10
     assert Bus.objects.count() == 8
-    assert ZipCode.objects.count() == 39
+    assert ZipCode.objects.count() == 41
     assert list(Bus.objects.filter(has_wc_lift=True).values_list("number", flat=True)) == ["4533"]
     hoboken = ZipCode.objects.get(zip="07030")
     assert (hoboken.city, hoboken.state, hoboken.county) == ("Hoboken", "NJ", "Hudson County")
