@@ -61,6 +61,8 @@ Requirements: [uv](https://docs.astral.sh/uv/) (installs Python 3.12 for you) an
 cd backend
 uv sync                                  # creates .venv with Python 3.12 + dependencies
 uv run python manage.py migrate
+uv run python manage.py seed_reference   # terminals, drivers, buses, ZIP codes (safe to re-run)
+uv run python manage.py createsuperuser  # optional: to browse reference data at /admin/
 uv run python manage.py runserver        # API on http://localhost:8000
 
 # frontend (second terminal)

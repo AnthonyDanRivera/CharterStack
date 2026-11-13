@@ -131,3 +131,6 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Sample and reference data (docs/DEMO_SANDBOX.md). Lives at the repo root, next to backend/.
+SEED_FILE = Path(os.environ.get("SEED_FILE", BASE_DIR.parent / "seed" / "seed_demo.json"))
