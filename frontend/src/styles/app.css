@@ -71,15 +71,14 @@ textarea {
 }
 .tabs {
   display: flex;
-  align-self: stretch;
-  gap: 2px;
+  align-items: center;
+  gap: 4px;
 }
 .tab {
-  height: 100%;
+  height: 28px;
   padding: 0 12px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  border-top: 2px solid transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
   background: transparent;
   color: rgba(255, 255, 255, 0.75);
   font-size: 12.5px;
@@ -95,16 +94,18 @@ textarea {
 }
 .tab:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.1);
 }
+/* Active tab inverts: white rectangle, navy text. */
 .tab[data-active='true'] {
-  color: #fff;
+  background: #fff;
+  border-color: #fff;
+  color: var(--app-header);
   font-weight: 600;
-  border-bottom-color: #fff;
 }
 .tab:focus-visible {
   outline: 2px solid #fff;
-  outline-offset: -4px;
+  outline-offset: 2px;
 }
 .sfoot {
   display: flex;
