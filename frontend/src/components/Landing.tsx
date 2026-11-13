@@ -15,8 +15,8 @@ const FEATURES: { title: string; text: string }[] = [
     text: 'One row per bus. Assign drivers, buses and report times, stamp Reported and On location, confirm with initials, and export the day to Excel.',
   },
   {
-    title: 'Private sandbox',
-    text: 'Every visitor gets their own copy of the sample data, dated today. Nobody sees anyone else’s changes, and it resets after 24 hours.',
+    title: 'Built-in checks',
+    text: 'Pick a bus and it warns you if it’s too small for the group or has no wheelchair lift. Late report times turn red, and the board counts trips still needing a driver, a bus or a confirmation.',
   },
 ]
 
