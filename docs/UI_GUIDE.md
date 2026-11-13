@@ -21,7 +21,7 @@ A dense, desktop internal tool: closer to a real TMS than a modern marketing app
 | Toolbar / header-row background | `#F7F8FA` / `#F3F5F8` |
 | App header bar | `#1F3A5F`, white text |
 | Text | `#1B1F24`; secondary `#4A525D`; muted `#5B6470`; placeholder dash `#8E97A3` |
-| Primary blue (buttons, active tab, focus) | `#2F6BC0`; hover `#2759A3`; active tab text `#1A4C8C` |
+| Primary blue (buttons, focus, Trip information tabs) | `#2F6BC0`; hover `#2759A3`; active inner-tab text `#1A4C8C` |
 | Red (warnings, Unassigned, Needed, counts) | `#C0261B` |
 | Row: selected | 2px inset outline `#3A424D` |
 | Row: duplicate | background `#E2EDFC` |
@@ -36,10 +36,9 @@ Times are 24-hour `HH:MM`. Board dates are `MM/DD/YYYY` with no weekday. Empty v
 
 Top to bottom:
 
-1. **Header bar** — dark navy, small bus icon, "CharterStack" in bold white. Nothing else.
-2. **Tabs** — "Dispatch board" and "Booking". Active tab has blue text and a 2px blue underline.
-3. **Tab content** (below).
-4. **Session strip** — a thin grey bar at the very bottom of the page, small text, label in grey then value:
+1. **Header bar with tabs** — one dark navy bar (`#1F3A5F`, 40px tall). On the left: small bus icon and "CharterStack" in bold white, then a thin divider, then the two tabs "Dispatch board" and "Booking". Tabs are white text at 75% opacity; the active tab is full white, semi-bold, with a 2px white underline. Hover brings a tab to full white. (Changed from separate header and tab rows to save vertical space for the trip table; the screenshots in `design/screenshots/` still show the old two-row frame.)
+2. **Tab content** (below).
+3. **Session strip** — a thin grey bar at the very bottom of the page, small text, label in grey then value:
    `Date Thu 11/12/2026 · Time 21:04:37 · User Demo User · Terminal All · Session DEMO-8F3K2 · Session time 00:12:45 · Server demo-server`
    - Date and Time are the visitor's real local date and time; Time ticks every second.
    - Terminal mirrors the board's terminal filter (`All`, `None`, or `NJ, PA`).

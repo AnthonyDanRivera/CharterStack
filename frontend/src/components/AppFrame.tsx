@@ -40,29 +40,30 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
       <header className="app-header">
         <Icon name="bus" size={20} />
         <h1>CharterStack</h1>
+        <span className="header-sep" aria-hidden="true" />
+        <nav className="tabs" aria-label="Views">
+          <button
+            type="button"
+            className="tab"
+            data-active={tab === 'board'}
+            aria-current={tab === 'board' ? 'page' : undefined}
+            onClick={() => setTab('board')}
+          >
+            <Icon name="board" />
+            Dispatch board
+          </button>
+          <button
+            type="button"
+            className="tab"
+            data-active={tab === 'booking'}
+            aria-current={tab === 'booking' ? 'page' : undefined}
+            onClick={() => setTab('booking')}
+          >
+            <Icon name="plus" />
+            Booking
+          </button>
+        </nav>
       </header>
-      <nav className="tabs" aria-label="Views">
-        <button
-          type="button"
-          className="tab"
-          data-active={tab === 'board'}
-          aria-current={tab === 'board' ? 'page' : undefined}
-          onClick={() => setTab('board')}
-        >
-          <Icon name="board" />
-          Dispatch board
-        </button>
-        <button
-          type="button"
-          className="tab"
-          data-active={tab === 'booking'}
-          aria-current={tab === 'booking' ? 'page' : undefined}
-          onClick={() => setTab('booking')}
-        >
-          <Icon name="plus" />
-          Booking
-        </button>
-      </nav>
       <main className="app-main">
         {tab === 'board' ? (
           <BoardTab
