@@ -5,6 +5,21 @@ import './landing.css'
 
 const SITE = 'https://anthonydanrivera.com'
 
+const FEATURES: { title: string; text: string }[] = [
+  {
+    title: 'Booking',
+    text: 'Book charter contracts: group, schedule, pickup and destination, buses and pricing. Balance due and payment status update as you type.',
+  },
+  {
+    title: 'Dispatch board',
+    text: 'One row per bus. Assign drivers, buses and report times, stamp Reported and On location, confirm with initials, and export the day to Excel.',
+  },
+  {
+    title: 'Private sandbox',
+    text: 'Every visitor gets their own copy of the sample data, dated today. Nobody sees anyone else’s changes, and it resets after 24 hours.',
+  },
+]
+
 const STACK: { title: string; text: string }[] = [
   {
     title: 'Django REST Framework',
@@ -78,6 +93,18 @@ export default function Landing() {
       <div className="lp-shot">
         <img src="/dispatch-board.jpg" alt="The dispatch board with today's trips" />
       </div>
+
+      <section className="lp-section lp-section-first" aria-labelledby="features-title">
+        <h2 id="features-title">What it does</h2>
+        <div className="lp-grid lp-grid-3">
+          {FEATURES.map((item) => (
+            <div key={item.title} className="lp-card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="lp-section" id="stack" aria-labelledby="stack-title">
         <h2 id="stack-title">How it&rsquo;s built</h2>

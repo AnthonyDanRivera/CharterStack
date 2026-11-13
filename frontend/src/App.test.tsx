@@ -118,6 +118,9 @@ test('landing page has one Made by block linking the portfolio in a new tab', as
     screen.getByRole('heading', { name: 'A TMS for charter bus companies.' }),
   ).toBeInTheDocument()
   expect(screen.getByText('Made by', { selector: '.lp-eyebrow' })).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'What it does' })).toBeInTheDocument()
+  for (const name of ['Booking', 'Dispatch board', 'Private sandbox'])
+    expect(screen.getByRole('heading', { name })).toBeInTheDocument()
   expect(screen.getAllByText(/Anthony Rivera/)).toHaveLength(1)
   const external = screen
     .getAllByRole('link')
