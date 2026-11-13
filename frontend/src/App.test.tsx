@@ -128,7 +128,9 @@ test('landing page has one Made by block linking the portfolio in a new tab', as
   expect(external[0]).toHaveAttribute('target', '_blank')
   expect(external[0].getAttribute('rel')).toContain('noopener')
   expect(screen.getByText('Logistics planner who builds software.')).toBeInTheDocument()
-  expect(screen.queryByText(/dispatcher/i)).toBeNull()
+  expect(
+    screen.getByText(/started as a dispatcher and now work as a logistics planner/),
+  ).toBeInTheDocument()
 })
 
 test('Try the demo creates a session and shows the app frame', async () => {

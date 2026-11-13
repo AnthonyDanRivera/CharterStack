@@ -101,8 +101,9 @@ export default function Landing() {
             <h2 id="made-by-name">Anthony Rivera</h2>
             <p className="lp-made-tagline">Logistics planner who builds software.</p>
             <p className="lp-made-text">
-              Hi, I&rsquo;m Anthony. I work in logistics planning and build software for the kinds
-              of problems I see on the job. CharterStack is one of them.
+              Hi, I&rsquo;m Anthony. I started as a dispatcher and now work as a logistics planner
+              in the charter bus business, matching trips, buses and drivers every day, so I built
+              the planning tool I wanted to use.
             </p>
             <a
               className="lp-btn lp-btn-ghost lp-btn-sm"
