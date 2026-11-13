@@ -1,0 +1,2195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CharterStack</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#1F5FBF}a:hover{color:#174A96}
+.cols{display:grid;column-gap:0}
+.cols > div{min-width:0;padding:0 8px;overflow-wrap:anywhere;box-sizing:border-box;border-right:1px solid #D5DAE1}
+.cols > div:has(+ .split){border-right:1px dashed #B9C0CA}
+.cols > .hcell{position:relative;display:flex;align-items:center;padding:10px 8px}
+.hgrid > .hcell{grid-row:1 / span 2}
+.hgrid > .grp{grid-row:1;padding:8px 8px 6px}
+.hgrid > .hcell.hcell{padding:0}
+.hgrid{user-select:none;-webkit-user-select:none}
+.hgrid > .grp.grp{padding:0}
+.grpbtn{font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;background:transparent;border:0;margin:0;width:100%;height:100%;min-height:30px;padding:8px 8px 6px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;cursor:grab;touch-action:none;transition:background-color .12s}
+.grpbtn svg{color:#8E97A3;flex:none}
+.grpbtn:hover{background:#E4E9F0}
+.grpbtn:hover svg{color:#4A525D}
+.grpbtn:active{cursor:grabbing}
+.grpbtn:focus-visible{outline:2px solid #1F5FBF;outline-offset:-2px}
+.sortbtn{touch-action:none}
+.hgrid > [data-drag="true"]{background:#CFDDF5;box-shadow:inset 0 -3px 0 #1F5FBF}
+.hgrid > [data-drag="true"] .sortbtn{color:#174A96}
+.hgrid[data-dragging="true"],.hgrid[data-dragging="true"] *{cursor:grabbing !important}
+.dropline{position:absolute;top:0;bottom:0;width:3px;margin-left:-2px;background:#1F5FBF;border-radius:4px;z-index:6;pointer-events:none;box-shadow:0 0 0 2px rgba(31,95,191,.18)}
+.daytag{font-weight:600;color:#5B6470;white-space:nowrap}
+.daytag[data-multi="true"]{background:#E6EEFB;color:#174A96;padding:3px 8px;border-radius:4px}
+.sortbtn{font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;background:transparent;border:0;margin:0;cursor:pointer;display:flex;align-items:center;gap:6px;text-align:left;width:100%;align-self:stretch;min-height:40px;padding:10px 10px 10px 8px;box-sizing:border-box;transition:background-color .12s,color .12s}
+.hgrid > .grp + .hcell .sortbtn,.hgrid > .hcell.split .sortbtn{padding:7px 10px 8px 8px;min-height:32px}
+.sortbtn:hover{background:#E4E9F0;color:#1B1F24}
+.sortbtn:active{background:#D9E0EA}
+.sortbtn:focus-visible{outline:2px solid #1F5FBF;outline-offset:-2px}
+.sortbtn:has(.sarr[data-dir="asc"]),.sortbtn:has(.sarr[data-dir="desc"]){background:#E3EBF8;color:#174A96}
+.sarr{flex:none;margin-left:auto;display:inline-flex;flex-direction:column;gap:2px}
+.sarr::before,.sarr::after{content:"";width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent}
+.sarr::before{border-bottom:4px solid #A3ABB6}
+.sarr::after{border-top:4px solid #A3ABB6}
+.sortbtn:hover .sarr::before{border-bottom-color:#6B7380}
+.sortbtn:hover .sarr::after{border-top-color:#6B7380}
+.sarr[data-dir="asc"]::before,.sortbtn:hover .sarr[data-dir="asc"]::before{border-bottom-color:#1F5FBF}
+.sarr[data-dir="asc"]::after,.sortbtn:hover .sarr[data-dir="asc"]::after{border-top-color:#C3CFE3}
+.sarr[data-dir="desc"]::after,.sortbtn:hover .sarr[data-dir="desc"]::after{border-top-color:#1F5FBF}
+.sarr[data-dir="desc"]::before,.sortbtn:hover .sarr[data-dir="desc"]::before{border-bottom-color:#C3CFE3}
+.hgrid > .grp + .hcell,.hgrid > .hcell.split{grid-row:2;padding:6px 8px 8px;font-size:11px}
+.rz{position:absolute;top:0;right:-6px;width:12px;height:100%;border:0;padding:0;background:transparent;cursor:col-resize;z-index:2;touch-action:none}
+.rz::after{content:"";position:absolute;left:5px;top:0;bottom:0;width:2px;border-radius:4px;background:transparent}
+.rz:hover::after,.rz:focus-visible::after{background:#1F5FBF}
+.rz:focus-visible{outline:none}
+.cols > .grp{grid-column:span 2;text-align:center;color:#1B1F24;border-bottom:2px solid #B9C0CA}
+.row{width:100%;text-align:left;border:0;border-bottom:1px solid #E2E5EA;background:#FFFFFF;font:inherit;font-size:13px;color:inherit;cursor:pointer;padding:0;position:relative}
+.rowpick{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;z-index:0}
+.rowpick:focus-visible{outline:3px solid #1F5FBF;outline-offset:-3px}
+.initin{font:inherit;font-size:13px;font-weight:600;text-transform:uppercase;width:100%;max-width:64px;height:34px;box-sizing:border-box;padding:0 8px;border:1px solid #B9C0CA;border-radius:4px;background:#FFFFFF;color:#1B1F24;cursor:text}
+.initin[data-tone="ok"]{background:#E7F1EA;border-color:#9CC3A8;color:#1E5A33}
+.initin[data-tone="warn"]{background:#FDEBDD;border-color:#E9B48F}
+.initin::placeholder{color:#8F3B06;font-weight:600;text-transform:none;opacity:1}
+.initin:focus{outline:3px solid #9DBCEB;border-color:#1F5FBF}
+.row.cols > div{padding:12px 8px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;border-right-color:#E2E5EA;pointer-events:none;position:relative;z-index:1}
+.row.cols > .initcell{pointer-events:auto}
+.row:hover{background:#F7F9FC}
+.row[data-selected="true"]{background:#E6EEFB;box-shadow:inset 0 0 0 2px #1F5FBF}
+.row:focus-visible{outline:3px solid #1F5FBF;outline-offset:-3px}
+[data-density="compact"] .row.cols > div{padding:7px 8px}
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:3px 8px;border-radius:4px;line-height:18px}
+.tag[data-tone="ok"]{background:#E7F1EA;color:#1E5A33}
+.tag[data-tone="warn"]{background:#FDEBDD;color:#8F3B06}
+.field{font:inherit;font-size:15px;color:#1B1F24;background:#FFFFFF;border:1px solid #B9C0CA;border-radius:4px;padding:0 12px;height:44px;width:100%;box-sizing:border-box}
+.field:focus{outline:3px solid #9DBCEB;border-color:#1F5FBF}
+.btn{font:inherit;font-size:15px;font-weight:600;height:44px;padding:0 20px;border-radius:4px;border:0;background:#1F5FBF;color:#FFFFFF;cursor:pointer}
+.btn:hover{background:#174A96}
+.tab{font:inherit;font-size:14px;font-weight:600;height:48px;padding:0 18px;border:0;border-bottom:3px solid transparent;background:transparent;color:#4A525D;cursor:pointer;display:flex;align-items:center;gap:8px}
+.tab:hover{color:#1B1F24}
+.tab[data-active="true"]{color:#1F5FBF;border-bottom-color:#1F5FBF}
+.tab:focus-visible{outline:3px solid #9DBCEB;outline-offset:-3px}
+.fs{border:0;border-top:1px solid #E2E5EA;margin:20px 0 0;padding:14px 0 0;min-width:0}
+.lg{float:left;width:100%;padding:0;margin:0 0 12px;font-size:13px;font-weight:700;color:#1F5FBF;text-transform:uppercase;letter-spacing:0.06em}
+.fgrid{clear:both;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px 16px}
+.fgrid.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld > label{font-size:13px;font-weight:600;color:#2C323A}
+.full{grid-column:1 / -1}
+.req{color:#8F3B06}
+.chk{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14px;font-weight:600;color:#1B1F24;cursor:pointer}
+.chk input{width:20px;height:20px;margin:0;accent-color:#1F5FBF}
+.tarea{height:auto;min-height:88px;padding:10px 12px;resize:vertical;line-height:20px}
+.sub{clear:both;margin:0 0 10px;font-size:14px;font-weight:700;color:#1B1F24}
+.sub.next{margin-top:18px}
+.zipmsg{font-size:13px;font-weight:600;line-height:17px}
+.zipmsg[data-tone="ok"]{color:#1E5A33}
+.zipmsg[data-tone="warn"]{color:#8F3B06}
+.field:disabled{background:#F2F4F7;color:#5B6470;cursor:not-allowed}
+.rl{font-size:13px;font-weight:600;color:#2C323A}
+.ro{min-height:44px;box-sizing:border-box;padding:11px 12px;border:1px solid #E2E5EA;border-radius:4px;background:#F7F8FA;font-size:15px;color:#1B1F24;line-height:20px;overflow-wrap:anywhere}
+.ro.mono{font-family:Consolas,'Courier New',monospace;font-weight:600}
+.ro.zip{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.ro.county{font-weight:600;color:#1E5A33}
+.ro.county[data-tone="warn"]{color:#8F3B06;background:#FDF3EC;border-color:#F0CDB4}
+.dl{margin:0;display:grid;grid-template-columns:112px minmax(0,1fr);gap:7px 12px;font-size:13px;line-height:19px}
+.dl dt{color:#4A525D;font-weight:600}
+.dl dd{margin:0;color:#1B1F24;overflow-wrap:anywhere}
+.btn2{font:inherit;font-size:15px;font-weight:600;height:44px;padding:0 18px;border-radius:4px;border:1px solid #B9C0CA;background:#FFFFFF;color:#2C323A;cursor:pointer}
+.btn2:hover{background:#F2F4F7;border-color:#8E97A3}
+.calbtn{display:flex;align-items:center;gap:12px;background:transparent;border:0;border-radius:0;padding:12px 16px;font:inherit;color:inherit;cursor:pointer;text-align:left;height:100%;box-sizing:border-box;min-height:44px}
+.calbtn:hover{background:#F2F6FC}
+.calbtn[data-active="true"]{background:#E6EEFB}
+.calbtn:focus-visible{outline:3px solid #9DBCEB;outline-offset:-3px}
+.calpop{position:absolute;top:calc(100% + 8px);left:0;z-index:20;background:#FFFFFF;border:1px solid #D5DAE1;border-radius:4px;box-shadow:0 12px 32px rgba(20,33,61,.18);padding:14px;width:304px;box-sizing:border-box}
+.calnav{width:36px;height:36px;border:0;border-radius:4px;background:transparent;color:#1B1F24;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.calnav:hover{background:#EEF1F5}
+.calday{height:38px;border:0;border-radius:4px;background:transparent;font:inherit;font-size:14px;font-weight:500;color:#1B1F24;cursor:pointer;position:relative;padding:0}
+.calday:hover{background:#EEF1F5}
+.calday[data-kind="blank"]{visibility:hidden}
+.calday[data-today="true"]{box-shadow:inset 0 0 0 1.5px #1F5FBF;color:#1F5FBF;font-weight:700}
+.calday[data-range="mid"]{background:#DCE7F8;border-radius:0}
+.calday[data-range="start"]{background:#1F5FBF;color:#FFFFFF;font-weight:700;border-radius:4px 0 0 8px}
+.calday[data-range="end"]{background:#1F5FBF;color:#FFFFFF;font-weight:700;border-radius:0 8px 8px 0}
+.calday[data-range="single"]{background:#1F5FBF;color:#FFFFFF;font-weight:700}
+.calday[data-has="true"]::after{content:"";position:absolute;bottom:5px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#C2580F}
+.calday[data-range="start"]::after,.calday[data-range="end"]::after,.calday[data-range="single"]::after{background:#FFFFFF}
+.callink{font:inherit;font-size:13px;font-weight:600;color:#1F5FBF;background:transparent;border:1px solid #B9C0CA;border-radius:4px;height:36px;padding:0 12px;cursor:pointer}
+.callink:hover{background:#F2F6FC}
+
+/* ---- TMS theme ---- */
+.cols > div{border-right-color:#C3CBD5}
+.row{font-size:12px;border-bottom:1px solid #D3D9E0}
+.row:nth-of-type(odd){background:#F3F5F8}
+.row.cols > div{padding:4px 6px;border-right-color:#D3D9E0}
+[data-density="compact"] .row.cols > div{padding:2px 6px}
+.row:hover{background:#FFF4CC}
+.row[data-selected="true"]{background:#C9DDF5;box-shadow:inset 0 0 0 1px #2B5B94}
+.cols > .grp{border-bottom:1px solid #A9B4C0;color:#1B1F24}
+.sortbtn{min-height:28px;padding:5px 8px 5px 6px}
+.hgrid > .grp + .hcell .sortbtn,.hgrid > .hcell.split .sortbtn{padding:3px 8px 4px 6px;min-height:22px}
+.hgrid > .grp + .hcell,.hgrid > .hcell.split{font-size:11px}
+.sortbtn:hover,.grpbtn:hover{background:#CBD4DE}
+.sortbtn:has(.sarr[data-dir="asc"]),.sortbtn:has(.sarr[data-dir="desc"]){background:#C3D3E8;color:#14365F}
+.grpbtn{min-height:22px;padding:3px 6px}
+.hgrid > [data-drag="true"]{background:#B9CDE8;box-shadow:inset 0 -2px 0 #2B5B94}
+.tag{font-size:11px;font-weight:600;padding:0 5px;line-height:16px;border:1px solid transparent}
+.tag[data-tone="ok"]{background:#E1F0E4;color:#1B5530;border-color:#A6CBB0}
+.tag[data-tone="warn"]{background:#FCE9D6;color:#853605;border-color:#E3AE84}
+.daytag[data-multi="true"]{padding:0 5px;border:1px solid #A9C1E6;line-height:16px}
+.initin{font-size:12px;height:22px;max-width:52px;padding:0 4px}
+.initin:focus{outline:2px solid #7FA7DA;outline-offset:0}
+.field{font-size:12px;height:26px;padding:0 6px;border-color:#9AA5B1}
+.field:focus{outline:2px solid #7FA7DA;outline-offset:0;border-color:#2B5B94}
+.field:disabled{background:#ECEFF3}
+.tarea{min-height:60px;padding:4px 6px;line-height:17px}
+.btn{font-size:12px;height:26px;padding:0 14px;background:#2B5B94;border:1px solid #1F4573;font-weight:600}
+.btn:hover{background:#234C7D}
+.btn2{font-size:12px;height:26px;padding:0 12px;background:#F3F5F7;border:1px solid #9AA5B1;color:#1B1F24;font-weight:600}
+.btn2:hover{background:#E3E8EE;border-color:#7D8896}
+.tab{font-size:12px;height:28px;padding:0 14px;margin-top:4px;border:1px solid transparent;border-bottom:0;color:#2C323A;gap:6px;border-radius:4px 2px 0 0}
+.tab:hover{background:#E3E8EE;color:#1B1F24}
+.tab[data-active="true"]{background:#E4E9EE;border-color:#A9B4C0;color:#14365F;margin-bottom:-1px;height:29px}
+.tab svg{width:14px;height:14px}
+.fs{margin:8px 0 0;padding:6px 0 0;border-top-color:#D3D9E0}
+.lg{font-size:12px;margin:0 0 6px;letter-spacing:0;text-transform:none;color:#1F3A5F}
+.fgrid{gap:6px 10px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.fgrid.wide{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.fld{gap:2px}
+.fld > label,.rl{font-size:11px;font-weight:600;color:#3A424D}
+.ro{min-height:26px;padding:3px 6px;font-size:12px;line-height:18px;background:#EEF1F4;border-color:#C3CBD5}
+.chk{min-height:26px;font-size:12px;gap:6px}
+.chk input{width:14px;height:14px}
+.sub{font-size:12px;margin:0 0 4px}
+.sub.next{margin-top:8px}
+.zipmsg{font-size:12px}
+.calbtn{padding:3px 10px;min-height:0;gap:8px}
+.calbtn svg{width:16px;height:16px}
+.calpop{box-shadow:0 4px 12px rgba(0,0,0,.22);padding:8px;width:252px;top:calc(100% + 4px)}
+.calday{height:28px;font-size:12px}
+.calday[data-range="start"],.calday[data-range="end"],.calday[data-range="mid"]{border-radius:0}
+.calnav{width:26px;height:26px}
+.callink{height:24px;font-size:12px;padding:0 10px;background:#F3F5F7;border-color:#9AA5B1;color:#1B1F24}
+.callink:hover{background:#E3E8EE}
+
+/* ---- modern refinement ---- */
+.tinfo{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));column-gap:28px}
+.tilist{margin:0}
+.tirow{display:grid;grid-template-columns:128px minmax(0,1fr);gap:12px;padding:8px 0;border-bottom:1px solid #EAEDF1;font-size:12.5px;line-height:19px}
+.tirow dt{color:#5B6470;font-weight:500}
+.tirow dd{margin:0;color:#1B1F24;font-weight:400;overflow-wrap:anywhere}
+
+.cols > div{border-right-color:#DDE2E8}
+.row{font-size:12.5px;border-bottom:1px solid #E3E7EC}
+.row:nth-of-type(odd){background:#FAFBFC}
+.row.cols > div{padding:7px 8px;border-right-color:#E6E9EE}
+[data-density="compact"] .row.cols > div{padding:3px 8px}
+.row:hover{background:#F1F6FD}
+.row[data-selected="true"]{background:#E2EDFC;box-shadow:inset 0 0 0 1px #8AB0E3}
+.cols > .grp{border-bottom:1px solid #D0D7DF;color:#2C323A}
+.sortbtn{min-height:32px;padding:7px 8px 7px 8px;font-weight:600;color:#3A424D}
+.hgrid > .grp + .hcell .sortbtn,.hgrid > .hcell.split .sortbtn{padding:4px 8px 5px 8px;min-height:24px}
+.sortbtn:hover,.grpbtn:hover{background:#E8ECF1}
+.sortbtn:has(.sarr[data-dir="asc"]),.sortbtn:has(.sarr[data-dir="desc"]){background:#E3ECF8;color:#1A4C8C}
+.hgrid > [data-drag="true"]{background:#D7E4F6;box-shadow:inset 0 -2px 0 #2F6BC0}
+.tag{font-size:11.5px;padding:1px 7px;line-height:17px;border-radius:10px}
+.tag[data-tone="ok"]{background:#E6F3EA;color:#1B5530;border-color:#BFDDC8}
+.tag[data-tone="warn"]{background:#FDF0E3;color:#853605;border-color:#F0C9A6}
+.daytag[data-multi="true"]{border-radius:10px;padding:1px 7px;border-color:#BCD0EE;background:#EAF1FC}
+.initin{height:26px;border-radius:4px}
+.field{font-size:12.5px;height:30px;padding:0 8px;border-color:#BFC7D1;border-radius:4px}
+.field:hover{border-color:#9AA5B1}
+.field:focus{outline:3px solid rgba(47,107,192,.22);border-color:#2F6BC0}
+.btn{height:30px;padding:0 16px;background:#2F6BC0;border-color:#2A5FAA;border-radius:4px;box-shadow:0 1px 1px rgba(16,24,40,.08)}
+.btn:hover{background:#2759A3}
+.btn2{height:30px;border-radius:4px;background:#FFFFFF;border-color:#C3CBD5;box-shadow:0 1px 1px rgba(16,24,40,.05)}
+.btn2:hover{background:#F4F6F9;border-color:#9AA5B1}
+.tab{height:38px;margin-top:0;border:0;border-bottom:2px solid transparent;border-radius:0;padding:0 14px;font-size:12.5px;color:#4A525D;background:transparent}
+.tab:hover{background:transparent;color:#1B1F24}
+.tab[data-active="true"]{background:transparent;color:#1A4C8C;border-bottom-color:#2F6BC0;margin-bottom:0;height:38px}
+.fs{margin:12px 0 0;padding:10px 0 0;border-top-color:#E3E7EC}
+.lg{font-size:12.5px;margin:0 0 8px;color:#1A4C8C}
+.fgrid{gap:8px 12px}
+.fld{gap:3px}
+.ro{min-height:30px;padding:5px 8px;background:#F6F8FA;border-color:#DDE2E8;border-radius:4px}
+.calpop{border-radius:6px;box-shadow:0 8px 24px rgba(16,24,40,.16);padding:10px}
+.calday{border-radius:4px;height:30px}
+.calday[data-has="true"]::after{content:none}
+.callink{height:28px;border-radius:4px;background:#FFFFFF;border-color:#C3CBD5}
+.chk{min-height:30px;gap:10px;font-size:12.5px;font-weight:600;color:#1B1F24;padding:0 2px;cursor:pointer}
+.chk input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;flex:none;border:2px solid #9AA5B1;border-radius:5px;background:#FFFFFF;display:inline-grid;place-content:center;cursor:pointer;transition:background-color .12s,border-color .12s}
+.chk input::before{content:"";width:11px;height:6px;border-left:2.5px solid #FFFFFF;border-bottom:2.5px solid #FFFFFF;transform:translateY(-2px) rotate(-45deg);opacity:0}
+.chk input:checked{background:#2F6BC0;border-color:#2F6BC0}
+.chk input:checked::before{opacity:1}
+.chk:hover input{border-color:#2F6BC0}
+.chk input:focus-visible{outline:3px solid rgba(47,107,192,.3);outline-offset:1px}
+.pairs{clear:both;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+@media (max-width:760px){.pairs{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:440px){.pair{grid-template-columns:minmax(0,1fr)}}
+.ro.county{color:#1B1F24;font-weight:500}
+.tag,.tag[data-tone="ok"],.tag[data-tone="warn"],.daytag,.daytag[data-multi="true"]{background:transparent;border:0;padding:0;border-radius:0;font-size:12.5px;font-weight:400;line-height:18px;color:#1B1F24}
+.tag[data-tone="warn"]{color:#C0261B;font-weight:600}
+.initin,.initin[data-tone="ok"],.initin[data-tone="warn"]{background:#FFFFFF;border:1px solid #BFC7D1;color:#1B1F24;font-weight:500}
+.initin::placeholder{color:#8E97A3;font-weight:400}
+.combo{position:relative}
+.combo .field{padding-right:30px}
+.combobtn{position:absolute;right:1px;top:1px;bottom:1px;width:28px;border:0;background:transparent;cursor:pointer;color:#4A525D;display:flex;align-items:center;justify-content:center;border-radius:0 4px 4px 0}
+.combobtn:hover{background:#EEF2F6;color:#1B1F24}
+.combolist{position:absolute;top:calc(100% + 2px);left:0;right:0;z-index:30;max-height:220px;overflow-y:auto;background:#FFFFFF;border:1px solid #BFC7D1;border-radius:4px;box-shadow:0 6px 16px rgba(16,24,40,.14);padding:3px 0}
+.comboopt{display:block;width:100%;text-align:left;border:0;background:transparent;font:inherit;font-size:12.5px;padding:5px 10px;cursor:pointer;color:#1B1F24}
+.comboopt:hover,.comboopt[data-hl="true"]{background:#EAF1FC}
+.comboopt[data-sel="true"]{font-weight:600;color:#1A4C8C}
+.surface{margin:10px 14px 20px;background:#FFFFFF;border:1px solid #CDD4DC;border-radius:4px}
+.tbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 10px;border-bottom:1px solid #DDE2E8;background:#F7F8FA;border-radius:4px 4px 0 0}
+.tgroup{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.tsep{width:1px;align-self:stretch;background:#D5DBE2;margin:2px 0}
+.tbtn{font:inherit;font-size:12.5px;font-weight:500;height:28px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;border-radius:4px;background:transparent;color:#1B1F24;cursor:pointer}
+.tbtn:hover{background:#E8ECF1;border-color:#D0D7DF}
+.tbtn:disabled{color:#9AA3AE;cursor:default;background:transparent;border-color:transparent}
+.tbtn:focus-visible{outline:2px solid #2F6BC0;outline-offset:1px}
+.tbtn.icon{width:28px;padding:0;justify-content:center}
+.tbtn svg{width:15px;height:15px;flex:none}
+.tbar .calbtn{padding:3px 10px}
+.tbar .calbtn > svg{width:14px;height:14px}
+.tnote{margin-left:auto;font-size:12px;color:#5B6470}
+.sbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 18px;padding:6px 12px;border-bottom:1px solid #DDE2E8;background:#FFFFFF;font-size:12px;color:#3A424D}
+.sbar b{font-weight:700;color:#1B1F24}
+.sbar b.red{color:#C0261B}
+.ctwrap{background:#FFFFFF;max-height:260px;overflow:auto;border-top:1px solid #DDE2E8}
+.ctable{width:100%;border-collapse:collapse;font-size:12.5px;color:#1B1F24}
+.ctable th{position:sticky;top:0;background:#F7F8FA;text-align:left;font-weight:600;color:#3A424D;padding:6px 8px;border-bottom:1px solid #D0D7DF;white-space:nowrap}
+.ctable td{padding:5px 8px;border-bottom:1px solid #E6E9EE;vertical-align:middle}
+.ctable .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ctable tbody tr{cursor:pointer}
+.ctable tbody tr:hover{background:#F1F6FD}
+.ctable tbody tr[data-current="true"]{box-shadow:inset 0 0 0 2px #3A424D}
+.ctable tbody tr[data-cs="cancelled"] td{color:#7A828C}
+.ctable tbody tr[data-cs="cancelled"] td:not(:nth-child(2)){text-decoration:line-through}
+.ctlink{border:0;background:none;padding:0;font:inherit;color:#1B1F24;cursor:pointer;font-family:Consolas,'Courier New',monospace}
+.cst{display:inline;font-size:inherit;font-weight:400;padding:0;background:none;color:#1B1F24}
+.ctable .cst[data-cs="booked"]{color:#1F5FBF}
+.cst[data-cs="quote"]{color:#8F5A06}
+.cst[data-cs="cancelled"]{color:#C0261B}
+h2 .cst{font-size:13px;color:#5B6470;margin-left:6px}
+h2 .cst[data-cs="cancelled"]{color:#C0261B}
+.pay{font-weight:600}
+.pay[data-tone="ok"]{color:#1B5530}
+.pay[data-tone="part"]{color:#8F5A06}
+.pay[data-tone="warn"]{color:#C0261B}
+.sfoot{display:flex;flex-wrap:wrap;gap:4px 20px;padding:5px 12px;border-top:1px solid #C9D1DA;background:#EEF1F4;font-size:12px;color:#1B1F24;font-variant-numeric:tabular-nums}
+.sfoot .sk{color:#5B6470;font-weight:600;margin-right:2px}
+.sbar .cnt{font-size:15px;font-weight:600;color:#1B1F24}
+.sbar .cnt b{font-size:17px}
+.timein{max-width:74px}
+.pair.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:440px){.pair.three{grid-template-columns:minmax(0,1fr)}}
+.itabs{display:flex;gap:2px}
+.itab{font:inherit;font-size:12.5px;height:30px;padding:0 12px;border:0;border-bottom:2px solid transparent;background:transparent;color:#4A525D;cursor:pointer;margin-bottom:-1px}
+.itab:hover{color:#1B1F24}
+.itab{display:inline-flex;align-items:center;position:relative}
+.tabdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#C0261B;margin-left:6px}
+.itab[data-active="true"]{color:#1A4C8C;border-bottom-color:#2F6BC0;font-weight:600}
+.itab:focus-visible{outline:2px solid #2F6BC0;outline-offset:-2px}
+.itlist{display:flex;flex-direction:column}
+.itrow{display:grid;grid-template-columns:150px 90px minmax(0,1fr);gap:12px;padding:8px 0;border-bottom:1px solid #EAEDF1;font-size:12.5px;line-height:18px}
+.itwhen{display:flex;gap:8px;flex-wrap:wrap}
+.ittype{font-weight:600;color:#3A424D}
+.itnote{color:#5B6470;font-size:12px;margin-top:2px}
+.ittext{white-space:pre-wrap;font-size:12.5px;line-height:20px;color:#1B1F24;padding:4px 0}
+.itedrow{display:grid;grid-template-columns:140px 110px 120px minmax(150px,1.3fr) minmax(130px,1fr) 30px;gap:6px 8px;align-items:end;padding:6px 0;border-bottom:1px dashed #E3E7EC}
+.itrm{width:30px;height:30px;border:1px solid #C3CBD5;border-radius:4px;background:#FFFFFF;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#5B6470;padding:0}
+.itrm:hover{color:#C0261B;border-color:#C0261B}
+@media (max-width:760px){.itedrow{grid-template-columns:repeat(2,minmax(0,1fr))}.itrow{grid-template-columns:minmax(0,1fr);gap:2px}}
+.bbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding:8px 10px;border-top:1px solid #DDE2E8;background:#F7F8FA}
+.bgroup{gap:8px}
+.bgroup .tbtn{background:#FFFFFF;border-color:#C3CBD5;box-shadow:0 1px 1px rgba(16,24,40,.05)}
+.bgroup .tbtn:hover{background:#F1F4F8;border-color:#9AA5B1}
+.bgroup .tbtn:disabled{background:#FFFFFF;border-color:#E1E5EA}
+.row[data-status="onloc"]{background:#DFF3E3}
+.row[data-status="onloc"]:hover{background:#D2EDD8}
+.row[data-status="onloc"][data-selected="true"]{background:#CDEBD4;box-shadow:inset 0 0 0 2px #2F6BC0}
+.row[data-status="cancelled"]{background:#FBE1DE}
+.row[data-status="cancelled"]:hover{background:#F7D3CF}
+.row[data-status="cancelled"][data-selected="true"]{background:#F5CDC8;box-shadow:inset 0 0 0 2px #2F6BC0}
+.tbtn .sw{width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,.15);flex:none}
+.st-onloc .sw{background:#9FD8AC}
+.st-cxl .sw{background:#F0A49B}
+.bgroup .st-onloc[data-on="true"]{background:#DFF3E3;border-color:#7DBF8D;font-weight:600}
+.bgroup .st-cxl[data-on="true"]{background:#FBE1DE;border-color:#E2877C;font-weight:600}
+.timein[data-late="true"]{color:#C0261B;border-color:#E2877C;font-weight:600}
+.actbtn{font:inherit;font-size:12px;font-weight:600;height:24px;padding:0 10px;border:1px solid #C3CBD5;border-radius:4px;background:#FFFFFF;color:#1A4C8C;cursor:pointer;white-space:nowrap}
+.actbtn:hover{background:#EEF4FD;border-color:#2F6BC0}
+.actbtn:focus-visible{outline:2px solid #2F6BC0;outline-offset:1px}
+.actual{display:inline-flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap}
+.row.cols > .initcell{overflow:hidden}
+.actbtn{flex:none}
+.actual[data-late="true"]{color:#C0261B}
+.actclr{width:18px;height:18px;padding:0;border:0;border-radius:3px;background:transparent;color:#8E97A3;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.actclr:hover{background:#EEF1F5;color:#1B1F24}
+.tdrop{background:#FFFFFF;border-color:#D0D7DF}
+.tdrop:hover{background:#F1F4F8}
+.dpop{position:absolute;top:calc(100% + 4px);left:0;z-index:25;background:#FFFFFF;border:1px solid #CDD4DC;border-radius:6px;box-shadow:0 8px 24px rgba(16,24,40,.16);padding:8px;min-width:210px;box-sizing:border-box}
+.dpop.narrow{min-width:160px;padding:4px}
+.dptitle{font-size:12px;font-weight:600;color:#5B6470;padding:2px 4px 6px}
+.dpop .chk{padding:2px 4px}
+.dpopt{display:block;width:100%;text-align:left;font:inherit;font-size:12.5px;padding:7px 10px;border:0;border-radius:4px;background:transparent;color:#1B1F24;cursor:pointer}
+.dpopt:hover{background:#EEF2F6}
+.dpopt[data-sel="true"]{font-weight:600;color:#1A4C8C;background:#EAF1FC}
+.tdel[data-armed="true"]{background:#FBE1DE !important;border-color:#E2877C !important;color:#A61B12;font-weight:600}
+.btn2:disabled{color:#9AA3AE;cursor:default;background:#FFFFFF}
+.bgroup .st-rep[data-on="true"]{background:#EAF1FC;border-color:#8AB0E3;color:#1A4C8C;font-weight:600}
+.row:has(.rowpick:active){box-shadow:inset 0 0 0 2px #3A424D}
+.itbox{background:#F7F8FA;border:1px solid #EAEDF1;border-radius:4px;padding:10px 14px;min-height:20px}
+.row[data-selected="true"]{background:#FFFFFF;box-shadow:inset 0 0 0 2px #3A424D}
+.row[data-selected="true"]:nth-of-type(odd){background:#FAFBFC}
+.row[data-dup="true"]{background:#E2EDFC}
+.row[data-dup="true"]:hover{background:#D6E5FA}
+.row[data-dup="true"][data-selected="true"]{background:#E2EDFC}
+.row[data-status="onloc"],.row[data-status="onloc"][data-dup="true"]{background:#DFF3E3}
+.row[data-status="cancelled"],.row[data-status="cancelled"][data-dup="true"]{background:#FBE1DE}
+.row[data-status="onloc"][data-selected="true"]{background:#CDEBD4;box-shadow:inset 0 0 0 2px #3A424D}
+.row[data-status="cancelled"][data-selected="true"]{background:#F5CDC8;box-shadow:inset 0 0 0 2px #3A424D}
+.tdel[data-armed="1"]{background:#FDF0E3 !important;border-color:#E9B48F !important;color:#853605;font-weight:600}
+.tdel[data-armed="2"]{background:#FBE1DE !important;border-color:#E2877C !important;color:#A61B12;font-weight:700}
+.row.cols > .initcell{pointer-events:none}
+.row.cols > .initcell input,.row.cols > .initcell button{pointer-events:auto}
+.row.cols > div,.row.cols > div *:not(strong){font-weight:400 !important}
+.row.cols > div.cno{font-weight:700 !important;color:#000000}
+.hgrid > .hcell,.hgrid .sortbtn,.hgrid .grpbtn{overflow-wrap:normal;word-break:normal}
+.ncheck{width:16px;height:16px;box-sizing:border-box;border:1.5px solid #9AA5B1;border-radius:3px;display:inline-grid;place-content:center;background:#FFFFFF}
+.ncheck[data-on="true"]{background:#2F6BC0;border-color:#2F6BC0}
+.ncheck[data-on="true"]::before{content:"";width:8px;height:4px;border-left:2px solid #FFFFFF;border-bottom:2px solid #FFFFFF;transform:translateY(-1px) rotate(-45deg)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ntext{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap;line-height:18px}
+</style>
+</helmet>
+<div data-density="{{density}}" style="min-height: 100vh; background: #EEF1F5; color: #1B1F24; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-size: 12px; box-sizing: border-box">
+
+<header style="background: #1F3A5F; color: #FFFFFF; padding: 8px 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+<div style="display: flex; align-items: center; gap: 6px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"></rect><path d="M3 11h18"></path><path d="M7 17v2"></path><path d="M17 17v2"></path><circle cx="7.5" cy="14" r="0.6"></circle><circle cx="16.5" cy="14" r="0.6"></circle></svg>
+<div>
+<h1 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.01em">CharterStack</h1>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+</div>
+</header>
+
+<nav aria-label="Views" style="background: #FFFFFF; border-bottom: 1px solid #D5DAE1; padding: 0 12px; display: flex; flex-wrap: wrap; gap: 4px">
+<button type="button" class="tab" data-active="{{boardActive}}" aria-current="{{boardCurrent}}" onClick="{{goBoard}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M3 14h18"></path><path d="M9 9v11"></path></svg>Dispatch board</button>
+<button type="button" class="tab" data-active="{{salesActive}}" aria-current="{{salesCurrent}}" onClick="{{goSales}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Booking</button>
+</nav>
+
+<sc-if value="{{onBoard}}" hint-placeholder-val="{{true}}">
+
+<div class="surface">
+<section aria-label="Toolbar" class="tbar">
+<div class="tgroup">
+<button type="button" class="tbtn icon" aria-label="Previous day" onClick="{{dayPrev}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<div style="position: relative">
+<div style="display: flex; align-items: stretch; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D0D7DF; border-radius: 4px; overflow: hidden">
+<button type="button" class="calbtn" data-active="{{startActive}}" onClick="{{openStart}}" aria-expanded="{{startActive}}" aria-haspopup="true">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F5FBF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"></rect><path d="M3.5 10h17"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+<span style="display: flex; flex-direction: column">
+<span style="font-size: 12px; font-weight: 600; color: #5B6470; ">Start date</span>
+<span style="font-size: 13px; font-weight: 700; margin-top: 2px">{{startLabel}}</span>
+</span>
+</button>
+<span aria-hidden="true" style="align-self: center; color: #5B6470; font-weight: 600; padding: 0 2px">–</span>
+<button type="button" class="calbtn" data-active="{{endActive}}" onClick="{{openEnd}}" aria-expanded="{{endActive}}" aria-haspopup="true">
+<span style="display: flex; flex-direction: column">
+<span style="font-size: 12px; font-weight: 600; color: #5B6470; ">End date</span>
+<span style="font-size: 13px; font-weight: 700; margin-top: 2px">{{endLabel}}</span>
+</span>
+</button>
+</div>
+<sc-if value="{{calOpen}}" hint-placeholder-val="{{false}}">
+<div class="calpop">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px">
+<button type="button" class="calnav" onClick="{{prevMonth}}" aria-label="Previous month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<span style="font-size: 13px; font-weight: 700">{{monthLabel}}</span>
+<button type="button" class="calnav" onClick="{{nextMonth}}" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+<p style="margin: 0 0 8px; font-size: 12px; color: #4A525D; text-align: center">{{calHint}}</p>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; font-size: 12px; font-weight: 600; color: #5B6470; text-align: center; margin-bottom: 4px">
+<span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px 0">
+<sc-for list="{{calDays}}" as="c" hint-placeholder-count="35">
+<button type="button" class="calday" data-kind="{{c.kind}}" data-range="{{c.range}}" data-today="{{c.today}}" data-has="{{c.has}}" disabled="{{c.blank}}" onClick="{{c.pick}}" aria-label="{{c.aria}}">{{c.n}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #C9D1DA">
+<span style="display: flex; gap: 8px">
+<button type="button" class="callink" onClick="{{goToday}}">Today</button>
+</span>
+</div>
+</div>
+</sc-if>
+</div>
+<button type="button" class="tbtn icon" aria-label="Next day" onClick="{{dayNext}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+<button type="button" class="tbtn" onClick="{{goToday}}">Today</button>
+</div>
+<span class="tsep" aria-hidden="true"></span>
+<div class="tgroup">
+<div style="position: relative">
+<button type="button" class="tbtn tdrop" aria-haspopup="true" aria-expanded="{{termOpenStr}}" onClick="{{toggleTerm}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V9l7-5 7 5v12"></path><path d="M9 21v-6h6v6"></path></svg>Terminal: {{termLabel}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 12px; height: 12px"><path d="M6 9l6 6 6-6"></path></svg></button>
+<sc-if value="{{termOpen}}" hint-placeholder-val="{{false}}"><div class="dpop">
+<div class="dptitle">Show terminals</div>
+<label class="chk"><input type="checkbox" checked="{{termAll}}" onChange="{{pickAllTerms}}">All terminals</label>
+<div style="border-top: 1px solid #E3E7EC; margin: 4px 0"></div>
+<sc-for list="{{termItems}}" as="o" hint-placeholder-count="5"><label class="chk"><input type="checkbox" checked="{{o.on}}" onChange="{{o.toggle}}">{{o.label}}</label></sc-for>
+<div style="display: flex; justify-content: flex-end; margin-top: 6px"><button type="button" class="btn2" onClick="{{toggleTerm}}">Done</button></div>
+</div></sc-if>
+</div>
+<div style="position: relative">
+<button type="button" class="tbtn tdrop" aria-haspopup="true" aria-expanded="{{viewOpenStr}}" onClick="{{toggleView}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>{{viewLabel}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 12px; height: 12px"><path d="M6 9l6 6 6-6"></path></svg></button>
+<sc-if value="{{viewOpen}}" hint-placeholder-val="{{false}}"><div class="dpop narrow">
+<sc-for list="{{viewItems}}" as="o" hint-placeholder-count="3"><button type="button" class="dpopt" data-sel="{{o.sel}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div></sc-if>
+</div>
+</div>
+<span class="tnote">{{refreshedLabel}}</span>
+<button type="button" class="tbtn tdrop" onClick="{{tbRefresh}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><path d="M20 5v6h-6"></path></svg>Refresh</button>
+</section>
+
+<div class="sbar" role="status">
+<span class="cnt"><b>{{totalCount}}</b> trips</span>
+<span class="cnt"><b class="red">{{unassignedCount}}</b> need driver or bus</span>
+<span class="cnt"><b class="red">{{pendingCount}}</b> pending confirmation</span>
+<label for="trip-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search trips</label>
+<input id="trip-search" type="search" class="field" placeholder="Search contract, org, group, driver…" value="{{query}}" onChange="{{onQuery}}" style="margin-left: auto; width: 300px; max-width: 100%; height: 30px; padding: 3px 8px">
+</div>
+<section aria-label="Trips">
+<div style="background: #FFFFFF; overflow-x: auto">
+<div style="min-width: {{tableMin}}px; position: relative">
+<div style="background: #F3F5F8; border-bottom: 1px solid #C9D1DA; font-size: 12px; font-weight: 600; color: #4A525D; ">
+<div class="cols hgrid" data-dragging="{{draggingStr}}" style="grid-template-columns: {{gridCols}}">
+<div class="hcell" style="order: {{ord.contract}}" data-drag="{{dragOn.contract}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.contract.down}}" onPointerMove="{{drag.contract.move}}" onPointerUp="{{drag.contract.up}}" onPointerCancel="{{drag.contract.cancel}}" onKeyDown="{{drag.contract.key}}" onClick="{{sorter.contract}}" aria-label="Sort by Contract #">Contract #<span class="sarr" data-dir="{{sdir.contract}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Contract # column" onPointerDown="{{rz.contract.down}}" onPointerMove="{{rz.contract.move}}" onPointerUp="{{rz.contract.up}}" onPointerCancel="{{rz.contract.up}}" onKeyDown="{{rz.contract.key}}"></button></div>
+<div class="hcell" style="order: {{ord.day}}" data-drag="{{dragOn.day}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.day.down}}" onPointerMove="{{drag.day.move}}" onPointerUp="{{drag.day.up}}" onPointerCancel="{{drag.day.cancel}}" onKeyDown="{{drag.day.key}}" onClick="{{sorter.day}}" aria-label="Sort by Day">Day<span class="sarr" data-dir="{{sdir.day}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Day column" onPointerDown="{{rz.day.down}}" onPointerMove="{{rz.day.move}}" onPointerUp="{{rz.day.up}}" onPointerCancel="{{rz.day.up}}" onKeyDown="{{rz.day.key}}"></button></div>
+<div class="hcell" style="order: {{ord.hasNotes}}" data-drag="{{dragOn.hasNotes}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.hasNotes.down}}" onPointerMove="{{drag.hasNotes.move}}" onPointerUp="{{drag.hasNotes.up}}" onPointerCancel="{{drag.hasNotes.cancel}}" onKeyDown="{{drag.hasNotes.key}}" onClick="{{sorter.hasNotes}}" aria-label="Sort by Notes">Notes<span class="sarr" data-dir="{{sdir.hasNotes}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Notes column" onPointerDown="{{rz.hasNotes.down}}" onPointerMove="{{rz.hasNotes.move}}" onPointerUp="{{rz.hasNotes.up}}" onPointerCancel="{{rz.hasNotes.up}}" onKeyDown="{{rz.hasNotes.key}}"></button></div>
+<div class="hcell" style="order: {{ord.notesText}}" data-drag="{{dragOn.notesText}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.notesText.down}}" onPointerMove="{{drag.notesText.move}}" onPointerUp="{{drag.notesText.up}}" onPointerCancel="{{drag.notesText.cancel}}" onKeyDown="{{drag.notesText.key}}" onClick="{{sorter.notesText}}" aria-label="Sort by Dispatch notes">Dispatch notes<span class="sarr" data-dir="{{sdir.notesText}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Dispatch notes column" onPointerDown="{{rz.notesText.down}}" onPointerMove="{{rz.notesText.move}}" onPointerUp="{{rz.notesText.up}}" onPointerCancel="{{rz.notesText.up}}" onKeyDown="{{rz.notesText.key}}"></button></div>
+<div class="hcell" style="order: {{ord.terminal}}" data-drag="{{dragOn.terminal}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.terminal.down}}" onPointerMove="{{drag.terminal.move}}" onPointerUp="{{drag.terminal.up}}" onPointerCancel="{{drag.terminal.cancel}}" onKeyDown="{{drag.terminal.key}}" onClick="{{sorter.terminal}}" aria-label="Sort by Terminal">Terminal<span class="sarr" data-dir="{{sdir.terminal}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Terminal column" onPointerDown="{{rz.terminal.down}}" onPointerMove="{{rz.terminal.move}}" onPointerUp="{{rz.terminal.up}}" onPointerCancel="{{rz.terminal.up}}" onKeyDown="{{rz.terminal.key}}"></button></div>
+<div class="hcell" style="order: {{ord.reportTime}}" data-drag="{{dragOn.reportTime}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.reportTime.down}}" onPointerMove="{{drag.reportTime.move}}" onPointerUp="{{drag.reportTime.up}}" onPointerCancel="{{drag.reportTime.cancel}}" onKeyDown="{{drag.reportTime.key}}" onClick="{{sorter.reportTime}}" aria-label="Sort by Report time">Report time<span class="sarr" data-dir="{{sdir.reportTime}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Report column" onPointerDown="{{rz.reportTime.down}}" onPointerMove="{{rz.reportTime.move}}" onPointerUp="{{rz.reportTime.up}}" onPointerCancel="{{rz.reportTime.up}}" onKeyDown="{{rz.reportTime.key}}"></button></div>
+<div class="hcell" style="order: {{ord.actualReport}}" data-drag="{{dragOn.actualReport}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.actualReport.down}}" onPointerMove="{{drag.actualReport.move}}" onPointerUp="{{drag.actualReport.up}}" onPointerCancel="{{drag.actualReport.cancel}}" onKeyDown="{{drag.actualReport.key}}" onClick="{{sorter.actualReport}}" aria-label="Sort by Actual report">Actual report<span class="sarr" data-dir="{{sdir.actualReport}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Actual report column" onPointerDown="{{rz.actualReport.down}}" onPointerMove="{{rz.actualReport.move}}" onPointerUp="{{rz.actualReport.up}}" onPointerCancel="{{rz.actualReport.up}}" onKeyDown="{{rz.actualReport.key}}"></button></div>
+<div class="hcell" style="order: {{ord.onLocAt}}" data-drag="{{dragOn.onLocAt}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.onLocAt.down}}" onPointerMove="{{drag.onLocAt.move}}" onPointerUp="{{drag.onLocAt.up}}" onPointerCancel="{{drag.onLocAt.cancel}}" onKeyDown="{{drag.onLocAt.key}}" onClick="{{sorter.onLocAt}}" aria-label="Sort by On location">On location<span class="sarr" data-dir="{{sdir.onLocAt}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize On location column" onPointerDown="{{rz.onLocAt.down}}" onPointerMove="{{rz.onLocAt.move}}" onPointerUp="{{rz.onLocAt.up}}" onPointerCancel="{{rz.onLocAt.up}}" onKeyDown="{{rz.onLocAt.key}}"></button></div>
+<div class="hcell" style="order: {{ord.spotTime}}" data-drag="{{dragOn.spotTime}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.spotTime.down}}" onPointerMove="{{drag.spotTime.move}}" onPointerUp="{{drag.spotTime.up}}" onPointerCancel="{{drag.spotTime.cancel}}" onKeyDown="{{drag.spotTime.key}}" onClick="{{sorter.spotTime}}" aria-label="Sort by Spot">Spot<span class="sarr" data-dir="{{sdir.spotTime}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Spot column" onPointerDown="{{rz.spotTime.down}}" onPointerMove="{{rz.spotTime.move}}" onPointerUp="{{rz.spotTime.up}}" onPointerCancel="{{rz.spotTime.up}}" onKeyDown="{{rz.spotTime.key}}"></button></div>
+<div class="grp" style="order: {{ord.begin}}" data-drag="{{dragOn.begin}}"><button type="button" class="grpbtn" title="Hold and drag to move these columns" aria-label="Move Begin date / start time columns. Hold and drag, or press Alt and an arrow key." onPointerDown="{{drag.begin.down}}" onPointerMove="{{drag.begin.move}}" onPointerUp="{{drag.begin.up}}" onPointerCancel="{{drag.begin.cancel}}" onKeyDown="{{drag.begin.key}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>Begin date / start time</button></div>
+<div class="hcell" style="order: {{ord.beginDate}}" data-drag="{{dragOn.begin}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.begin.down}}" onPointerMove="{{drag.begin.move}}" onPointerUp="{{drag.begin.up}}" onPointerCancel="{{drag.begin.cancel}}" onKeyDown="{{drag.begin.key}}" onClick="{{sorter.beginDate}}" aria-label="Sort by Begin date">Begin date<span class="sarr" data-dir="{{sdir.beginDate}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Begin date column" onPointerDown="{{rz.beginDate.down}}" onPointerMove="{{rz.beginDate.move}}" onPointerUp="{{rz.beginDate.up}}" onPointerCancel="{{rz.beginDate.up}}" onKeyDown="{{rz.beginDate.key}}"></button></div>
+<div class="hcell split" style="order: {{ord.startTime}}" data-drag="{{dragOn.begin}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.begin.down}}" onPointerMove="{{drag.begin.move}}" onPointerUp="{{drag.begin.up}}" onPointerCancel="{{drag.begin.cancel}}" onKeyDown="{{drag.begin.key}}" onClick="{{sorter.startTime}}" aria-label="Sort by Start time">Start time<span class="sarr" data-dir="{{sdir.startTime}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Start time column" onPointerDown="{{rz.startTime.down}}" onPointerMove="{{rz.startTime.move}}" onPointerUp="{{rz.startTime.up}}" onPointerCancel="{{rz.startTime.up}}" onKeyDown="{{rz.startTime.key}}"></button></div>
+<div class="hcell" style="order: {{ord.org}}" data-drag="{{dragOn.org}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.org.down}}" onPointerMove="{{drag.org.move}}" onPointerUp="{{drag.org.up}}" onPointerCancel="{{drag.org.cancel}}" onKeyDown="{{drag.org.key}}" onClick="{{sorter.org}}" aria-label="Sort by Organization">Organization<span class="sarr" data-dir="{{sdir.org}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Organization column" onPointerDown="{{rz.org.down}}" onPointerMove="{{rz.org.move}}" onPointerUp="{{rz.org.up}}" onPointerCancel="{{rz.org.up}}" onKeyDown="{{rz.org.key}}"></button></div>
+<div class="grp" style="order: {{ord.pudest}}" data-drag="{{dragOn.pudest}}"><button type="button" class="grpbtn" title="Hold and drag to move these columns" aria-label="Move Pickup / Destination columns. Hold and drag, or press Alt and an arrow key." onPointerDown="{{drag.pudest.down}}" onPointerMove="{{drag.pudest.move}}" onPointerUp="{{drag.pudest.up}}" onPointerCancel="{{drag.pudest.cancel}}" onKeyDown="{{drag.pudest.key}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>Pickup / Destination</button></div>
+<div class="hcell" style="order: {{ord.pickup}}" data-drag="{{dragOn.pudest}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.pudest.down}}" onPointerMove="{{drag.pudest.move}}" onPointerUp="{{drag.pudest.up}}" onPointerCancel="{{drag.pudest.cancel}}" onKeyDown="{{drag.pudest.key}}" onClick="{{sorter.pickup}}" aria-label="Sort by Pickup">Pickup<span class="sarr" data-dir="{{sdir.pickup}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Pickup column" onPointerDown="{{rz.pickup.down}}" onPointerMove="{{rz.pickup.move}}" onPointerUp="{{rz.pickup.up}}" onPointerCancel="{{rz.pickup.up}}" onKeyDown="{{rz.pickup.key}}"></button></div>
+<div class="hcell split" style="order: {{ord.dest}}" data-drag="{{dragOn.pudest}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.pudest.down}}" onPointerMove="{{drag.pudest.move}}" onPointerUp="{{drag.pudest.up}}" onPointerCancel="{{drag.pudest.cancel}}" onKeyDown="{{drag.pudest.key}}" onClick="{{sorter.dest}}" aria-label="Sort by Destination">Destination<span class="sarr" data-dir="{{sdir.dest}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Destination column" onPointerDown="{{rz.dest.down}}" onPointerMove="{{rz.dest.move}}" onPointerUp="{{rz.dest.up}}" onPointerCancel="{{rz.dest.up}}" onKeyDown="{{rz.dest.key}}"></button></div>
+<div class="grp" style="order: {{ord.ret}}" data-drag="{{dragOn.ret}}"><button type="button" class="grpbtn" title="Hold and drag to move these columns" aria-label="Move Return date / time columns. Hold and drag, or press Alt and an arrow key." onPointerDown="{{drag.ret.down}}" onPointerMove="{{drag.ret.move}}" onPointerUp="{{drag.ret.up}}" onPointerCancel="{{drag.ret.cancel}}" onKeyDown="{{drag.ret.key}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>Return date / time</button></div>
+<div class="hcell" style="order: {{ord.returnDate}}" data-drag="{{dragOn.ret}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.ret.down}}" onPointerMove="{{drag.ret.move}}" onPointerUp="{{drag.ret.up}}" onPointerCancel="{{drag.ret.cancel}}" onKeyDown="{{drag.ret.key}}" onClick="{{sorter.returnDate}}" aria-label="Sort by Return date">Return date<span class="sarr" data-dir="{{sdir.returnDate}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Return date column" onPointerDown="{{rz.returnDate.down}}" onPointerMove="{{rz.returnDate.move}}" onPointerUp="{{rz.returnDate.up}}" onPointerCancel="{{rz.returnDate.up}}" onKeyDown="{{rz.returnDate.key}}"></button></div>
+<div class="hcell split" style="order: {{ord.returnTime}}" data-drag="{{dragOn.ret}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.ret.down}}" onPointerMove="{{drag.ret.move}}" onPointerUp="{{drag.ret.up}}" onPointerCancel="{{drag.ret.cancel}}" onKeyDown="{{drag.ret.key}}" onClick="{{sorter.returnTime}}" aria-label="Sort by Return time">Return time<span class="sarr" data-dir="{{sdir.returnTime}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Return time column" onPointerDown="{{rz.returnTime.down}}" onPointerMove="{{rz.returnTime.move}}" onPointerUp="{{rz.returnTime.up}}" onPointerCancel="{{rz.returnTime.up}}" onKeyDown="{{rz.returnTime.key}}"></button></div>
+<div class="hcell" style="order: {{ord.group}}" data-drag="{{dragOn.group}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.group.down}}" onPointerMove="{{drag.group.move}}" onPointerUp="{{drag.group.up}}" onPointerCancel="{{drag.group.cancel}}" onKeyDown="{{drag.group.key}}" onClick="{{sorter.group}}" aria-label="Sort by Group name">Group name<span class="sarr" data-dir="{{sdir.group}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Group name column" onPointerDown="{{rz.group.down}}" onPointerMove="{{rz.group.move}}" onPointerUp="{{rz.group.up}}" onPointerCancel="{{rz.group.up}}" onKeyDown="{{rz.group.key}}"></button></div>
+<div class="hcell" style="order: {{ord.driver}}" data-drag="{{dragOn.driver}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.driver.down}}" onPointerMove="{{drag.driver.move}}" onPointerUp="{{drag.driver.up}}" onPointerCancel="{{drag.driver.cancel}}" onKeyDown="{{drag.driver.key}}" onClick="{{sorter.driver}}" aria-label="Sort by Driver">Driver<span class="sarr" data-dir="{{sdir.driver}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Driver column" onPointerDown="{{rz.driver.down}}" onPointerMove="{{rz.driver.move}}" onPointerUp="{{rz.driver.up}}" onPointerCancel="{{rz.driver.up}}" onKeyDown="{{rz.driver.key}}"></button></div>
+<div class="hcell" style="order: {{ord.driverPhone}}" data-drag="{{dragOn.driverPhone}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.driverPhone.down}}" onPointerMove="{{drag.driverPhone.move}}" onPointerUp="{{drag.driverPhone.up}}" onPointerCancel="{{drag.driverPhone.cancel}}" onKeyDown="{{drag.driverPhone.key}}" onClick="{{sorter.driverPhone}}" aria-label="Sort by Driver phone">Driver phone<span class="sarr" data-dir="{{sdir.driverPhone}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Driver phone column" onPointerDown="{{rz.driverPhone.down}}" onPointerMove="{{rz.driverPhone.move}}" onPointerUp="{{rz.driverPhone.up}}" onPointerCancel="{{rz.driverPhone.up}}" onKeyDown="{{rz.driverPhone.key}}"></button></div>
+<div class="grp" style="order: {{ord.bus}}" data-drag="{{dragOn.bus}}"><button type="button" class="grpbtn" title="Hold and drag to move these columns" aria-label="Move Bus # / Size req. columns. Hold and drag, or press Alt and an arrow key." onPointerDown="{{drag.bus.down}}" onPointerMove="{{drag.bus.move}}" onPointerUp="{{drag.bus.up}}" onPointerCancel="{{drag.bus.cancel}}" onKeyDown="{{drag.bus.key}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>Bus # / Size req.</button></div>
+<div class="hcell" style="order: {{ord.busNum}}" data-drag="{{dragOn.bus}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.bus.down}}" onPointerMove="{{drag.bus.move}}" onPointerUp="{{drag.bus.up}}" onPointerCancel="{{drag.bus.cancel}}" onKeyDown="{{drag.bus.key}}" onClick="{{sorter.busNum}}" aria-label="Sort by Bus #">Bus #<span class="sarr" data-dir="{{sdir.busNum}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Bus # column" onPointerDown="{{rz.busNum.down}}" onPointerMove="{{rz.busNum.move}}" onPointerUp="{{rz.busNum.up}}" onPointerCancel="{{rz.busNum.up}}" onKeyDown="{{rz.busNum.key}}"></button></div>
+<div class="hcell split" style="order: {{ord.sizeReq}}" data-drag="{{dragOn.bus}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.bus.down}}" onPointerMove="{{drag.bus.move}}" onPointerUp="{{drag.bus.up}}" onPointerCancel="{{drag.bus.cancel}}" onKeyDown="{{drag.bus.key}}" onClick="{{sorter.sizeReq}}" aria-label="Sort by Size req.">Size req.<span class="sarr" data-dir="{{sdir.sizeReq}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Size requirement column" onPointerDown="{{rz.sizeReq.down}}" onPointerMove="{{rz.sizeReq.move}}" onPointerUp="{{rz.sizeReq.up}}" onPointerCancel="{{rz.sizeReq.up}}" onKeyDown="{{rz.sizeReq.key}}"></button></div>
+<div class="grp" style="order: {{ord.conf}}" data-drag="{{dragOn.conf}}"><button type="button" class="grpbtn" title="Hold and drag to move these columns" aria-label="Move Confirmation columns. Hold and drag, or press Alt and an arrow key." onPointerDown="{{drag.conf.down}}" onPointerMove="{{drag.conf.move}}" onPointerUp="{{drag.conf.up}}" onPointerCancel="{{drag.conf.cancel}}" onKeyDown="{{drag.conf.key}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>Confirmation</button></div>
+<div class="hcell" style="order: {{ord.confInit}}" data-drag="{{dragOn.conf}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.conf.down}}" onPointerMove="{{drag.conf.move}}" onPointerUp="{{drag.conf.up}}" onPointerCancel="{{drag.conf.cancel}}" onKeyDown="{{drag.conf.key}}" onClick="{{sorter.confInit}}" aria-label="Sort by Initials">Initials<span class="sarr" data-dir="{{sdir.confInit}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Initials column" onPointerDown="{{rz.confInit.down}}" onPointerMove="{{rz.confInit.move}}" onPointerUp="{{rz.confInit.up}}" onPointerCancel="{{rz.confInit.up}}" onKeyDown="{{rz.confInit.key}}"></button></div>
+<div class="hcell split" style="order: {{ord.confAt}}" data-drag="{{dragOn.conf}}"><button type="button" class="sortbtn" title="Click to sort. Hold and drag to move the column." onPointerDown="{{drag.conf.down}}" onPointerMove="{{drag.conf.move}}" onPointerUp="{{drag.conf.up}}" onPointerCancel="{{drag.conf.cancel}}" onKeyDown="{{drag.conf.key}}" onClick="{{sorter.confAt}}" aria-label="Sort by Entered">Entered<span class="sarr" data-dir="{{sdir.confAt}}" aria-hidden="true"></span></button><button type="button" class="rz" aria-label="Resize Entered column" onPointerDown="{{rz.confAt.down}}" onPointerMove="{{rz.confAt.move}}" onPointerUp="{{rz.confAt.up}}" onPointerCancel="{{rz.confAt.up}}" onKeyDown="{{rz.confAt.key}}"></button></div>
+</div>
+</div>
+<sc-for list="{{rows}}" as="item" hint-placeholder-count="10">
+<div class="row cols" style="grid-template-columns: {{gridCols}}" data-selected="{{item.selected}}" data-status="{{item.status}}" data-dup="{{item.dup}}">
+<button type="button" class="rowpick" onPointerDown="{{item.pick}}" onClick="{{item.pick}}" aria-label="Open trip {{item.contract}}, {{item.group}}"></button>
+<div class="cno" style="order: {{ord.contract}}; font-family: Consolas, 'Courier New', monospace">{{item.contract}}</div>
+<div style="order: {{ord.day}}"><span class="daytag" data-multi="{{item.multi}}">{{item.dayLabel}}</span></div>
+<div style="order: {{ord.hasNotes}}; align-items: center"><span class="ncheck" data-on="{{item.hasNotes}}" aria-hidden="true"></span><span class="sr">{{item.notesSr}}</span></div>
+<div style="order: {{ord.notesText}}"><span class="ntext">{{item.notesText}}</span></div>
+<div style="order: {{ord.terminal}}">{{item.terminalLabel}}</div>
+<div style="order: {{ord.reportTime}}; font-weight: 500">{{item.reportLabel}}</div>
+<div class="initcell" style="order: {{ord.actualReport}}"><sc-if value="{{item.hasActual}}" hint-placeholder-val="{{false}}"><span class="actual" data-late="{{item.actualLate}}">{{item.actualValue}}<button type="button" class="actclr" aria-label="Clear actual report time for contract {{item.contract}}" onPointerDown="{{item.pick}}" onClick="{{item.clearActual}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></button></span></sc-if><sc-if value="{{item.noActual}}" hint-placeholder-val="{{true}}"><span style="color: #8E97A3">—</span></sc-if></div>
+<div style="order: {{ord.onLocAt}}"><sc-if value="{{item.hasOnLoc}}" hint-placeholder-val="{{false}}"><span style="color: #000000; white-space: nowrap">{{item.onLocAt}}</span></sc-if><sc-if value="{{item.noOnLoc}}" hint-placeholder-val="{{true}}"><span style="color: #8E97A3">—</span></sc-if></div>
+<div style="order: {{ord.spotTime}}; font-weight: 500">{{item.spotLabel}}</div>
+<div style="order: {{ord.beginDate}}; font-weight: 500">{{item.beginNoWd}}</div>
+<div class="split" style="order: {{ord.startTime}}; color: #2C323A">{{item.startTime}}</div>
+<div style="order: {{ord.org}}; font-weight: 500; line-height: 18px">{{item.org}}</div>
+<div style="order: {{ord.pickup}}; line-height: 18px">{{item.pickup}}</div>
+<div class="split" style="order: {{ord.dest}}; line-height: 18px">{{item.dest}}</div>
+<div style="order: {{ord.returnDate}}; font-weight: 500">{{item.returnNoWd}}</div>
+<div class="split" style="order: {{ord.returnTime}}; color: #2C323A">{{item.returnTime}}</div>
+<div style="order: {{ord.group}}; line-height: 18px">{{item.group}}</div>
+<div style="order: {{ord.driver}}"><span class="tag" data-tone="{{item.driverTone}}">{{item.driverLabel}}</span></div>
+<div style="order: {{ord.driverPhone}}; color: #2C323A">{{item.driverPhoneLabel}}</div>
+<div style="order: {{ord.busNum}}">
+<div><span class="tag" data-tone="{{item.busTone}}">{{item.busNumLabel}}</span></div>
+<div style="color: #5B6470; font-size: 12px; margin-top: 3px">{{item.busSeatsLabel}}</div>
+</div>
+<div class="split" style="order: {{ord.sizeReq}}; line-height: 18px"><span>{{item.reqType}}<sc-if value="{{item.wc}}" hint-placeholder-val="{{false}}"><strong style="font-weight: 700; color: #1B1F24">&nbsp;WC</strong></sc-if></span></div>
+<div class="initcell" style="order: {{ord.confInit}}"><input type="text" class="initin" maxlength="4" placeholder="Add" value="{{item.initValue}}" onFocus="{{item.pick}}" onChange="{{item.onInit}}" data-tone="{{item.confirmTone}}" aria-label="Dispatcher initials for contract {{item.contract}}"></div>
+<div class="split" style="order: {{ord.confAt}}; color: #4A525D; font-size: 12px; line-height: 17px">{{item.confirmAt}}</div>
+</div>
+</sc-for>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; padding: 28px 20px; color: #5B6470">No trips match these dates or search.</p>
+</sc-if>
+</div>
+</div>
+<div class="bbar">
+<div class="tgroup bgroup">
+<button type="button" class="tbtn st-rep" data-on="{{selReported}}" aria-pressed="{{selReported}}" disabled="{{noSel}}" onClick="{{markReported}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>{{reportedLabel}}</button>
+<button type="button" class="tbtn st-onloc" data-on="{{selOnLoc}}" aria-pressed="{{selOnLoc}}" disabled="{{noSel}}" onClick="{{markOnLoc}}"><span class="sw" aria-hidden="true"></span>On location</button>
+<button type="button" class="tbtn st-cxl" data-on="{{selCxl}}" aria-pressed="{{selCxl}}" disabled="{{noSel}}" onClick="{{markCxl}}"><span class="sw" aria-hidden="true"></span>Cancelled</button>
+<button type="button" class="tbtn" disabled="{{noSel}}" onClick="{{dupTrip}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="1.5"></rect><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"></path></svg>Duplicate</button>
+<button type="button" class="tbtn tdel" data-armed="{{delArmedStr}}" disabled="{{cantDelete}}" onClick="{{delDup}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M6 7l1 13h10l1-13"></path><path d="M9 7V4h6v3"></path></svg>{{delLabel}}</button>
+<span class="tsep" aria-hidden="true"></span>
+<button type="button" class="tbtn" onClick="{{tbPrint}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path d="M9 12l4 5"></path><path d="M13 12l-4 5"></path></svg>Export to Excel</button>
+</div>
+<div class="tgroup bgroup">
+<button type="button" class="tbtn" onClick="{{resetColumns}}">Reset columns</button>
+</div>
+</div>
+</section>
+
+<section aria-label="Trip detail" style="border-top: 1px solid #DDE2E8">
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-wrap: wrap; gap: 0; align-items: stretch">
+
+<div style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border-right: 1px solid #DDE2E8; padding: 12px 16px; box-sizing: border-box">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-bottom: 10px; border-bottom: 1px solid #EAEDF1">
+<h2 style="margin: 0; font-size: 13px; font-weight: 700; color: #1B1F24">Trip information</h2>
+<div class="itabs" role="group" aria-label="Trip information view"><button type="button" class="itab" data-active="{{infoDetailsStr}}" aria-pressed="{{infoDetailsStr}}" onClick="{{showDetails}}">Details</button><button type="button" class="itab" data-active="{{infoItinStr}}" aria-pressed="{{infoItinStr}}" onClick="{{showItin}}">Itinerary</button><button type="button" class="itab" data-active="{{infoNotesStr}}" aria-pressed="{{infoNotesStr}}" onClick="{{showNotes}}">Dispatch notes</button></div>
+</div>
+<sc-if value="{{infoIsDetails}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; padding-bottom: 10px; border-bottom: 1px solid #EAEDF1">
+<h3 style="margin: 0; font-size: 14px; font-weight: 700">Group name: <span style="font-weight: 500">{{sel.group}}</span></h3>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px">
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Pickup</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 10px 14px; box-sizing: border-box; flex: 1">
+<div style="font-weight: 600">{{sel.beginDate}} · {{sel.startTime}}</div>
+<div style="margin-top: 4px; line-height: 19px; color: #2C323A">{{sel.pickup}}</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Destination</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 10px 14px; box-sizing: border-box; flex: 1">
+<div style="font-weight: 600">Return {{sel.returnDate}} · {{sel.returnTime}}</div>
+<div style="margin-top: 4px; line-height: 19px; color: #2C323A">{{sel.dest}}</div>
+</div>
+</div>
+</div>
+<div style="margin-top: 12px">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Info</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 10px 14px; box-sizing: border-box"><p style="margin: 0; line-height: 21px; color: #2C323A">{{sel.special}}</p></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px">
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Passengers</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 10px 14px; box-sizing: border-box; flex: 1"><div style="font-weight: 600">{{sel.pax}}</div></div>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Group contact</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 10px 14px; box-sizing: border-box; flex: 1"><div style="font-weight: 600">{{sel.contact}}</div><div style="color: #4A525D; margin-top: 2px">{{sel.phone}}</div></div>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Driver request</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 10px 14px; box-sizing: border-box; flex: 1"><div style="font-weight: 600">{{sel.requestedLabel}}</div></div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{infoIsNotes}}" hint-placeholder-val="{{false}}">
+<div class="fld"><label for="dispatch-notes" style="font-size: 12px; font-weight: 600; color: #5B6470">Dispatch notes</label><textarea id="dispatch-notes" class="field tarea" style="min-height: 140px" placeholder="Add notes for dispatch" value="{{sel.dispatchNotes}}" onChange="{{onDispatchNotes}}"></textarea></div>
+<p style="margin: 6px 0 0; font-size: 12px; color: #5B6470">Notes save automatically as you type.</p>
+</sc-if>
+<sc-if value="{{infoIsItin}}" hint-placeholder-val="{{false}}">
+<div class="ittext itbox">{{sel.itinText}}</div>
+</sc-if>
+</div>
+
+<div style="flex: 1 1 320px; background: #FFFFFF; padding: 12px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 700">Assign driver &amp; bus</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="driver-select" style="font-size: 12px; font-weight: 600; color: #2C323A">Driver</label>
+<select id="driver-select" class="field" value="{{draftDriver}}" onChange="{{onDriver}}">
+<sc-for list="{{driverOptions}}" as="d" hint-placeholder-count="6">
+<option value="{{d.value}}">{{d.label}}</option>
+</sc-for>
+</select>
+<sc-if value="{{hasDraftPhone}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; color: #3A424D">Phone: {{draftPhone}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="bus-select" style="font-size: 12px; font-weight: 600; color: #2C323A">Bus</label>
+<select id="bus-select" class="field" value="{{draftBus}}" onChange="{{onBus}}">
+<sc-for list="{{busOptions}}" as="b" hint-placeholder-count="6">
+<option value="{{b.value}}">{{b.label}}</option>
+</sc-for>
+</select>
+<sc-if value="{{showWarn}}" hint-placeholder-val="{{false}}">
+<span style="font-size: 12px; font-weight: 600; color: #8F3B06; background: #FDEBDD; padding: 6px 10px; border-radius: 4px">{{warnText}}</span>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="report-select" style="font-size: 12px; font-weight: 600; color: #2C323A">Report time</label>
+<select id="report-select" class="field" value="{{draftReport}}" onChange="{{onReportSel}}">
+<sc-for list="{{reportOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.label}}</option></sc-for>
+</select>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 4px">
+<button type="button" class="btn" onClick="{{save}}">Assign</button>
+<button type="button" class="btn2" onClick="{{reset}}">Reset</button>
+<sc-if value="{{savedFlash}}" hint-placeholder-val="{{false}}">
+<span style="font-size: 12px; font-weight: 600; color: #1E5A33">Assigned</span>
+</sc-if>
+</div>
+<div style="border-top: 1px solid #EAEDF1; margin-top: 10px; padding-top: 10px">
+<h3 style="margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #1B1F24">Booking terminal</h3>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Terminal</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 8px 12px; font-weight: 600">{{sel.terminalLabel}}</div>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="font-size: 12px; font-weight: 600; color: #5B6470; margin-bottom: 4px">Total buses</div>
+<div style="background: #F7F8FA; border: 1px solid #EAEDF1; border-radius: 4px; padding: 8px 12px; font-weight: 600">{{sel.busTotal}}</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</sc-if>
+<sc-if value="{{noSel}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; padding: 20px 16px; color: #5B6470">Select a trip above to see its details and assign a driver and bus.</p>
+</sc-if>
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{onSales}}" hint-placeholder-val="{{false}}">
+<section aria-label="Booking" style="padding: 10px 14px 20px">
+<div class="surface" style="margin: 0 0 8px; border-color: #D0D7DF">
+<section aria-label="Contracts toolbar" class="tbar">
+<div class="tgroup">
+<button type="button" class="tbtn icon" aria-label="Previous day" onClick="{{dayPrev}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<div style="position: relative">
+<div style="display: flex; align-items: stretch; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D0D7DF; border-radius: 4px; overflow: hidden">
+<button type="button" class="calbtn" data-active="{{startActive}}" onClick="{{openStart}}" aria-expanded="{{startActive}}" aria-haspopup="true">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F5FBF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"></rect><path d="M3.5 10h17"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>
+<span style="display: flex; flex-direction: column">
+<span style="font-size: 12px; font-weight: 600; color: #5B6470; ">Start date</span>
+<span style="font-size: 13px; font-weight: 700; margin-top: 2px">{{startLabel}}</span>
+</span>
+</button>
+<span aria-hidden="true" style="align-self: center; color: #5B6470; font-weight: 600; padding: 0 2px">–</span>
+<button type="button" class="calbtn" data-active="{{endActive}}" onClick="{{openEnd}}" aria-expanded="{{endActive}}" aria-haspopup="true">
+<span style="display: flex; flex-direction: column">
+<span style="font-size: 12px; font-weight: 600; color: #5B6470; ">End date</span>
+<span style="font-size: 13px; font-weight: 700; margin-top: 2px">{{endLabel}}</span>
+</span>
+</button>
+</div>
+<sc-if value="{{calOpen}}" hint-placeholder-val="{{false}}">
+<div class="calpop">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px">
+<button type="button" class="calnav" onClick="{{prevMonth}}" aria-label="Previous month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<span style="font-size: 13px; font-weight: 700">{{monthLabel}}</span>
+<button type="button" class="calnav" onClick="{{nextMonth}}" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+<p style="margin: 0 0 8px; font-size: 12px; color: #4A525D; text-align: center">{{calHint}}</p>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; font-size: 12px; font-weight: 600; color: #5B6470; text-align: center; margin-bottom: 4px">
+<span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px 0">
+<sc-for list="{{calDays}}" as="c" hint-placeholder-count="35">
+<button type="button" class="calday" data-kind="{{c.kind}}" data-range="{{c.range}}" data-today="{{c.today}}" data-has="{{c.has}}" disabled="{{c.blank}}" onClick="{{c.pick}}" aria-label="{{c.aria}}">{{c.n}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #C9D1DA">
+<span style="display: flex; gap: 8px">
+<button type="button" class="callink" onClick="{{goToday}}">Today</button>
+</span>
+</div>
+</div>
+</sc-if>
+</div>
+<button type="button" class="tbtn icon" aria-label="Next day" onClick="{{dayNext}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+<button type="button" class="tbtn" onClick="{{goToday}}">Today</button>
+</div>
+<span class="tsep" aria-hidden="true"></span>
+<div class="tgroup">
+<div style="position: relative">
+<button type="button" class="tbtn tdrop" aria-haspopup="true" aria-expanded="{{ctOpenStr}}" onClick="{{toggleCt}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>{{ctLabel}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 12px; height: 12px"><path d="M6 9l6 6 6-6"></path></svg></button>
+<sc-if value="{{ctOpen}}" hint-placeholder-val="{{false}}"><div class="dpop narrow">
+<sc-for list="{{ctItems}}" as="o" hint-placeholder-count="3"><button type="button" class="dpopt" data-sel="{{o.sel}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div></sc-if>
+</div>
+</div>
+<span class="tsep" aria-hidden="true"></span>
+<div class="tgroup" style="gap: 6px">
+<label for="f-lookup" style="font-size: 12px; font-weight: 600; color: #3A424D">Contract lookup</label>
+<input id="f-lookup" type="text" maxlength="10" class="field" placeholder="e.g. 24817" value="{{lookupQ}}" onChange="{{onLookup}}" style="width: 130px; height: 30px; padding: 3px 8px">
+<sc-if value="{{lkNotFound}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; color: #8F3B06">No contract {{lookupQ}} found.</span></sc-if>
+</div>
+</section>
+<div class="ctwrap"><table class="ctable">
+<thead><tr><th>Contract #</th><th>Status</th><th>Begin</th><th>Organization</th><th>Group</th><th>Route</th><th>Buses</th><th class="num">Total</th><th class="num">Balance</th><th>Payment</th></tr></thead>
+<tbody>
+<sc-for list="{{ctList}}" as="c" hint-placeholder-count="6">
+<tr data-current="{{c.current}}" data-cs="{{c.cStatus}}" onClick="{{c.open}}"><td class="mono"><button type="button" class="ctlink" onClick="{{c.open}}">{{c.contract}}</button></td><td><span class="cst" data-cs="{{c.cStatus}}">{{c.statusLabel}}</span></td><td>{{c.begin}}</td><td>{{c.org}}</td><td>{{c.group}}</td><td>{{c.route}}</td><td>{{c.buses}}</td><td class="num">{{c.total}}</td><td class="num">{{c.balance}}</td><td><span class="pay" data-tone="{{c.payTone}}">{{c.pay}}</span></td></tr>
+</sc-for>
+</tbody></table>
+<sc-if value="{{ctEmpty}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 16px 12px; color: #5B6470">No contracts match these dates, filter or search.</p></sc-if>
+</div>
+<div class="sbar" role="status" style="border-top: 1px solid #DDE2E8; border-bottom: 0">
+<span class="cnt">{{ctCount}}</span>
+<span class="cnt"><b>{{ctBooked}}</b> booked</span>
+<span class="cnt"><b>{{ctQuotes}}</b> quotes</span>
+<span class="cnt"><b class="red">{{ctCancelled}}</b> cancelled</span>
+<span class="cnt"><b class="red">{{ctBalance}}</b> balance due</span>
+<label for="ct-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search contracts</label>
+<input id="ct-search" type="search" class="field" placeholder="Search contract, org, group, contact…" value="{{ctQuery}}" onChange="{{onCtQuery}}" style="margin-left: auto; width: 300px; max-width: 100%; height: 30px; padding: 3px 8px">
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start">
+
+<div style="flex: 999 1 640px; min-width: 0; background: #FFFFFF; border: 1px solid #D0D7DF; border-radius: 4px; padding: 12px 16px; box-sizing: border-box">
+<sc-if value="{{inView}}" hint-placeholder-val="{{true}}">
+<sc-if value="{{hasEdited}}" hint-placeholder-val="{{false}}">
+<div style="margin-top: 6px; margin-bottom: 6px; background: #E7F1EA; border-radius: 4px; padding: 6px 10px; color: #1E5A33; font-size: 12px; font-weight: 600">Changes saved to contract {{lk.contract}}.</div>
+</sc-if>
+<sc-if value="{{hasAdded}}" hint-placeholder-val="{{false}}">
+<div style="margin-top: 6px; background: #E7F1EA; border-radius: 4px; padding: 5px 10px; color: #1E5A33; font-size: 12px; font-weight: 600">Contract {{lastJob.contract}} added for {{lastJob.beginDate}} at {{lastJob.startTime}}.</div>
+</sc-if>
+<sc-if value="{{hasCurrent}}" hint-placeholder-val="{{true}}">
+<div style="margin-top: 6px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 16px; padding-bottom: 6px; border-bottom: 1px solid #C9D1DA">
+<div>
+<h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #1B1F24">Contract <span style="font-family: Consolas, 'Courier New', monospace; font-weight: 700">{{lk.contract}}</span> <span class="cst" data-cs="{{lk.cStatus}}" style="vertical-align: 2px">{{lk.cStatusLabel}}</span></h2>
+</div>
+<span style="display: flex; gap: 8px; flex-wrap: wrap"><button type="button" class="btn2" onClick="{{startInsert}}" style="display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Insert contract</button><button type="button" class="btn" onClick="{{startEdit}}">Edit contract</button><button type="button" class="btn2 tdel" data-armed="{{delCStep}}" onClick="{{delContract}}">{{delCLabel}}</button><button type="button" class="callink" onClick="{{lkOpenOnBoard}}">Open on board</button></span>
+</div>
+<fieldset class="fs"><legend class="lg">Job</legend><div class="fgrid">
+<div class="fld"><span class="rl">Contract #</span><div class="ro mono">{{lk.contract}}</div></div>
+<div class="fld"><span class="rl">Organization</span><div class="ro">{{lk.org}}</div></div>
+<div class="fld"><span class="rl">Group name</span><div class="ro">{{lk.group}}</div></div>
+<div class="fld"><span class="rl">Passengers</span><div class="ro">{{lk.pax}}</div></div>
+<div class="fld"><span class="rl">Contract status</span><div class="ro">{{lk.cStatusLabel}}</div></div>
+</div></fieldset>
+<fieldset class="fs"><legend class="lg">Group contact</legend><div class="fgrid">
+<div class="fld"><span class="rl">Contact name</span><div class="ro">{{lk.contact}}</div></div>
+<div class="fld"><span class="rl">Phone</span><div class="ro">{{lk.phone}}</div></div>
+</div></fieldset>
+<fieldset class="fs"><legend class="lg">Schedule</legend><div class="fgrid">
+<div class="fld"><span class="rl">Begin date</span><div class="ro">{{lk.beginFull}}</div></div>
+<div class="fld"><span class="rl">Spot time</span><div class="ro">{{lk.spotTime}}</div></div>
+<div class="fld"><span class="rl">Start time</span><div class="ro">{{lk.startTime}}</div></div>
+<div class="fld"><span class="rl">Return date</span><div class="ro">{{lk.returnFull}}</div></div>
+<div class="fld"><span class="rl">Return time</span><div class="ro">{{lk.returnTime}}</div></div>
+</div></fieldset>
+<fieldset class="fs"><legend class="lg">Locations</legend>
+<h3 class="sub">Pickup</h3><div class="fgrid">
+<div class="fld full"><span class="rl">Location</span><div class="ro">{{lk.puPlace}}</div></div>
+<div class="fld full"><span class="rl">Address</span><div class="ro">{{lk.puStreet}}</div></div>
+<div class="fld"><span class="rl">State</span><div class="ro">{{lk.puState}}</div></div>
+<div class="fld"><span class="rl">City</span><div class="ro">{{lk.puCity}}</div></div>
+<div class="fld"><span class="rl">ZIP code</span><div class="ro">{{lk.puZip}}</div></div>
+<div class="fld"><span class="rl">County</span><div class="ro county" data-tone="ok">{{lk.puCounty}}</div></div>
+</div>
+<h3 class="sub next">Destination</h3><div class="fgrid">
+<div class="fld full"><span class="rl">Location</span><div class="ro">{{lk.dePlace}}</div></div>
+<div class="fld full"><span class="rl">Address</span><div class="ro">{{lk.deStreet}}</div></div>
+<div class="fld"><span class="rl">State</span><div class="ro">{{lk.deState}}</div></div>
+<div class="fld"><span class="rl">City</span><div class="ro">{{lk.deCity}}</div></div>
+<div class="fld"><span class="rl">ZIP code</span><div class="ro">{{lk.deZip}}</div></div>
+<div class="fld"><span class="rl">County</span><div class="ro county" data-tone="ok">{{lk.deCounty}}</div></div>
+</div>
+</fieldset>
+<fieldset class="fs"><legend class="lg">Itinerary</legend><div style="clear: both">
+<div class="ittext itbox">{{lk.itinText}}</div>
+</div></fieldset>
+<fieldset class="fs"><legend class="lg">Vehicle &amp; driver</legend><div class="fgrid">
+<div class="fld"><span class="rl">Number of buses</span><div class="ro">{{lk.busCount}}</div></div>
+<div class="fld"><span class="rl">Terminal</span><div class="ro">{{lk.terminal}}</div></div>
+<div class="fld"><span class="rl">Size requirement</span><div class="ro">{{lk.reqType}}<sc-if value="{{lk.wc}}" hint-placeholder-val="{{false}}"><strong>&nbsp;WC</strong></sc-if></div></div>
+<div class="fld"><span class="rl">Requested driver</span><div class="ro">{{lk.requestedLabel}}</div></div>
+<div class="fld full"><span class="rl">Info</span><div class="ro">{{lk.special}}</div></div>
+</div></fieldset>
+<fieldset class="fs"><legend class="lg">Pricing</legend><div class="fgrid">
+<div class="fld"><span class="rl">Total price</span><div class="ro">{{lk.priceLabel}}</div></div>
+<div class="fld"><span class="rl">Deposit required</span><div class="ro">{{lk.depositLabel}}</div></div>
+<div class="fld"><span class="rl">Total paid (incl. deposit)</span><div class="ro">{{lk.paidLabel}}</div></div>
+<div class="fld"><span class="rl">Balance due</span><div class="ro">{{lk.balanceLabel}}</div></div>
+<div class="fld"><span class="rl">Payment status</span><div class="ro"><span class="pay" data-tone="{{lk.payTone}}">{{lk.payStatus}}</span></div></div>
+</div></fieldset>
+<sc-if value="{{lk.singleBus}}" hint-placeholder-val="{{true}}"><fieldset class="fs"><legend class="lg">Dispatch</legend><div class="fgrid">
+<div class="fld"><span class="rl">Driver</span><div class="ro">{{lk.driverLabel}}</div></div>
+<div class="fld"><span class="rl">Driver phone</span><div class="ro">{{lk.driverPhone}}</div></div>
+<div class="fld"><span class="rl">Report time</span><div class="ro">{{lk.reportTime}}</div></div>
+<div class="fld"><span class="rl">Actual report</span><div class="ro">{{lk.actualReport}}</div></div>
+<div class="fld"><span class="rl">Bus</span><div class="ro">{{lk.busLabel}}</div></div>
+<div class="fld"><span class="rl">Confirmation</span><div class="ro">{{lk.confirmLabel}}</div></div>
+</div></fieldset></sc-if><sc-if value="{{lk.multiBus}}" hint-placeholder-val="{{false}}"><fieldset class="fs"><legend class="lg">Dispatch</legend><p style="clear: both; margin: 0; font-size: 12.5px; color: #3A424D">This contract has {{lk.busCount}} buses ({{lk.contract}}-1 to {{lk.contract}}-{{lk.busCount}} on the dispatch board). Driver, bus and report details are set per bus there.</p></fieldset></sc-if>
+<fieldset class="fs"><legend class="lg">Dispatch notes</legend><div style="clear: both"><div class="ittext itbox">{{lk.dispatchNotes}}</div></div></fieldset>
+</sc-if>
+<sc-if value="{{noCurrent}}" hint-placeholder-val="{{false}}">
+<p style="margin: 12px 0 0; color: #4A525D">Pick a contract from the list, or look one up, to see it here.</p>
+<div style="margin-top: 10px"><button type="button" class="btn2" onClick="{{startInsert}}" style="display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Insert contract</button></div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{inInsert}}" hint-placeholder-val="{{false}}">
+<h2 style="margin: 0; font-size: 14px; font-weight: 700">{{formTitle}}</h2>
+
+<sc-if value="{{hasErrors}}" hint-placeholder-val="{{false}}">
+<div style="margin-top: 8px; background: #FDEBDD; border-radius: 4px; padding: 6px 10px; color: #8F3B06; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{salesErrors}}" as="er" hint-placeholder-count="2">
+<div>{{er.text}}</div>
+</sc-for>
+</div>
+</sc-if>
+
+<fieldset class="fs">
+<legend class="lg">Job</legend>
+<div class="fgrid">
+<div class="fld"><span class="rl">Contract #</span><div class="ro" aria-label="Contract number is assigned when the contract is added">{{formContract}}</div></div>
+<div class="fld"><label for="f-org">Organization <span class="req">*</span></label><input id="f-org" type="text" class="field" value="{{form.org}}" onChange="{{on.org}}"></div>
+<div class="fld"><label for="f-group">Group name <span class="req">*</span></label><input id="f-group" type="text" class="field" value="{{form.group}}" onChange="{{on.group}}"></div>
+<div class="fld"><label for="f-pax">Passengers <span class="req">*</span></label><input id="f-pax" type="number" min="1" class="field" value="{{form.pax}}" onChange="{{on.pax}}"></div>
+<div class="fld"><label for="f-cstatus">Contract status <span class="req">*</span></label><select id="f-cstatus" class="field" value="{{form.cStatus}}" onChange="{{on.cStatus}}"><sc-for list="{{statusOptions}}" as="o" hint-placeholder-count="3"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+</div>
+</fieldset>
+
+<fieldset class="fs">
+<legend class="lg">Group contact</legend>
+<div class="fgrid">
+<div class="fld"><label for="f-contact">Contact name <span class="req">*</span></label><input id="f-contact" type="text" class="field" value="{{form.contact}}" onChange="{{on.contact}}"></div>
+<div class="fld"><label for="f-phone">Phone <span class="req">*</span></label><input id="f-phone" type="tel" class="field" value="{{form.phone}}" onChange="{{on.phone}}"></div>
+</div>
+</fieldset>
+
+
+<fieldset class="fs">
+<legend class="lg">Schedule</legend>
+<div class="pairs">
+<div class="pair three">
+<div class="fld"><label for="f-bdate">Begin date <span class="req">*</span></label><input id="f-bdate" type="date" class="field" value="{{form.beginDate}}" onChange="{{on.beginDate}}"></div>
+<div class="fld"><label for="f-sptime">Spot time <span class="req">*</span></label><div class="combo"><input id="f-sptime" type="text" class="field" autocomplete="off" placeholder="e.g. 06:45" aria-expanded="{{tl.spotTime.expanded}}" value="{{form.spotTime}}" onChange="{{tl.spotTime.change}}" onClick="{{tl.spotTime.open}}" onKeyDown="{{tl.spotTime.key}}" onBlur="{{tb.spotTime}}"><button type="button" class="combobtn" tabindex="-1" aria-label="Show spot times" onMouseDown="{{tl.spotTime.toggle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button><sc-if value="{{tl.spotTime.isOpen}}" hint-placeholder-val="{{false}}"><div class="combolist" ref="{{tl.spotTime.listRef}}"><sc-for list="{{tl.spotTime.items}}" as="o" hint-placeholder-count="6"><button type="button" class="comboopt" tabindex="-1" data-sel="{{o.sel}}" data-hl="{{o.hl}}" data-anchor="{{o.anchor}}" onMouseDown="{{o.pick}}">{{o.value}}</button></sc-for></div></sc-if></div></div>
+<div class="fld"><label for="f-stime">Start time <span class="req">*</span></label><div class="combo"><input id="f-stime" type="text" class="field" autocomplete="off" placeholder="e.g. 07:15" aria-expanded="{{tl.startTime.expanded}}" value="{{form.startTime}}" onChange="{{tl.startTime.change}}" onClick="{{tl.startTime.open}}" onKeyDown="{{tl.startTime.key}}" onBlur="{{tb.startTime}}"><button type="button" class="combobtn" tabindex="-1" aria-label="Show start times" onMouseDown="{{tl.startTime.toggle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button><sc-if value="{{tl.startTime.isOpen}}" hint-placeholder-val="{{false}}"><div class="combolist" ref="{{tl.startTime.listRef}}"><sc-for list="{{tl.startTime.items}}" as="o" hint-placeholder-count="6"><button type="button" class="comboopt" tabindex="-1" data-sel="{{o.sel}}" data-hl="{{o.hl}}" data-anchor="{{o.anchor}}" onMouseDown="{{o.pick}}">{{o.value}}</button></sc-for></div></sc-if></div></div>
+</div>
+<div class="pair">
+<div class="fld"><label for="f-rdate">Return date <span class="req">*</span></label><input id="f-rdate" type="date" class="field" value="{{form.returnDate}}" onChange="{{on.returnDate}}"></div>
+<div class="fld"><label for="f-rtime">Return time <span class="req">*</span></label><div class="combo"><input id="f-rtime" type="text" class="field" autocomplete="off" placeholder="e.g. 18:30" aria-expanded="{{tl.returnTime.expanded}}" value="{{form.returnTime}}" onChange="{{tl.returnTime.change}}" onClick="{{tl.returnTime.open}}" onKeyDown="{{tl.returnTime.key}}" onBlur="{{tb.returnTime}}"><button type="button" class="combobtn" tabindex="-1" aria-label="Show return times" onMouseDown="{{tl.returnTime.toggle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button><sc-if value="{{tl.returnTime.isOpen}}" hint-placeholder-val="{{false}}"><div class="combolist" ref="{{tl.returnTime.listRef}}"><sc-for list="{{tl.returnTime.items}}" as="o" hint-placeholder-count="6"><button type="button" class="comboopt" tabindex="-1" data-sel="{{o.sel}}" data-hl="{{o.hl}}" data-anchor="{{o.anchor}}" onMouseDown="{{o.pick}}">{{o.value}}</button></sc-for></div></sc-if></div></div>
+</div>
+</div>
+</fieldset>
+
+<fieldset class="fs">
+<legend class="lg">Locations</legend>
+<h3 class="sub">Pickup</h3>
+<div class="fgrid">
+<div class="fld full"><label for="f-pu-place">Location</label><input id="f-pu-place" type="text" class="field" placeholder="e.g. school, hotel, stadium" value="{{form.pickupPlace}}" onChange="{{on.pickupPlace}}"></div>
+<div class="fld full"><label for="f-pu-street">Address <span class="req">*</span></label><input id="f-pu-street" type="text" class="field" value="{{form.pickupStreet}}" onChange="{{on.pickupStreet}}"></div>
+<div class="fld"><label for="f-pu-state">State <span class="req">*</span></label><select id="f-pu-state" class="field" value="{{form.pickupState}}" onChange="{{on.pickupState}}"><sc-for list="{{stateOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld"><label for="f-pu-city">City <span class="req">*</span></label><select id="f-pu-city" class="field" disabled="{{puCityDisabled}}" value="{{form.pickupCity}}" onChange="{{on.pickupCity}}"><sc-for list="{{puCityOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld"><label for="f-pu-zip">ZIP code</label><input id="f-pu-zip" type="text" inputmode="numeric" maxlength="5" class="field" placeholder="ZIP" value="{{form.pickupZip}}" onChange="{{on.pickupZip}}"></div>
+<div class="fld"><span class="rl">County</span><div class="ro county" data-tone="{{puZipTone}}" aria-live="polite">{{puZipMsg}}</div></div>
+</div>
+<h3 class="sub next">Destination</h3>
+<div class="fgrid">
+<div class="fld full"><label for="f-de-place">Location</label><input id="f-de-place" type="text" class="field" placeholder="e.g. school, hotel, stadium" value="{{form.destPlace}}" onChange="{{on.destPlace}}"></div>
+<div class="fld full"><label for="f-de-street">Address <span class="req">*</span></label><input id="f-de-street" type="text" class="field" value="{{form.destStreet}}" onChange="{{on.destStreet}}"></div>
+<div class="fld"><label for="f-de-state">State <span class="req">*</span></label><select id="f-de-state" class="field" value="{{form.destState}}" onChange="{{on.destState}}"><sc-for list="{{stateOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld"><label for="f-de-city">City <span class="req">*</span></label><select id="f-de-city" class="field" disabled="{{deCityDisabled}}" value="{{form.destCity}}" onChange="{{on.destCity}}"><sc-for list="{{deCityOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld"><label for="f-de-zip">ZIP code</label><input id="f-de-zip" type="text" inputmode="numeric" maxlength="5" class="field" placeholder="ZIP" value="{{form.destZip}}" onChange="{{on.destZip}}"></div>
+<div class="fld"><span class="rl">County</span><div class="ro county" data-tone="{{deZipTone}}" aria-live="polite">{{deZipMsg}}</div></div>
+</div>
+</fieldset>
+
+<fieldset class="fs">
+<legend class="lg">Itinerary</legend>
+<div class="fld" style="clear: both"><label for="f-itin">Itinerary</label><textarea id="f-itin" class="field tarea" style="min-height: 140px" placeholder="Enter itinerary" value="{{form.itinerary}}" onChange="{{on.itinerary}}"></textarea></div>
+</fieldset>
+
+<fieldset class="fs">
+<legend class="lg">Vehicle &amp; driver</legend>
+<div class="fgrid">
+<div class="fld"><label for="f-buses">Number of buses <span class="req">*</span></label><input id="f-buses" type="number" min="1" max="30" class="field" value="{{form.busCount}}" onChange="{{on.busCount}}"></div>
+<div class="fld"><label for="f-terminal">Terminal <span class="req">*</span></label><select id="f-terminal" class="field" value="{{form.terminal}}" onChange="{{on.terminal}}"><sc-for list="{{terminalOptions}}" as="o" hint-placeholder-count="5"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld"><label for="f-size">Size requirement <span class="req">*</span></label><select id="f-size" class="field" value="{{form.sizeReq}}" onChange="{{on.sizeReq}}"><sc-for list="{{sizeOptions}}" as="o" hint-placeholder-count="4"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld"><label for="f-reqdriver">Requested driver</label><select id="f-reqdriver" class="field" value="{{form.requestedDriver}}" onChange="{{on.requestedDriver}}"><sc-for list="{{reqDriverOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.label}}</option></sc-for></select></div>
+<div class="fld full"><label for="f-special">Info</label><textarea id="f-special" class="field tarea" value="{{form.special}}" onChange="{{on.special}}"></textarea></div>
+</div>
+</fieldset>
+
+<fieldset class="fs">
+<legend class="lg">Pricing</legend>
+<div class="fgrid">
+<div class="fld"><label for="f-price">Total price <span class="req">*</span></label><input id="f-price" type="text" inputmode="decimal" class="field" placeholder="$0.00" value="{{form.price}}" onChange="{{on.price}}"></div>
+<div class="fld"><label for="f-deposit">Deposit required</label><input id="f-deposit" type="text" inputmode="decimal" class="field" placeholder="$0.00" value="{{form.deposit}}" onChange="{{on.deposit}}"></div>
+<div class="fld"><label for="f-paid">Total paid (incl. deposit)</label><input id="f-paid" type="text" inputmode="decimal" class="field" placeholder="$0.00" value="{{form.paid}}" onChange="{{on.paid}}"></div>
+<div class="fld"><span class="rl">Balance due</span><div class="ro">{{formPay.balance}}</div></div>
+<div class="fld"><span class="rl">Payment status</span><div class="ro"><span class="pay" data-tone="{{formPay.tone}}">{{formPay.status}}</span></div></div>
+</div>
+</fieldset>
+
+<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px solid #C9D1DA">
+<button type="button" class="btn" onClick="{{submitForm}}">{{submitLabel}}</button>
+<button type="button" class="btn2" onClick="{{cancelInsert}}">Cancel</button>
+</div>
+</sc-if>
+</div>
+
+
+</div>
+</section>
+</sc-if>
+
+<footer class="sfoot" aria-label="Session information">
+<span><span class="sk">Date</span> {{ftDate}}</span>
+<span><span class="sk">Time</span> {{ftTime}}</span>
+<span><span class="sk">User</span> Demo User</span>
+<span><span class="sk">Terminal</span> {{termLabel}}</span>
+<span><span class="sk">Session</span> DEMO-0001</span>
+<span><span class="sk">Session time</span> {{ftSession}}</span>
+<span><span class="sk">Server</span> demo-server</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"density":{"editor":"enum","options":["comfortable","compact"],"default":"comfortable"},"$preview":{"width":1440,"height":1340}}'>
+var DRIVERS = ['Marcus Bell','Luis Ortega','Denise Carter','Ray Holloway','Priya Nair','Tom Kowalski','Andre Simmons','Gloria Mendez','Kevin Doyle','Sam Whitaker'];
+var DRIVER_PHONE = {
+  'Marcus Bell': '(201) 555-0181', 'Luis Ortega': '(201) 555-0122', 'Denise Carter': '(973) 555-0147', 'Ray Holloway': '(201) 555-0163',
+  'Priya Nair': '(732) 555-0110', 'Tom Kowalski': '(201) 555-0195', 'Andre Simmons': '(973) 555-0138', 'Gloria Mendez': '(201) 555-0174',
+  'Kevin Doyle': '(551) 555-0129', 'Sam Whitaker': '(551) 555-0156'
+};
+var TERMINALS = ['NJ', 'NY', 'PA', 'CT', 'MA'];
+var BUSES = [
+  { num: '4512', seats: 56, model: 'MCI J4500' },
+  { num: '4520', seats: 56, model: 'MCI J4500' },
+  { num: '4533', seats: 57, model: 'Prevost H3-45, WC lift', lift: true },
+  { num: '4547', seats: 56, model: 'Van Hool CX45' },
+  { num: '4561', seats: 56, model: 'MCI J4500' },
+  { num: '3108', seats: 35, model: 'Minicoach' },
+  { num: '3115', seats: 35, model: 'Minicoach' },
+  { num: '2207', seats: 28, model: 'Shuttle' }
+];
+var TRIPS = [
+  { id: 't1', contract: '24811', beginDate: 'Mon 11/09', startTime: '5:30 AM', org: 'Hoboken Youth Soccer League', pickup: 'Stevens Park, Hudson St & 4th St, Hoboken', dest: 'Lehigh Valley Sports Complex, Allentown PA', returnDate: 'Mon 11/09', returnTime: '7:00 PM', group: 'U14 Travel Squad', pax: 52, reqType: '56-pax coach', driver: 'Marcus Bell', bus: '4512', confirm: { init: 'AR', at: '11/04 10:12 AM' }, special: '12 large equipment duffels go in the bays. Two chaperones ride in the front row.', driverRequest: 'Group asked for Marcus again; he drove their fall season.', requestedDriver: 'Marcus Bell', contact: 'Coach Dana Price', phone: '(201) 555-0142' },
+  { id: 't2', contract: '24814', beginDate: 'Mon 11/09', startTime: '6:45 AM', org: 'Bergen County Senior Center', pickup: 'Senior Center main entrance, Hackensack', dest: 'Hershey Gardens, Hershey PA', returnDate: 'Mon 11/09', returnTime: '6:30 PM', group: 'Fall Foliage Day Trip', pax: 44, reqType: '56-pax coach', wc: true, driver: 'Denise Carter', bus: '4533', confirm: { init: 'MK', at: '11/05 3:40 PM' }, special: 'Wheelchair lift required for 2 passengers. Rest stop every 90 minutes.', driverRequest: 'Group asked for Denise again; experienced with senior groups and lift operation.', requestedDriver: 'Denise Carter', contact: 'Helen Russo', phone: '(201) 555-0188' },
+  { id: 't3', contract: '24817', beginDate: 'Mon 11/09', startTime: '7:15 AM', org: 'Union City Public Schools', pickup: 'Union City HS, 2500 Kennedy Blvd', dest: 'Liberty Science Center, Jersey City', returnDate: 'Mon 11/09', returnTime: '2:15 PM', group: '9th Grade Biology', pax: 48, reqType: '56-pax coach', driver: '', bus: '', confirm: null, special: 'Driver checks in at the main office on arrival. No food or drink on the bus.', driverRequest: 'Driver must have a school bus (S) endorsement on file.', requestedDriver: '', contact: 'Ms. Alicia Gomez', phone: '(201) 555-0117' },
+  { id: 't4', contract: '24820', beginDate: 'Mon 11/09', startTime: '9:00 AM', org: 'Meridian Health Partners', pickup: 'Newark Liberty Intl., Terminal B arrivals', dest: 'Hyatt Regency, New Brunswick', returnDate: 'Wed 11/11', returnTime: '5:00 PM', group: 'Regional Sales Conference', pax: 30, reqType: '35-pax minicoach', driver: 'Andre Simmons', bus: '3108', confirm: null, special: 'Meet group at Door 3 with company sign. Luggage for 30.', driverRequest: 'Client asked for Andre again. Business attire for driver.', requestedDriver: 'Andre Simmons', contact: 'Jordan Lee', phone: '(732) 555-0164' },
+  { id: 't5', contract: '24823', beginDate: 'Mon 11/09', startTime: '11:30 AM', org: 'St. Augustine Parish', pickup: 'St. Augustine Church, West New York', dest: 'National Shrine, Washington DC', returnDate: 'Tue 11/10', returnTime: '8:00 PM', group: 'Pilgrimage (overnight)', pax: 55, reqType: '56-pax coach', driver: 'Luis Ortega', bus: '', confirm: null, special: 'Overnight trip; driver room is booked at the group hotel.', driverRequest: 'Spanish-speaking driver; Luis requested by name.', requestedDriver: 'Luis Ortega', contact: 'Fr. Miguel Santos', phone: '(201) 555-0139' },
+  { id: 't6', contract: '24826', beginDate: 'Tue 11/10', startTime: '6:00 AM', org: 'Garden State College Athletics', pickup: 'GSC Field House, Piscataway', dest: 'Bryce Jordan Center, State College PA', returnDate: 'Wed 11/11', returnTime: '11:00 PM', group: "Women's Volleyball", pax: 26, reqType: '35-pax minicoach', driver: 'Priya Nair', bus: '3115', confirm: { init: 'AR', at: '11/06 9:05 AM' }, special: 'Team brings its own cooler; allow it on board.', driverRequest: 'Team asked for Priya; she drove their last road trip.', requestedDriver: 'Priya Nair', contact: 'Coach Erin Walsh', phone: '(848) 555-0102' },
+  { id: 't7', contract: '24829', beginDate: 'Tue 11/10', startTime: '8:30 AM', org: 'Hudson Corporate Events', pickup: 'Port Imperial Ferry Terminal, Weehawken', dest: 'Atlantic City Convention Center', returnDate: 'Tue 11/10', returnTime: '7:30 PM', group: 'Client Appreciation Day', pax: 40, reqType: '56-pax coach', driver: '', bus: '4547', confirm: null, special: 'Wi-Fi and USB charging required. Water bottles stocked by client.', driverRequest: 'None.', requestedDriver: '', contact: 'Sasha Kim', phone: '(201) 555-0171' },
+  { id: 't8', contract: '24832', beginDate: 'Tue 11/10', startTime: '12:00 PM', org: 'North Bergen Little League', pickup: 'Braddock Park, North Bergen', dest: 'MetLife Stadium, East Rutherford', returnDate: 'Tue 11/10', returnTime: '5:00 PM', group: 'Family Day Outing', pax: 22, reqType: '28-pax shuttle', driver: 'Tom Kowalski', bus: '2207', confirm: { init: 'MK', at: '11/07 1:22 PM' }, special: 'Drop at Lot E. Children under 12 on board.', driverRequest: 'League asked for Tom by name.', requestedDriver: 'Tom Kowalski', contact: 'Rick Alvarez', phone: '(201) 555-0156' },
+  { id: 't9', contract: '24835', beginDate: 'Wed 11/11', startTime: '7:00 AM', org: 'Hudson County Veterans Council', pickup: 'Journal Square, Jersey City', dest: 'Washington Crossing Historic Park, PA', returnDate: 'Wed 11/11', returnTime: '4:00 PM', group: 'Veterans Day Memorial', pax: 50, reqType: '56-pax coach', driver: 'Gloria Mendez', bus: '4561', confirm: null, special: 'Ceremony at 11 AM; bus must stay on site. Several passengers use walkers.', driverRequest: 'Council asked for Gloria (veteran driver).', requestedDriver: 'Gloria Mendez', contact: 'Walt Brennan', phone: '(201) 555-0193' },
+  { id: 't10', contract: '24838', beginDate: 'Wed 11/11', startTime: '10:00 PM', org: 'Liberty Touring Co.', pickup: 'Port Authority Bus Terminal, Gate 401', dest: 'Old Montreal, Montreal QC', returnDate: 'Sat 11/14', returnTime: '6:00 PM', group: 'Boston Weekend Tour', pax: 54, reqType: '56-pax coach', driver: '', bus: '', confirm: null, special: 'Overnight stay; driver room booked at the group hotel.', driverRequest: 'Two-driver team requested for the overnight leg.', requestedDriver: '', contact: 'Nadia Ferreira', phone: '(212) 555-0128' },
+  { id: 't11', contract: '24841', beginDate: 'Sat 11/21', startTime: '8:00 AM', org: 'Weehawken Rotary Club', pickup: '', dest: '', returnDate: 'Sat 11/21', returnTime: '6:00 PM', group: 'Holiday Outing', pax: 38, reqType: '56-pax coach', driver: '', bus: '', confirm: null, special: 'Customer is comparing quotes; follow up by 11/16.', driverRequest: '', requestedDriver: '', contact: 'Linda Park', phone: '(201) 555-0148', cStatus: 'quote' },
+  { id: 't12', contract: '24844', beginDate: 'Tue 11/10', startTime: '10:00 AM', org: 'Secaucus Senior Club', pickup: '', dest: '', returnDate: 'Tue 11/10', returnTime: '4:00 PM', group: 'Museum Day', pax: 30, reqType: '35-pax minicoach', driver: '', bus: '', confirm: null, special: 'Cancelled by customer 11/08; deposit kept per policy.', driverRequest: '', requestedDriver: '', contact: 'Frank Russo', phone: '(201) 555-0193', cStatus: 'cancelled' }
+];
+
+function stamp() {
+  var d = new Date(), h = d.getHours(), m = d.getMinutes();
+  return (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1) + '/' + (d.getDate() < 10 ? '0' : '') + d.getDate() + ' ' + (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+}
+var COLS = [
+  ['contract', 96, 56], ['day', 58, 52], ['hasNotes', 56, 48], ['notesText', 200, 100], ['terminal', 86, 56], ['reportTime', 78, 64], ['actualReport', 78, 64], ['spotTime', 60, 56], ['onLocAt', 84, 64], ['beginDate', 86, 56], ['startTime', 68, 56], ['org', 108, 64],
+  ['pickup', 122, 64], ['dest', 122, 64], ['returnDate', 86, 56], ['returnTime', 68, 56],
+  ['group', 96, 64], ['driver', 98, 72], ['driverPhone', 104, 72], ['busNum', 66, 64], ['sizeReq', 84, 64],
+  ['confInit', 70, 64], ['confAt', 80, 64]
+];
+var UNITS = [
+  { k: 'contract', cols: ['contract'] }, { k: 'day', cols: ['day'] }, { k: 'hasNotes', cols: ['hasNotes'] }, { k: 'notesText', cols: ['notesText'] }, { k: 'terminal', cols: ['terminal'] },
+  { k: 'reportTime', cols: ['reportTime'] }, { k: 'actualReport', cols: ['actualReport'] }, { k: 'spotTime', cols: ['spotTime'] }, { k: 'onLocAt', cols: ['onLocAt'] }, { k: 'begin', cols: ['beginDate', 'startTime'] },
+  { k: 'org', cols: ['org'] }, { k: 'pudest', cols: ['pickup', 'dest'] },
+  { k: 'ret', cols: ['returnDate', 'returnTime'] }, { k: 'group', cols: ['group'] }, { k: 'driver', cols: ['driver'] }, { k: 'driverPhone', cols: ['driverPhone'] },
+  { k: 'bus', cols: ['busNum', 'sizeReq'] }, { k: 'conf', cols: ['confInit', 'confAt'] }
+];
+var EXPORT_LABELS = { contract: 'Contract #', day: 'Day', hasNotes: 'Notes', notesText: 'Dispatch notes', terminal: 'Terminal', reportTime: 'Report time', actualReport: 'Actual report', spotTime: 'Spot', onLocAt: 'On location', beginDate: 'Begin date', startTime: 'Start time', org: 'Organization', pickup: 'Pickup', dest: 'Destination', returnDate: 'Return date', returnTime: 'Return time', group: 'Group name', driver: 'Driver', driverPhone: 'Driver phone', busNum: 'Bus #', sizeReq: 'Size req.', confInit: 'Initials', confAt: 'Entered' };
+function exportVal(r, c) {
+  switch (c) {
+    case 'day': return r.dayLabel;
+    case 'beginDate': return r.beginNoWd;
+    case 'returnDate': return r.returnNoWd;
+    case 'hasNotes': return r.hasNotes === 'true' ? 'Yes' : '';
+    case 'notesText': return r.dispatchNotes || '';
+    case 'driver': return r.driver || 'Unassigned';
+    case 'driverPhone': return r.driverPhone || '';
+    case 'busNum': return r.bus ? r.busNumLabel : 'Needed';
+    case 'sizeReq': return (r.reqType || '') + (r.wc ? ' WC' : '');
+    case 'confInit': return r.confirm ? r.confirm.init : 'Pending';
+    case 'confAt': return r.confirmAt || '';
+    default: var v = r[c]; return v == null ? '' : String(v);
+  }
+}
+var CRC_T = null;
+function crc32(b) {
+  if (!CRC_T) { CRC_T = []; for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; CRC_T[n] = c >>> 0; } }
+  var x = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) x = CRC_T[(x ^ b[i]) & 255] ^ (x >>> 8); return (x ^ 0xFFFFFFFF) >>> 0;
+}
+function zipStore(files) {
+  var enc = new TextEncoder(), parts = [], cen = [], off = 0;
+  var u16 = function (v) { return [v & 255, (v >>> 8) & 255]; }, u32 = function (v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255]; };
+  files.forEach(function (f) {
+    var name = enc.encode(f[0]), data = enc.encode(f[1]), crc = crc32(data);
+    var lh = [].concat(u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0));
+    parts.push(new Uint8Array(lh), name, data);
+    cen.push([].concat(u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(off)), name);
+    off += lh.length + name.length + data.length;
+  });
+  var csize = 0;
+  cen.forEach(function (c, i) { var a = i % 2 === 0 ? new Uint8Array(c) : c; parts.push(a); csize += a.length; });
+  parts.push(new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length), u32(csize), u32(off), u16(0))));
+  var total = parts.reduce(function (a, p) { return a + p.length; }, 0), out = new Uint8Array(total), pos = 0;
+  parts.forEach(function (p) { out.set(p, pos); pos += p.length; });
+  return out;
+}
+function xesc(v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ''); }
+function colName(i) { var n = ''; i++; while (i > 0) { var m = (i - 1) % 26; n = String.fromCharCode(65 + m) + n; i = Math.floor((i - 1) / 26); } return n; }
+function buildXlsx(rows, cols, widths) {
+  var cell = function (ref, v, st) { return '<c r="' + ref + '" t="inlineStr"' + (st ? ' s="' + st + '"' : '') + '><is><t xml:space="preserve">' + xesc(v) + '</t></is></c>'; };
+  var x = ['<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>'];
+  cols.forEach(function (c, i) { x.push('<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + Math.max(8, Math.round((widths[c] || 90) / 6.5)) + '" customWidth="1"/>'); });
+  x.push('</cols><sheetData><row r="1">');
+  cols.forEach(function (c, i) { x.push(cell(colName(i) + '1', EXPORT_LABELS[c] || c, 1)); });
+  x.push('</row>');
+  rows.forEach(function (r, ri) {
+    x.push('<row r="' + (ri + 2) + '">');
+    cols.forEach(function (c, i) { x.push(cell(colName(i) + (ri + 2), exportVal(r, c))); });
+    x.push('</row>');
+  });
+  x.push('</sheetData><autoFilter ref="A1:' + colName(cols.length - 1) + (rows.length + 1) + '"/></worksheet>');
+  return zipStore([
+    ['[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
+    ['_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+    ['xl/workbook.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Dispatch board" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\'Dispatch board\'!$A$1:$' + colName(cols.length - 1) + '$' + (rows.length + 1) + '</definedName></definedNames></workbook>'],
+    ['xl/_rels/workbook.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
+    ['xl/styles.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE3E7EC"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf/><xf fontId="1" fillId="2" applyFont="1" applyFill="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'],
+    ['xl/worksheets/sheet1.xml', x.join('')]
+  ]);
+}
+function exportBoardXlsx(rows, cols, widths, dateKey) {
+  var bytes = buildXlsx(rows, cols, widths), filename = 'CharterStack-board-' + (dateKey || 'export') + '.xlsx';
+  var fallback = function () {
+    try {
+      var url = URL.createObjectURL(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+      var a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    } catch (e) {}
+  };
+  var c = typeof window !== 'undefined' && window.claude && window.claude.use ? window.claude : null;
+  if (!c) { fallback(); return; }
+  c.use('downloads').then(function (dl) {
+    if (!dl) { fallback(); return; }
+    return dl.save({ filename: filename, data: bytes }).catch(function (e) { if (e && e.code !== 'declined' && e.code !== 'rate_limited') fallback(); });
+  }, fallback);
+}
+var C_STATUS = { booked: 'Booked', quote: 'Quote', cancelled: 'Cancelled' };
+function money(n) { var v = Number(n); if (!isFinite(v)) return '—'; return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function numOf(v) { var n = parseFloat(String(v == null ? '' : v).replace(/[$,\s]/g, '')); return isFinite(n) ? n : null; }
+function payInfo(price, deposit, paid, cs) {
+  var pr = numOf(price), dp = numOf(deposit) || 0, pd = numOf(paid) || 0;
+  if (cs === 'cancelled') return { balance: 0, status: pd > 0 ? 'Cancelled \u00b7 ' + money(pd) + ' kept' : 'Cancelled', tone: 'none' };
+  if (pr === null) return { balance: null, status: '—', tone: 'none' };
+  var bal = Math.max(0, pr - pd);
+  if (pr > 0 && pd >= pr) return { balance: bal, status: 'Paid in full', tone: 'ok' };
+  if (dp > 0 && pd >= dp) return { balance: bal, status: 'Deposit paid', tone: 'part' };
+  if (pd > 0) return { balance: bal, status: 'Partially paid', tone: 'part' };
+  return { balance: bal, status: 'Unpaid', tone: 'warn' };
+}
+var UNIT_BY = {};
+UNITS.forEach(function (u) { UNIT_BY[u.k] = u; });
+function defaultUnitOrder() { return ['contract', 'day', 'terminal', 'begin', 'reportTime', 'actualReport', 'spotTime', 'onLocAt', 'org', 'pudest', 'group', 'driver', 'bus', 'ret', 'conf', 'driverPhone', 'hasNotes', 'notesText']; }
+function numToKey(n) { var d = new Date(n * 86400000); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate()); }
+function keyToNum(k) { var p = k.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 86400000; }
+function tripEndKey(t) {
+  if (t.returnKey) return t.returnKey;
+  if (t.returnDate && t.returnDate.indexOf('/') !== -1) { var rp = t.returnDate.split(' ')[1].split('/'); return '2026-' + rp[0] + '-' + rp[1]; }
+  return null;
+}
+function emptyFilters() {
+  var f = {};
+  COLS.forEach(function (c) { f[c[0]] = ''; });
+  return f;
+}
+function defaultWidths() {
+  var w = {};
+  COLS.forEach(function (c) { w[c[0]] = c[1]; });
+  return w;
+}
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function keyOf(y, m, d) { return y + '-' + pad2(m + 1) + '-' + pad2(d); }
+function tripKey(t) { if (t.dateKey) return t.dateKey; var p = t.beginDate.split(' ')[1].split('/'); return '2026-' + p[0] + '-' + p[1]; }
+function labelOf(key) {
+  var p = key.split('-');
+  return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+function shortOf(key) {
+  var p = key.split('-');
+  return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+var STATES = [['NJ','New Jersey'],['NY','New York'],['PA','Pennsylvania'],['CT','Connecticut'],['DE','Delaware'],['MD','Maryland'],['DC','District of Columbia'],['VA','Virginia'],['MA','Massachusetts']];
+var ZIPS = {
+  '07030':['Hoboken','NJ','Hudson County'], '07093':['West New York','NJ','Hudson County'], '07087':['Union City','NJ','Hudson County'], '07047':['North Bergen','NJ','Hudson County'], '07086':['Weehawken','NJ','Hudson County'],
+  '07302':['Jersey City','NJ','Hudson County'], '07306':['Jersey City','NJ','Hudson County'], '07305':['Jersey City','NJ','Hudson County'], '07601':['Hackensack','NJ','Bergen County'], '07102':['Newark','NJ','Essex County'], '07114':['Newark','NJ','Essex County'],
+  '08901':['New Brunswick','NJ','Middlesex County'], '08854':['Piscataway','NJ','Middlesex County'], '07073':['East Rutherford','NJ','Bergen County'], '08401':['Atlantic City','NJ','Atlantic County'],
+  '10001':['New York','NY','New York County'], '10036':['New York','NY','New York County'], '11201':['Brooklyn','NY','Kings County'], '10301':['Staten Island','NY','Richmond County'], '10601':['White Plains','NY','Westchester County'], '12207':['Albany','NY','Albany County'], '14202':['Buffalo','NY','Erie County'],
+  '19103':['Philadelphia','PA','Philadelphia County'], '18101':['Allentown','PA','Lehigh County'], '17033':['Hershey','PA','Dauphin County'], '16801':['State College','PA','Centre County'], '16802':['University Park','PA','Centre County'], '15222':['Pittsburgh','PA','Allegheny County'], '18977':['Washington Crossing','PA','Bucks County'],
+  '06103':['Hartford','CT','Hartford County'], '06510':['New Haven','CT','New Haven County'], '06902':['Stamford','CT','Fairfield County'],
+  '19801':['Wilmington','DE','New Castle County'], '21202':['Baltimore','MD','Baltimore City'], '21401':['Annapolis','MD','Anne Arundel County'],
+  '20001':['Washington','DC','District of Columbia'], '20017':['Washington','DC','District of Columbia'], '22314':['Alexandria','VA','City of Alexandria'], '02108':['Boston','MA','Suffolk County']
+};
+var CITIES = {};
+Object.keys(ZIPS).forEach(function (z) {
+  var c = ZIPS[z][0], st = ZIPS[z][1];
+  CITIES[st] = CITIES[st] || [];
+  if (CITIES[st].indexOf(c) === -1) CITIES[st].push(c);
+});
+Object.keys(CITIES).forEach(function (st) { CITIES[st].sort(); });
+function place(street, city, st, zip) {
+  var a = city + ', ' + st + (zip ? ' ' + zip : '');
+  return street ? street + ', ' + a : a;
+}
+var SIZE_OPTIONS = ['56-pax coach', '56-pax coach WC', '57-pax coach', '57-pax coach WC', '35-pax minicoach', '35-pax minicoach WC', '28-pax shuttle', '28-pax shuttle WC'];
+var EXTRA = {
+  t1: ['NJ', '5:00 AM', '4:15 AM'], t2: ['NJ', '6:15 AM', '5:30 AM'], t3: ['NJ', '6:45 AM', ''],
+  t4: ['NY', '8:30 AM', ''], t5: ['NJ', '11:00 AM', '10:00 AM'], t6: ['PA', '5:30 AM', ''],
+  t7: ['NJ', '8:00 AM', ''], t8: ['NJ', '11:30 AM', '10:45 AM'], t9: ['NJ', '6:30 AM', ''],
+  t10: ['NY', '9:30 PM', ''], t11: ['NJ', '7:30 AM', ''], t12: ['NJ', '9:30 AM', '']
+};
+TRIPS.forEach(function (t) { var e = EXTRA[t.id]; if (e) { t.terminal = e[0]; t.spotTime = e[1]; t.reportTime = e[2]; } t.busCount = t.id === 't5' ? 2 : 1; });
+var ITIN_TYPES = ['Depart', 'Arrive', 'Pickup', 'Drop-off', 'Rest stop', 'Hotel', 'Wait', 'Stop'];
+var SAMPLE_ITIN = {
+  t1: [['2026-11-09', '5:30 AM', 'Depart', 'Stevens Park, Hoboken', 'Load equipment bags first'], ['2026-11-09', '7:30 AM', 'Arrive', 'Lehigh Valley Sports Complex', ''], ['2026-11-09', '5:30 PM', 'Depart', 'Lehigh Valley Sports Complex', ''], ['2026-11-09', '7:00 PM', 'Arrive', 'Stevens Park, Hoboken', '']],
+  t5: [['2026-11-09', '11:30 AM', 'Depart', 'St. Augustine Church, West New York', ''], ['2026-11-09', '2:00 PM', 'Rest stop', 'Service plaza, I-95 MD', '30 min'], ['2026-11-09', '4:30 PM', 'Arrive', 'National Shrine, Washington DC', ''], ['2026-11-09', '6:30 PM', 'Hotel', 'Group hotel', 'Driver room booked'], ['2026-11-10', '9:00 AM', 'Pickup', 'Group hotel', ''], ['2026-11-10', '3:00 PM', 'Depart', 'National Shrine, Washington DC', ''], ['2026-11-10', '8:00 PM', 'Arrive', 'St. Augustine Church, West New York', '']],
+  t10: [['2026-11-11', '10:00 PM', 'Depart', 'Port Authority Bus Terminal, Gate 401', ''], ['2026-11-12', '3:30 AM', 'Arrive', 'Faneuil Hall Marketplace, Boston', ''], ['2026-11-14', '12:00 PM', 'Depart', 'Faneuil Hall Marketplace, Boston', ''], ['2026-11-14', '6:00 PM', 'Arrive', 'Port Authority Bus Terminal', '']]
+};
+TRIPS.forEach(function (t) {
+  t.itinerary = (SAMPLE_ITIN[t.id] || []).map(function (r) {
+    return fmtShortKey(r[0]) + '  ' + r[1] + '  ' + r[2] + ' \u2013 ' + r[3] + (r[4] ? ' (' + r[4] + ')' : '');
+  }).join('\n');
+});
+function itinRowsOf(t) {
+  return ((t && t.itinerary) || []).map(function (r) {
+    return { dateLabel: r.date ? fmtShortKey(r.date) : '\u2014', time: r.time || '\u2014', type: r.type || 'Stop', location: r.location || '\u2014', notes: r.notes || '', hasNotes: !!r.notes };
+  });
+}
+var LOC = {
+  t1: ['Stevens Park', 'Hudson St & 4th St', 'Hoboken', 'NJ', '07030', 'Lehigh Valley Sports Complex', '3100 Lehigh St', 'Allentown', 'PA', '18101'],
+  t2: ['Bergen County Senior Center', '20 Main St', 'Hackensack', 'NJ', '07601', 'Hershey Gardens', '170 Hotel Rd', 'Hershey', 'PA', '17033'],
+  t3: ['Union City High School', '2500 Kennedy Blvd', 'Union City', 'NJ', '07087', 'Liberty Science Center', '222 Jersey City Blvd', 'Jersey City', 'NJ', '07305'],
+  t4: ['Newark Liberty Intl., Terminal B arrivals', '3 Brewster Rd', 'Newark', 'NJ', '07114', 'Hyatt Regency', '2 Albany St', 'New Brunswick', 'NJ', '08901'],
+  t5: ['St. Augustine Church', '5900 Bergenline Ave', 'West New York', 'NJ', '07093', 'National Shrine', '400 Michigan Ave NE', 'Washington', 'DC', '20017'],
+  t6: ['GSC Field House', '1 Stadium Dr', 'Piscataway', 'NJ', '08854', 'Bryce Jordan Center', '127 Bryce Jordan Center', 'University Park', 'PA', '16802'],
+  t7: ['Port Imperial Ferry Terminal', '4005 Port Imperial Blvd', 'Weehawken', 'NJ', '07086', 'Atlantic City Convention Center', '1 Convention Blvd', 'Atlantic City', 'NJ', '08401'],
+  t8: ['Braddock Park', '8900 Tonnelle Ave', 'North Bergen', 'NJ', '07047', 'MetLife Stadium, Lot E', '1 MetLife Stadium Dr', 'East Rutherford', 'NJ', '07073'],
+  t9: ['Journal Square', '1 PATH Plaza', 'Jersey City', 'NJ', '07306', 'Washington Crossing Historic Park', '1112 River Rd', 'Washington Crossing', 'PA', '18977'],
+  t10: ['Port Authority Bus Terminal, Gate 401', '625 8th Ave', 'New York', 'NY', '10036', 'Faneuil Hall Marketplace', '4 S Market St', 'Boston', 'MA', '02108'],
+  t11: ['Weehawken Waterfront Park', '1 Port Imperial Blvd', 'Weehawken', 'NJ', '07086', 'Crayola Experience', '30 Centre Square', 'Easton', 'PA', '18042'],
+  t12: ['Secaucus Senior Center', '101 Centre Ave', 'Secaucus', 'NJ', '07094', 'Newark Museum of Art', '49 Washington St', 'Newark', 'NJ', '07102']
+};
+var PRICE = {
+  t1: [2450, 500, 2450], t2: [2900, 600, 600], t3: [950, 0, 0], t4: [6200, 1500, 6200], t5: [11800, 3000, 3000], t6: [4800, 1000, 4800],
+  t7: [2600, 500, 1200], t8: [1100, 0, 0], t9: [2200, 500, 500], t10: [9400, 2500, 9400], t11: [2350, 500, 0], t12: [1650, 400, 400]
+};
+TRIPS.forEach(function (t) { var pr = PRICE[t.id]; if (pr) { t.price = pr[0]; t.deposit = pr[1]; t.paid = pr[2]; } if (!t.cStatus) t.cStatus = 'booked'; });
+TRIPS.forEach(function (t) {
+  var L = LOC[t.id]; if (!L) return;
+  t.pickupPlace = L[0]; t.pickupStreet = L[1]; t.pickupCity = L[2]; t.pickupState = L[3]; t.pickupZip = L[4];
+  t.destPlace = L[5]; t.destStreet = L[6]; t.destCity = L[7]; t.destState = L[8]; t.destZip = L[9];
+  t.pickup = place(L[0] + ', ' + L[1], L[2], L[3], L[4]); t.dest = place(L[5] + ', ' + L[6], L[7], L[8], L[9]);
+});
+TRIPS.forEach(function (t) {
+  ['startTime', 'returnTime', 'spotTime', 'reportTime', 'itinerary'].forEach(function (k) { if (t[k]) t[k] = toMil(t[k]); });
+  if (t.confirm && t.confirm.at) t.confirm = { init: t.confirm.init, at: toMil(t.confirm.at) };
+});
+function stateName(c) {
+  for (var i = 0; i < STATES.length; i++) { if (STATES[i][0] === c) return STATES[i][1] + ' (' + c + ')'; }
+  return c || '—';
+}
+function countyOf(z) { return z && ZIPS[z] ? ZIPS[z][2] : (z ? 'County not found' : ''); }
+function viewOf(t) {
+  if (!t) return {};
+  var b = findBus(t.bus);
+  var dash = function (v) { return (v === undefined || v === null || v === '') ? '—' : v; };
+  var rk = t.returnKey;
+  if (!rk && t.returnDate && t.returnDate.indexOf('/') !== -1) { var rp = t.returnDate.split(' ')[1].split('/'); rk = '2026-' + rp[0] + '-' + rp[1]; }
+  return {
+    id: t.id, contract: t.contract, org: t.org, group: t.group, pax: t.pax,
+    beginFull: labelOf(tripKey(t)), startTime: dash(t.startTime),
+    returnFull: rk ? labelOf(rk) : '—', returnTime: dash(t.returnTime),
+    puState: stateName(t.pickupState), puCity: dash(t.pickupCity), puZip: dash(t.pickupZip), puCounty: countyOf(t.pickupZip), puStreet: dash(t.pickupStreet), puPlace: dash(t.pickupPlace),
+    deState: stateName(t.destState), deCity: dash(t.destCity), deZip: dash(t.destZip), deCounty: countyOf(t.destZip), deStreet: dash(t.destStreet), dePlace: dash(t.destPlace),
+    reqType: t.reqType, wc: !!t.wc, wcText: t.wc ? 'Yes' : 'No',
+    requestedLabel: t.requestedDriver || 'No request', special: dash(t.special),
+    driverLabel: t.driver || 'Unassigned',
+    busLabel: b ? '#' + b.num + ' · ' + b.seats + '-pax ' + b.model : 'Unassigned',
+    confirmLabel: t.confirm ? t.confirm.init + ' · ' + t.confirm.at : 'Pending',
+    contact: dash(t.contact), phone: dash(t.phone),
+    cStatus: t.cStatus || 'booked', cStatusLabel: C_STATUS[t.cStatus || 'booked'],
+    priceLabel: t.price == null ? '\u2014' : money(t.price), depositLabel: money(t.deposit || 0), paidLabel: money(t.paid || 0),
+    balanceLabel: (function () { var pi = payInfo(t.price, t.deposit, t.paid, t.cStatus); return pi.balance === null ? '\u2014' : money(pi.balance); })(),
+    payStatus: payInfo(t.price, t.deposit, t.paid, t.cStatus).status, payTone: payInfo(t.price, t.deposit, t.paid, t.cStatus).tone,
+    spotTime: dash(t.spotTime), terminal: dash(t.terminal), reportTime: dash(t.reportTime), actualReport: dash(t.actualReport), dispatchNotes: t.dispatchNotes || '',
+    driverPhone: t.driver ? (DRIVER_PHONE[t.driver] || '\u2014') : '\u2014',
+    itinText: t.itinerary || '', hasItin: !!t.itinerary, noItin: !t.itinerary,
+    busCount: Math.max(1, parseInt(t.busCount, 10) || 1), singleBus: !(parseInt(t.busCount, 10) > 1), multiBus: parseInt(t.busCount, 10) > 1
+  };
+}
+function emptyForm() {
+  return { contract: '', org: '', group: '', pax: '', beginDate: '', startTime: '', returnDate: '', returnTime: '', busCount: '1', itinerary: '', spotTime: '', terminal: '', pickupState: '', pickupCity: '', pickupZip: '', pickupPlace: '', pickupStreet: '', destState: '', destCity: '', destZip: '', destPlace: '', destStreet: '', sizeReq: '56-pax coach', wc: false, requestedDriver: '', special: '', contact: '', phone: '', cStatus: 'booked', price: '', deposit: '', paid: '' };
+}
+function fmtShortKey(key) {
+  var p = key.split('-');
+  var wd = new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-US', { weekday: 'short' });
+  return wd + ' ' + p[1] + '/' + p[2];
+}
+function nowTime() {
+  var d = new Date(), h = d.getHours(), m = d.getMinutes();
+  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+}
+function minsOf(v) {
+  var m = /(\d{1,2}):(\d{2})\s*(AM|PM)?/i.exec(v || '');
+  if (!m) return null;
+  var h = +m[1];
+  if (m[3]) { h = h % 12 + (m[3].toUpperCase() === 'PM' ? 12 : 0); }
+  return h * 60 + +m[2];
+}
+function normTime(v) {
+  var t = String(v || '').trim().toUpperCase().replace(/\./g, '').replace(/\s+/g, ' ');
+  if (!t) return '';
+  if (/^ONE ?WAY$/.test(t) || t === 'OW') return 'One way';
+  var ap = null, mm = t.match(/\s?(AM|PM|A|P)$/);
+  if (mm) { ap = mm[1].charAt(0); t = t.slice(0, t.length - mm[0].length).trim(); }
+  var h, m;
+  if (/^\d{1,2}:\d{1,2}$/.test(t)) { var p = t.split(':'); h = +p[0]; m = +p[1]; }
+  else if (/^\d{3,4}$/.test(t)) { h = +t.slice(0, t.length - 2); m = +t.slice(-2); }
+  else if (/^\d{1,2}$/.test(t)) { h = +t; m = 0; }
+  else return null;
+  if (m > 59) return null;
+  if (ap) { if (h < 1 || h > 12) return null; h = h % 12 + (ap === 'P' ? 12 : 0); }
+  if (h > 23) return null;
+  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+}
+function toMil(str) {
+  return String(str || '').replace(/\b(\d{1,2}):(\d{2})\s?(AM|PM)\b/g, function (_, h, m, ap) {
+    var hh = (+h % 12) + (ap === 'PM' ? 12 : 0);
+    return (hh < 10 ? '0' : '') + hh + ':' + m;
+  });
+}
+var TIME_OPTS = null, RETURN_OPTS = null, REPORT_OPTS = null, REPORT_OPTS_ALL = null;
+var TIME_LIST = (function () {
+  var out = [];
+  for (var i = 0; i < 96; i++) {
+    var h = Math.floor(i / 4), m = (i % 4) * 15;
+    out.push((h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m);
+  }
+  return out;
+})();
+function to24(v) {
+  var m = /(\d+):(\d+)\s*(AM|PM)/.exec(v || '');
+  if (!m) return '';
+  var h = (+m[1] % 12) + (m[3] === 'PM' ? 12 : 0);
+  return (h < 10 ? '0' : '') + h + ':' + m[2];
+}
+function formFromTrip(t) {
+  var dash = function (v) { return (!v || v === '\u2014' || v === 'None.') ? '' : v; };
+  var rk = t.returnKey;
+  if (!rk && t.returnDate && t.returnDate.indexOf('/') !== -1) { var rp = t.returnDate.split(' ')[1].split('/'); rk = '2026-' + rp[0] + '-' + rp[1]; }
+  return {
+    contract: t.contract, org: t.org || '', group: t.group || '', pax: String(t.pax || ''),
+    busCount: String(t.busCount || 1), itinerary: typeof t.itinerary === 'string' ? t.itinerary : '', beginDate: tripKey(t), spotTime: t.spotTime || '', terminal: t.terminal || '', startTime: t.startTime || '', returnDate: rk || '', returnTime: t.returnTime || '',
+    pickupState: t.pickupState || '', pickupCity: t.pickupCity || '', pickupZip: t.pickupZip || '', pickupPlace: t.pickupPlace || '', pickupStreet: t.pickupStreet || '',
+    destState: t.destState || '', destCity: t.destCity || '', destZip: t.destZip || '', destPlace: t.destPlace || '', destStreet: t.destStreet || '',
+    sizeReq: (t.reqType || '56-pax coach') + (t.wc ? ' WC' : ''), wc: false, requestedDriver: t.requestedDriver || '',
+    special: dash(t.special), contact: dash(t.contact), phone: t.phone || '',
+    cStatus: t.cStatus || 'booked', price: t.price == null ? '' : String(t.price), deposit: t.deposit == null ? '' : String(t.deposit), paid: t.paid == null ? '' : String(t.paid)
+  };
+}
+function tripFieldsFromForm(f) {
+  return {
+    dateKey: f.beginDate, beginDate: fmtShortKey(f.beginDate), startTime: normTime(f.startTime) || '', spotTime: (normTime(f.spotTime) && normTime(f.spotTime) !== 'One way') ? normTime(f.spotTime) : '', terminal: f.terminal,
+    busCount: Math.max(1, Math.min(30, parseInt(f.busCount, 10) || 1)),
+    itinerary: String(f.itinerary || '').replace(/\s+$/, ''),
+    org: f.org.trim(), group: f.group.trim(), pax: parseInt(f.pax, 10),
+    pickup: place([(f.pickupPlace || '').trim(), f.pickupStreet.trim()].filter(Boolean).join(', '), f.pickupCity, f.pickupState, f.pickupZip), dest: place([(f.destPlace || '').trim(), f.destStreet.trim()].filter(Boolean).join(', '), f.destCity, f.destState, f.destZip),
+    pickupPlace: (f.pickupPlace || '').trim(), pickupStreet: f.pickupStreet.trim(), pickupCity: f.pickupCity, pickupState: f.pickupState, pickupZip: f.pickupZip,
+    destPlace: (f.destPlace || '').trim(), destStreet: f.destStreet.trim(), destCity: f.destCity, destState: f.destState, destZip: f.destZip,
+    returnKey: f.returnDate, returnDate: f.returnDate ? fmtShortKey(f.returnDate) : '\u2014', returnTime: normTime(f.returnTime) || '',
+    reqType: f.sizeReq.replace(/ WC$/, ''), wc: / WC$/.test(f.sizeReq), requestedDriver: f.requestedDriver,
+    special: f.special.trim() || 'None.', contact: f.contact.trim() || '\u2014', phone: f.phone.trim(),
+    cStatus: f.cStatus || 'booked', price: numOf(f.price), deposit: numOf(f.deposit) || 0, paid: numOf(f.paid) || 0
+  };
+}
+function validateForm(f) {
+  var errs = [];
+  if (!f.org.trim()) errs.push('Enter the organization.');
+  if (!f.group.trim()) errs.push('Enter the group name.');
+  if (!(parseInt(f.pax, 10) > 0)) errs.push('Enter the number of passengers.');
+  if (!(parseInt(f.busCount, 10) >= 1)) errs.push('Enter how many buses (at least 1).');
+  if (!f.beginDate) errs.push('Pick a begin date.');
+  if (!f.startTime) errs.push('Enter a start time.');
+  else if (!normTime(f.startTime) || normTime(f.startTime) === 'One way') errs.push('Start time isn\u2019t a valid time. Try something like 07:15.');
+  if (f.spotTime && (normTime(f.spotTime) === null || normTime(f.spotTime) === 'One way')) errs.push('Spot time isn\u2019t a valid time. Try something like 06:45.');
+  if (f.returnTime && normTime(f.returnTime) === null) errs.push('Return time isn\u2019t a valid time. Try something like 18:30, or pick One way.');
+  if (!(f.contact || '').trim()) errs.push('Enter the group contact name.');
+  if (!(f.phone || '').trim()) errs.push('Enter the group contact phone.');
+  if (!f.spotTime) errs.push('Enter a spot time.');
+  if (!f.returnDate) errs.push('Pick a return date.');
+  if (!f.returnTime) errs.push('Enter a return time, or pick One way.');
+  if (!f.pickupState || !f.pickupCity) errs.push('Pick the pickup state and city.');
+  if (!(f.pickupStreet || '').trim()) errs.push('Enter the pickup address.');
+  if (!f.destState || !f.destCity) errs.push('Pick the destination state and city.');
+  if (!(f.destStreet || '').trim()) errs.push('Enter the destination address.');
+  if (!f.terminal) errs.push('Pick a terminal.');
+  if (!f.sizeReq) errs.push('Pick a size requirement.');
+  if (numOf(f.price) === null || numOf(f.price) < 0) errs.push('Enter the total price.');
+  if (String(f.deposit || '').trim() && (numOf(f.deposit) === null || numOf(f.deposit) < 0)) errs.push('Deposit must be a dollar amount.');
+  if (String(f.paid || '').trim() && (numOf(f.paid) === null || numOf(f.paid) < 0)) errs.push('Total paid must be a dollar amount.');
+  if (numOf(f.price) !== null && numOf(f.deposit) > numOf(f.price)) errs.push('Deposit can\u2019t be more than the total price.');
+  if (f.returnDate && f.beginDate && f.returnDate < f.beginDate) errs.push('Return date can\u2019t be before the begin date.');
+  return errs;
+}
+function fmtTime(v) {
+  if (!v) return '';
+  var p = v.split(':'), h = +p[0], ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if (h === 0) h = 12;
+  return h + ':' + p[1] + ' ' + ap;
+}
+function findBus(num) {
+  for (var i = 0; i < BUSES.length; i++) { if (BUSES[i].num === num) return BUSES[i]; }
+  return null;
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { selectedId: 't3', overrides: {}, draftDriver: '', draftBus: '', query: '', initials: 'AR', savedFlash: false, widths: defaultWidths(), calOpen: false, viewY: 2026, viewM: 10, rangeStart: '2026-11-09', rangeEnd: '2026-11-09', calTarget: null, tab: 'board', newTrips: [], form: emptyForm(), salesErrors: [], lastAdded: null, lookupQ: '', salesMode: 'view', editId: null, lastEdited: null, timeOpen: null, hl: -1, refreshedAt: null, delC: null, delArm: null, termSel: TERMINALS.slice(), termOpen: false, viewMode: 'today', viewOpen: false, draftReport: '', infoTab: 'details', sortKey: null, sortDir: 'asc', unitOrder: defaultUnitOrder(), dragUnit: null, dropIdx: null };
+    this.press = null;
+    this.suppressClick = false;
+    this.drag = null;
+    this.sessionStart = Date.now();
+    this.state.now = Date.now();
+    var me = this;
+    try {
+      document.addEventListener('pointerdown', function (e) {
+        var st = me.state;
+        if (!st.calTarget && !st.termOpen && !st.viewOpen && !st.ctOpen) return;
+        var el = e.target;
+        if (el && el.closest && el.closest('.calpop, .dpop, .calbtn, [aria-haspopup]')) return;
+        me.setState({ calTarget: null, termOpen: false, viewOpen: false, ctOpen: false });
+      }, true);
+    } catch (e) {}
+    this.clock = setInterval(function () { try { me.setState({ now: Date.now() }); } catch (e) {} }, 1000);
+  }
+  setWidth(k, v) {
+    var nw = Object.assign({}, this.state.widths);
+    nw[k] = v;
+    this.setState({ widths: nw });
+  }
+  setReport(id, raw, done, field) {
+    var v = String(raw || '');
+    if (done) { var n = normTime(v, 2); if (n && n !== 'One way') v = n; }
+    var o = Object.assign({}, this.state.overrides);
+    var ch = {}; ch[field || 'reportTime'] = v;
+    o[id] = Object.assign({}, o[id], ch);
+    this.setState({ overrides: o });
+  }
+  setInit(id, raw) {
+    var v = (raw || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+    var base = null;
+    var list = this._units || [];
+    for (var i = 0; i < list.length; i++) { if (list[i].id === id) base = list[i]; }
+    var prev = base ? base.confirm : null;
+    var confirm = v ? { init: v, at: (prev && prev.init) ? prev.at : stamp() } : null;
+    var o = Object.assign({}, this.state.overrides);
+    o[id] = Object.assign({}, o[id], { confirm: confirm });
+    this.setState({ overrides: o });
+  }
+  resizers() {
+    var self = this;
+    var rz = {};
+    COLS.forEach(function (c) {
+      var k = c[0], min = c[2];
+      rz[k] = {
+        down: function (e) {
+          try { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+          self.drag = { key: k, x: e.clientX, w: self.state.widths[k] };
+        },
+        move: function (e) {
+          if (!self.drag || self.drag.key !== k) return;
+          var nw = Math.max(min, Math.round(self.drag.w + e.clientX - self.drag.x));
+          if (nw !== self.state.widths[k]) self.setWidth(k, nw);
+        },
+        up: function (e) {
+          try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) {}
+          self.drag = null;
+        },
+        key: function (e) {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          e.preventDefault();
+          var d = e.key === 'ArrowLeft' ? -16 : 16;
+          self.setWidth(k, Math.max(min, self.state.widths[k] + d));
+        }
+      };
+    });
+    return rz;
+  }
+  merged(t) {
+    var o = this.state.overrides[t.id];
+    return o ? Object.assign({}, t, o) : t;
+  }
+  select(id) {
+    if (this.state.selectedId === id && !this.state.delArm && !this.state.delC) return;
+    var t = null;
+    var list = this._units || [];
+    for (var i = 0; i < list.length; i++) { if (list[i].id === id) t = list[i]; }
+    this.setState({ delArm: null, delC: null, selectedId: id, draftDriver: t ? t.driver : '', draftBus: t ? t.bus : '', draftReport: t ? (t.reportTime || '') : '', savedFlash: false });
+  }
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var q = (s.query || '').trim().toLowerCase();
+    var tripsAll = TRIPS.concat(s.newTrips).map(function (t) { return self.merged(t); }).filter(function (t) { return !t.deleted; });
+    var DISP_BLANK = { driver: '', bus: '', confirm: null, status: '', reportTime: '', actualReport: '', onLocAt: '', dispatchNotes: '' };
+    var all = [];
+    tripsAll.forEach(function (t) {
+      var n = Math.max(1, parseInt(t.busCount, 10) || 1);
+      var cx = t.cStatus === 'cancelled' ? { status: 'cancelled' } : {};
+      if (n === 1) { all.push(Object.assign({}, t, cx)); return; }
+      for (var k = 1; k <= n; k++) {
+        var uid = t.id + '#' + k;
+        all.push(Object.assign({}, t, k === 1 ? {} : DISP_BLANK, { id: uid, contract: t.contract + '-' + k, parentId: t.id, busIndex: k }, s.overrides[uid] || {}, cx));
+      }
+    });
+    this._units = all;
+    var dayAll = all.filter(function (t) {
+      var a = tripKey(t), b = tripEndKey(t) || a;
+      if (b < a) b = a;
+      if (!(a <= s.rangeEnd && b >= s.rangeStart)) return false;
+      if (t.cStatus === 'quote') return false;
+      var multi = b > a, mode = s.viewMode || 'today';
+      if (mode === 'away' && !multi) return false;
+      if (mode === 'today' && multi && !(a >= s.rangeStart && a <= s.rangeEnd)) return false;
+      if (s.termSel && s.termSel.indexOf(t.terminal) === -1) return false;
+      return true;
+    });
+    var unassigned = dayAll.filter(function (t) { return t.status !== 'cancelled' && (!t.driver || !t.bus); }).length;
+    var pending = dayAll.filter(function (t) { return t.status !== 'cancelled' && !t.confirm; }).length;
+
+    var counts = {};
+    all.forEach(function (t) { var k = tripKey(t); counts[k] = (counts[k] || 0) + 1; });
+    var now = new Date();
+    var todayKey = keyOf(now.getFullYear(), now.getMonth(), now.getDate());
+    var firstDow = new Date(s.viewY, s.viewM, 1).getDay();
+    var dim = new Date(s.viewY, s.viewM + 1, 0).getDate();
+    var rs = s.rangeStart, re = s.rangeEnd;
+    var rangeOf = function (k) {
+      if (rs === re) return k === rs ? 'single' : 'none';
+      if (k === rs) return 'start';
+      if (k === re) return 'end';
+      if (k > rs && k < re) return 'mid';
+      return 'none';
+    };
+    var noop = function () {};
+    var calDays = [];
+    for (var b = 0; b < firstDow; b++) calDays.push({ kind: 'blank', blank: true, n: '', range: 'none', hover: noop, today: 'false', has: 'false', aria: '', pick: noop });
+    for (var d = 1; d <= dim; d++) {
+      (function (d) {
+        var k = keyOf(s.viewY, s.viewM, d);
+        var c = counts[k] || 0;
+        calDays.push({
+          kind: 'day', blank: false, n: String(d),
+          range: rangeOf(k),
+          today: k === todayKey ? 'true' : 'false',
+          has: c ? 'true' : 'false',
+          aria: MONTHS[s.viewM] + ' ' + d + (c ? ', ' + c + (c === 1 ? ' trip' : ' trips') : ''),
+          pick: function () {
+            if (self.state.calTarget === 'end') {
+              var st = self.state.rangeStart;
+              self.setState({ rangeStart: k < st ? k : st, rangeEnd: k < st ? st : k, calTarget: null });
+            } else {
+              self.setState({ rangeStart: k, rangeEnd: k, calTarget: null });
+            }
+          }
+        });
+      })(d);
+    }
+    while (calDays.length % 7 !== 0) calDays.push({ kind: 'blank', blank: true, n: '', range: 'none', hover: noop, today: 'false', has: 'false', aria: '', pick: noop });
+    var dateLabel = s.rangeStart === s.rangeEnd ? labelOf(s.rangeStart) : shortOf(s.rangeStart) + ' – ' + shortOf(s.rangeEnd) + ', ' + s.rangeEnd.slice(0, 4);
+
+    var rows = dayAll.filter(function (t) {
+      if (!q) return true;
+      return [t.contract, t.org, t.group, t.pickup, t.dest, t.driver, t.bus].join(' ').toLowerCase().indexOf(q) !== -1;
+    }).map(function (t) {
+      var b = findBus(t.bus);
+      var bk = tripKey(t), ek = tripEndKey(t) || bk;
+      if (ek < bk) ek = bk;
+      var total = keyToNum(ek) - keyToNum(bk) + 1;
+      var dFrom = keyToNum(s.rangeStart > bk ? s.rangeStart : bk) - keyToNum(bk) + 1;
+      var dTo = keyToNum(s.rangeEnd < ek ? s.rangeEnd : ek) - keyToNum(bk) + 1;
+      return Object.assign({}, t, {
+        status: t.status || '',
+        hasNotes: (t.dispatchNotes || '').trim() ? 'true' : 'false',
+        notesSr: (t.dispatchNotes || '').trim() ? 'Has dispatch notes' : 'No dispatch notes',
+        notesText: t.dispatchNotes || '',
+        dup: t.dupOf ? 'true' : 'false',
+        terminalLabel: t.terminal || '\u2014',
+        spotLabel: t.spotTime || '\u2014',
+        reportValue: t.reportTime || '',
+        onReport: function (e) { self.setReport(t.id, e.target.value, false); },
+        onReportBlur: function (e) { self.setReport(t.id, e.target.value, true); },
+        actualValue: t.actualReport || '',
+        onLocAt: t.onLocAt || '',
+        hasOnLoc: !!t.onLocAt,
+        noOnLoc: !t.onLocAt,
+        onLocLate: (minsOf(t.onLocAt) !== null && minsOf(t.spotTime) !== null && minsOf(t.onLocAt) > minsOf(t.spotTime)) ? 'true' : 'false',
+        reportLabel: t.reportTime || '\u2014',
+        hasActual: !!t.actualReport,
+        noActual: !t.actualReport,
+        stampActual: function () { self.setReport(t.id, nowTime(), true, 'actualReport'); },
+        clearActual: function () { self.setReport(t.id, '', false, 'actualReport'); },
+        actualLate: (minsOf(t.actualReport) !== null && minsOf(t.reportTime) !== null && minsOf(t.actualReport) > minsOf(t.reportTime)) ? 'true' : 'false',
+        onActual: function (e) { self.setReport(t.id, e.target.value, false, 'actualReport'); },
+        onActualBlur: function (e) { self.setReport(t.id, e.target.value, true, 'actualReport'); },
+        driverPhone: t.driver ? (DRIVER_PHONE[t.driver] || '') : '',
+        driverPhoneLabel: t.driver ? (DRIVER_PHONE[t.driver] || '\u2014') : '\u2014',
+        beginNoWd: (function () { try { var p = tripKey(t).split('-'); return p[1] + '/' + p[2] + '/' + p[0]; } catch (e) { return String(t.beginDate || ''); } })(),
+        returnNoWd: (function () { var k = tripEndKey(t); if (!k) return String(t.returnDate || '').replace(/^[A-Za-z]{3} /, ''); var p = k.split('-'); return p[1] + '/' + p[2] + '/' + p[0]; })(),
+        dayNum: dFrom,
+        multi: total > 1 ? 'true' : 'false',
+        dayLabel: total === 1 ? '1/1' : (dFrom === dTo ? dFrom + '/' + total : dFrom + '\u2013' + dTo + '/' + total),
+        selected: t.id === s.selectedId ? 'true' : 'false',
+        driverLabel: t.driver || 'Unassigned',
+        driverTone: t.driver ? 'ok' : 'warn',
+        busNumLabel: b ? '#' + b.num : 'Needed',
+        busSeatsLabel: b ? b.seats + ' seats' : '',
+        busTone: b ? 'ok' : 'warn',
+        confirmInit: t.confirm ? t.confirm.init : 'Pending',
+        confirmAt: t.confirm ? t.confirm.at : '',
+        initValue: t.confirm ? t.confirm.init : '',
+        onInit: function (e) { self.setInit(t.id, e.target.value); },
+        confirmTone: t.confirm ? 'ok' : 'warn',
+        pick: function () { self.select(t.id); }
+      });
+    });
+
+    var tmin = minsOf;
+    var p4 = function (n) { return n === null ? '0000' : ('000' + n).slice(-4); };
+    var retKey = function (t) {
+      if (t.returnKey) return t.returnKey;
+      if (t.returnDate && t.returnDate.indexOf('/') !== -1) { var rp = t.returnDate.split(' ')[1].split('/'); return '2026-' + rp[0] + '-' + rp[1]; }
+      return null;
+    };
+    var SORTS = {
+      contract: ['num', function (t) { return parseInt(t.contract, 10); }],
+      day: ['num', function (t) { return t.dayNum; }],
+      hasNotes: ['num', function (t) { return (t.dispatchNotes || '').trim() ? 1 : 0; }],
+      notesText: ['text', function (t) { return (t.dispatchNotes || '').trim() || null; }],
+      terminal: ['text', function (t) { return t.terminal || null; }],
+      reportTime: ['date', function (t) { return tmin(t.reportTime); }],
+      actualReport: ['date', function (t) { return tmin(t.actualReport); }],
+      onLocAt: ['date', function (t) { return tmin(t.onLocAt); }],
+      spotTime: ['date', function (t) { return tmin(t.spotTime); }],
+      beginDate: ['date', function (t) { return tripKey(t) + ' ' + p4(tmin(t.startTime)); }],
+      startTime: ['date', function (t) { return tmin(t.startTime); }],
+      org: ['text', function (t) { return t.org || null; }],
+      pickup: ['text', function (t) { return t.pickup || null; }],
+      dest: ['text', function (t) { return t.dest || null; }],
+      returnDate: ['date', function (t) { var k = retKey(t); return k ? k + ' ' + p4(tmin(t.returnTime)) : null; }],
+      returnTime: ['date', function (t) { return tmin(t.returnTime); }],
+      group: ['text', function (t) { return t.group || null; }],
+      driver: ['text', function (t) { return t.driver || null; }],
+      driverPhone: ['text', function (t) { return t.driver ? (DRIVER_PHONE[t.driver] || null) : null; }],
+      busNum: ['num', function (t) { return t.bus ? parseInt(t.bus, 10) : null; }],
+      sizeReq: ['num', function (t) { return parseInt(t.reqType, 10) || null; }],
+      confInit: ['text', function (t) { return t.confirm ? t.confirm.init : null; }],
+      confAt: ['date', function (t) { return t.confirm ? t.confirm.at.split(' ')[0] + ' ' + p4(tmin(t.confirm.at)) : null; }]
+    };
+    if (!s.sortKey) {
+      var ckey = function (t) { var p = String(t.contract).split('-'); return [parseInt(p[0], 10) || 0, (p[1] && p[1].charAt(0) === 'D') ? 1 : 0, p[1] ? parseInt(p[1].replace(/[^0-9]/g, ''), 10) || 0 : 0]; };
+      rows.sort(function (x, y) { var a = ckey(x), b = ckey(y); return a[0] - b[0] || a[1] - b[1] || a[2] - b[2]; });
+    }
+    if (s.sortKey && SORTS[s.sortKey]) {
+      var srt = SORTS[s.sortKey], get = srt[1], mul = s.sortDir === 'desc' ? -1 : 1;
+      rows.sort(function (a, b) {
+        var va = get(a), vb = get(b);
+        if (va === null || va === undefined) return (vb === null || vb === undefined) ? 0 : 1;
+        if (vb === null || vb === undefined) return -1;
+        var c = srt[0] === 'text' ? String(va).localeCompare(String(vb), 'en', { sensitivity: 'base' }) : (va < vb ? -1 : va > vb ? 1 : 0);
+        return c * mul;
+      });
+    }
+    var sorter = {}, sdir = {};
+    COLS.forEach(function (c) {
+      var k = c[0], first = SORTS[k] && SORTS[k][0] === 'num' ? 'desc' : 'asc';
+      sorter[k] = function () {
+        if (self.suppressClick) { self.suppressClick = false; return; }
+        if (self.state.sortKey === k) self.setState({ sortDir: self.state.sortDir === 'asc' ? 'desc' : 'asc' });
+        else self.setState({ sortKey: k, sortDir: first });
+      };
+      sdir[k] = s.sortKey === k ? s.sortDir : 'none';
+    });
+
+    var selRaw = null;
+    for (var i = 0; i < all.length; i++) { if (all[i].id === s.selectedId) selRaw = all[i]; }
+    if (!selRaw) { for (var i2 = 0; i2 < all.length; i2++) { if (all[i2].parentId === s.selectedId) { selRaw = all[i2]; break; } } }
+    var selTrip = null;
+    if (selRaw) { var pid = selRaw.parentId || selRaw.id; tripsAll.forEach(function (t) { if (t.id === pid) selTrip = t; }); }
+    var sel = selRaw ? Object.assign({}, selRaw, {
+      confirmInit: selRaw.confirm ? selRaw.confirm.init : '',
+      confirmAt: selRaw.confirm ? selRaw.confirm.at : '',
+      requestedLabel: selRaw.requestedDriver || 'None',
+      reportLabel: selRaw.reportTime || '\u2014',
+      actualLabel: selRaw.actualReport || '\u2014',
+      dispatchNotes: selRaw.dispatchNotes || '',
+      spotLabel: selRaw.spotTime || '\u2014',
+      terminalLabel: selRaw.terminal || 'No terminal',
+      busTotal: Math.max(1, parseInt(selRaw.busCount, 10) || 1),
+      itinText: selRaw.itinerary || '',
+      hasItin: !!selRaw.itinerary,
+      noItin: !selRaw.itinerary
+    }) : {};
+
+    var driverOptions = [{ value: '', label: 'Select driver…' }].concat(DRIVERS.map(function (d) {
+      return { value: d, label: (sel.requestedDriver === d ? d + ' (requested)' : d) };
+    }));
+    var busOptions = [{ value: '', label: 'Select bus…' }].concat(BUSES.map(function (b) {
+      return { value: b.num, label: '#' + b.num + ' · ' + b.seats + '-pax ' + b.model };
+    }));
+
+    var db = findBus(s.draftBus);
+    var paxPer = selRaw ? Math.ceil((parseInt(selRaw.pax, 10) || 0) / Math.max(1, parseInt(selRaw.busCount, 10) || 1)) : 0;
+    var tooSmall = !!(db && selRaw && db.seats < paxPer);
+    var noLift = !!(db && selRaw && selRaw.wc && !db.lift);
+    var showWarn = tooSmall || noLift;
+    var warnText = tooSmall ? 'Bus #' + db.num + ' seats ' + db.seats + (parseInt(selRaw.busCount, 10) > 1 ? '; each bus needs about ' + paxPer + ' seats.' : '; this group has ' + selRaw.pax + ' passengers.') : (noLift ? 'Bus #' + db.num + ' has no wheelchair lift; this trip needs WC.' : '');
+
+    var maxNum = 0;
+    tripsAll.forEach(function (t) { var n = parseInt(t.contract, 10); if (n > maxNum) maxNum = n; });
+    var nextContract = String(maxNum + 1);
+    var on = {};
+    Object.keys(emptyForm()).forEach(function (k) {
+      on[k] = function (e) {
+        var f = Object.assign({}, self.state.form);
+        var v = k === 'wc' ? e.target.checked : e.target.value;
+        var pre = k.indexOf('pickup') === 0 ? 'pickup' : (k.indexOf('dest') === 0 ? 'dest' : '');
+        if (pre && k === pre + 'Zip') {
+          v = String(v).replace(/[^0-9]/g, '').slice(0, 5);
+        }
+        if (pre && k === pre + 'State' && v !== f[k]) f[pre + 'City'] = '';
+        f[k] = v;
+        self.setState({ form: f });
+      };
+    });
+    var zipInfo = function (zip, st) {
+      if (!zip) return { has: false, tone: 'ok', msg: '' };
+      if (zip.length < 5) return { has: true, tone: 'warn', msg: '' };
+      var z = ZIPS[zip];
+      if (!z) return { has: true, tone: 'warn', msg: 'County not found' };
+      if (st && z[1] !== st) return { has: true, tone: 'warn', msg: z[2] + ', ' + z[1] + ' (not ' + st + ')' };
+      return { has: true, tone: 'ok', msg: z[2] };
+    };
+    var puZ = zipInfo(s.form.pickupZip, s.form.pickupState), deZ = zipInfo(s.form.destZip, s.form.destState);
+    var cityOpts = function (st) {
+      return [{ value: '', label: st ? 'Select city…' : 'Pick a state first' }].concat((CITIES[st] || []).map(function (c) { return { value: c, label: c }; }));
+    };
+    var lq = (s.lookupQ || '').trim();
+    var lkRaw = null;
+    tripsAll.forEach(function (t) { if (t.contract === lq) lkRaw = t; });
+    if (!lkRaw) all.forEach(function (t) { if (t.contract === lq) lkRaw = t; });
+    var lkq = viewOf(lkRaw);
+    var ctMode = s.ctMode || 'all';
+    var ctList = tripsAll.filter(function (t) {
+      var a = tripKey(t), b = tripEndKey(t) || a; if (b < a) b = a;
+      if (!(a <= s.rangeEnd && b >= s.rangeStart)) return false;
+      var cs = t.cStatus || 'booked';
+      if (ctMode === 'active') return cs !== 'cancelled';
+      if (ctMode !== 'all' && cs !== ctMode) return false;
+      var cq = (s.ctQuery || '').trim().toLowerCase();
+      if (cq && [t.contract, t.org, t.group, t.contact, t.phone, t.pickupCity, t.destCity, t.pickupPlace, t.destPlace].join(' ').toLowerCase().indexOf(cq) === -1) return false;
+      return true;
+    }).sort(function (x, y) { var a = tripKey(x), b = tripKey(y); return a < b ? -1 : a > b ? 1 : String(x.contract).localeCompare(String(y.contract), 'en', { numeric: true }); }).map(function (t) {
+      var pi = payInfo(t.price, t.deposit, t.paid, t.cStatus), p = tripKey(t).split('-');
+      return {
+        contract: t.contract, cStatus: t.cStatus || 'booked', statusLabel: C_STATUS[t.cStatus || 'booked'],
+        begin: p[1] + '/' + p[2] + '/' + p[0] + ' ' + (t.startTime || ''), org: t.org || '', group: t.group || '',
+        route: (t.pickupCity || '—') + ' → ' + (t.destCity || '—'), buses: String(t.busCount || 1),
+        balNum: pi.balance || 0,
+        total: t.price == null ? '—' : money(t.price), balance: pi.balance === null ? '—' : money(pi.balance), pay: pi.status, payTone: pi.tone,
+        current: selTrip && selTrip.id === t.id ? 'true' : 'false',
+        open: function () { self.setState({ selectedId: t.id, salesMode: 'view', lookupQ: '', delC: null, draftDriver: t.driver || '', draftBus: t.bus || '', savedFlash: false, ctOpen: false }); }
+      };
+    });
+    var lk = viewOf(selTrip);
+    var tb = {};
+    ['startTime', 'returnTime', 'spotTime'].forEach(function (k) {
+      tb[k] = function () {
+        var f = Object.assign({}, self.state.form), n = normTime(f[k]);
+        if (n) f[k] = n;
+        else if (f[k]) {
+          var qd = String(f[k]).replace(/[^0-9]/g, ''), guess = null;
+          if (qd) TIME_LIST.some(function (x) { var d = x.replace(':', ''); if (d.indexOf(qd) === 0 || d.indexOf('0' + qd) === 0) { guess = x; return true; } return false; });
+          if (guess) f[k] = guess;
+        }
+        self.setState({ form: f, timeOpen: null, hl: -1 });
+      };
+    });
+    var tl = {};
+    [['startTime', 'f-stime', TIME_LIST], ['returnTime', 'f-rtime', ['One way'].concat(TIME_LIST)], ['spotTime', 'f-sptime', TIME_LIST]].forEach(function (cfg) {
+      var k = cfg[0], fid = cfg[1], list = cfg[2];
+      var val = s.form[k] || '';
+      var q = val.replace(/[^0-9]/g, '');
+      var exact = list.indexOf(val) !== -1;
+      var items = (!q || exact) ? list : list.filter(function (x) { var d = x.replace(/[^0-9]/g, ''); return d.indexOf(q) === 0 || d.indexOf('0' + q) === 0; });
+      if (!items.length) items = list;
+      var isOpen = s.timeOpen === k;
+      var choose = function (x) {
+        var f = Object.assign({}, self.state.form); f[k] = x;
+        self.setState({ form: f, timeOpen: null, hl: -1 });
+      };
+      tl[k] = {
+        isOpen: isOpen,
+        listRef: function (el) {
+          if (!el) return;
+          var t = el.querySelector('[data-hl="true"]') || el.querySelector('[data-sel="true"]') || el.querySelector('[data-anchor="true"]');
+          if (t) el.scrollTop = Math.max(0, t.offsetTop - el.clientHeight / 2 + t.offsetHeight / 2);
+        },
+        expanded: isOpen ? 'true' : 'false',
+        items: !isOpen ? [] : items.map(function (x, i) {
+          return { value: x, anchor: (!val && (k === 'startTime' || k === 'spotTime') && x === '06:00') ? 'true' : 'false', sel: x === val ? 'true' : 'false', hl: (isOpen && i === s.hl) ? 'true' : 'false', pick: function (e) { if (e && e.preventDefault) e.preventDefault(); choose(x); } };
+        }),
+        change: function (e) {
+          var f = Object.assign({}, self.state.form); f[k] = e.target.value;
+          self.setState({ form: f, timeOpen: k, hl: /[0-9]/.test(e.target.value) ? 0 : -1 });
+        },
+        open: function () { if (self.state.timeOpen !== k) self.setState({ timeOpen: k, hl: -1 }); },
+        toggle: function (e) {
+          if (e && e.preventDefault) e.preventDefault();
+          var el = document.getElementById(fid);
+          if (el && document.activeElement !== el) el.focus();
+          self.setState({ timeOpen: self.state.timeOpen === k ? null : k, hl: -1 });
+        },
+        key: function (e) {
+          var n = items.length, h = self.state.timeOpen === k ? self.state.hl : -1;
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            h = e.key === 'ArrowDown' ? Math.min(n - 1, h + 1) : Math.max(0, h - 1);
+            self.setState({ timeOpen: k, hl: h });
+          } else if (e.key === 'Enter') {
+            if (self.state.timeOpen === k && h >= 0 && items[h]) { e.preventDefault(); choose(items[h]); }
+            else if (self.state.timeOpen === k) { e.preventDefault(); var nt = normTime(val); if (nt) choose(nt); }
+          } else if (e.key === 'Escape') {
+            self.setState({ timeOpen: null, hl: -1 });
+          }
+        }
+      };
+    });
+    var lastJob = null;
+    s.newTrips.forEach(function (t) { if (t.id === s.lastAdded) lastJob = t; });
+
+    var w = s.widths;
+    var uorder = s.unitOrder;
+    var leaf = [];
+    uorder.forEach(function (uk) { UNIT_BY[uk].cols.forEach(function (c) { leaf.push(c); }); });
+    var gridCols = leaf.map(function (c) { return w[c] + 'px'; }).join(' ');
+    var tableMin = leaf.reduce(function (a, c) { return a + w[c]; }, 0);
+    var ord = {};
+    uorder.forEach(function (uk, ui) {
+      var u = UNIT_BY[uk];
+      if (u.cols.length === 1) ord[u.cols[0]] = ui * 10;
+      else { ord[uk] = ui * 10; ord[u.cols[0]] = ui * 10 + 1; ord[u.cols[1]] = ui * 10 + 2; }
+    });
+    var unitW = function (uk) { return UNIT_BY[uk].cols.reduce(function (a, c) { return a + self.state.widths[c]; }, 0); };
+    var bounds = [0];
+    uorder.forEach(function (uk) { bounds.push(bounds[bounds.length - 1] + w[UNIT_BY[uk].cols[0]] + (UNIT_BY[uk].cols[1] ? w[UNIT_BY[uk].cols[1]] : 0)); });
+    var moveUnit = function (uk, to) {
+      var arr = self.state.unitOrder.slice(), from = arr.indexOf(uk);
+      if (from === -1) return;
+      arr.splice(from, 1);
+      if (to > from) to--;
+      to = Math.max(0, Math.min(arr.length, to));
+      arr.splice(to, 0, uk);
+      self.setState({ unitOrder: arr });
+    };
+    var drag = {}, dragOn = {};
+    UNITS.forEach(function (u) {
+      var uk = u.k;
+      dragOn[uk] = s.dragUnit === uk ? 'true' : 'false';
+      var startDrag = function () {
+        if (!self.press || self.press.active) return;
+        self.press.active = true;
+        var idx = self.state.unitOrder.indexOf(uk);
+        self.setState({ dragUnit: uk, dropIdx: idx });
+      };
+      drag[uk] = {
+        down: function (e) {
+          if (e.button !== undefined && e.button !== 0) return;
+          var el = e.currentTarget;
+          if (e.preventDefault) e.preventDefault();
+          self.liveOrder = null;
+          try { el.setPointerCapture(e.pointerId); } catch (err) {}
+          var grid = el.closest ? el.closest('.hgrid') : null;
+          self.press = { unit: uk, x: e.clientX, el: el, grid: grid, active: false, timer: setTimeout(startDrag, 200) };
+        },
+        move: function (e) {
+          var pr = self.press;
+          if (!pr || pr.unit !== uk) return;
+          if (!pr.active && Math.abs(e.clientX - pr.x) > 5) startDrag();
+          if (!pr.active || !pr.grid) return;
+          var x = e.clientX - pr.grid.getBoundingClientRect().left;
+          var arr = (self.liveOrder || self.state.unitOrder).slice();
+          var moved = false, guard = 0;
+          while (guard++ < 20) {
+            var idx = arr.indexOf(uk), start = 0;
+            for (var i = 0; i < idx; i++) start += unitW(arr[i]);
+            var end = start + unitW(uk);
+            if (idx < arr.length - 1 && x > end + unitW(arr[idx + 1]) / 2) {
+              arr.splice(idx, 1); arr.splice(idx + 1, 0, uk); moved = true; continue;
+            }
+            if (idx > 0 && x < start - unitW(arr[idx - 1]) / 2) {
+              arr.splice(idx, 1); arr.splice(idx - 1, 0, uk); moved = true; continue;
+            }
+            break;
+          }
+          if (moved) { self.liveOrder = arr; self.setState({ unitOrder: arr }); }
+        },
+        up: function (e) {
+          var pr = self.press;
+          if (!pr || pr.unit !== uk) return;
+          clearTimeout(pr.timer);
+          try { pr.el.releasePointerCapture(e.pointerId); } catch (err) {}
+          self.press = null;
+          self.liveOrder = null;
+          if (pr.active) {
+            self.suppressClick = true;
+            setTimeout(function () { self.suppressClick = false; }, 0);
+            self.setState({ dragUnit: null, dropIdx: null });
+          }
+        },
+        cancel: function () {
+          if (self.press) clearTimeout(self.press.timer);
+          self.press = null;
+          self.liveOrder = null;
+          self.setState({ dragUnit: null, dropIdx: null });
+        },
+        key: function (e) {
+          if (!e.altKey || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+          e.preventDefault();
+          var idx = self.state.unitOrder.indexOf(uk);
+          moveUnit(uk, e.key === 'ArrowLeft' ? idx - 1 : idx + 2);
+        }
+      };
+    });
+
+    var setStatus = function (st) {
+      if (!selRaw) return;
+      var o = Object.assign({}, self.state.overrides);
+      var ns = selRaw.status === st ? '' : st;
+      o[selRaw.id] = Object.assign({}, o[selRaw.id], { status: ns, onLocAt: ns === 'onloc' ? nowTime() : '' });
+      self.setState({ overrides: o });
+    };
+    var shiftRange = function (dir) {
+      var a = keyToNum(self.state.rangeStart), b = keyToNum(self.state.rangeEnd), len = b - a + 1;
+      var ns = numToKey(a + dir * len), ne = numToKey(b + dir * len), p = ns.split('-');
+      self.setState({ rangeStart: ns, rangeEnd: ne, viewY: +p[0], viewM: +p[1] - 1, calTarget: null });
+    };
+    var addJob = function () {
+        var f = self.state.form, errs = validateForm(f);
+        var contract = nextContract;
+        if (errs.length) { self.setState({ salesErrors: errs.map(function (x) { return { text: x }; }), lastAdded: null }); return; }
+        var id = 'n' + Date.now().toString(36) + Math.floor(Math.random() * 1e4);
+        var trip = Object.assign({ id: id, contract: contract, driver: '', bus: '', confirm: null, driverRequest: '' }, tripFieldsFromForm(f));
+        self.setState({ newTrips: self.state.newTrips.concat([trip]), form: emptyForm(), salesErrors: [], lastAdded: id, selectedId: id, salesMode: 'view', draftDriver: '', draftBus: '', savedFlash: false });
+      };
+
+    return {
+      tbNew: function () { self.setState({ tab: 'sales', salesMode: 'insert', form: emptyForm(), salesErrors: [], calTarget: null }); },
+      tbEdit: function () {
+        if (!selTrip) return;
+        self.setState({ tab: 'sales', salesMode: 'edit', editId: selTrip.id, form: formFromTrip(selTrip), salesErrors: [], lastEdited: null, calTarget: null });
+      },
+      tbPrint: function () { exportBoardXlsx(rows, leaf, w, s.rangeStart); },
+      tbRefresh: function () { self.setState({ refreshedAt: stamp() }); },
+      refreshedLabel: s.refreshedAt ? 'Refreshed ' + s.refreshedAt : '',
+      dayPrev: function () { shiftRange(-1); },
+      dayNext: function () { shiftRange(1); },
+      terminalOptions: [{ value: '', label: 'Select terminal\u2026' }].concat(TERMINALS.map(function (x) { return { value: x, label: x }; })),
+      draftPhone: DRIVER_PHONE[s.draftDriver] || '',
+      hasDraftPhone: !!DRIVER_PHONE[s.draftDriver],
+      infoIsDetails: s.infoTab !== 'itin' && s.infoTab !== 'notes',
+      infoIsNotes: s.infoTab === 'notes',
+      hasDispatchNotes: !!(selRaw && (selRaw.dispatchNotes || '').trim()),
+      infoNotesStr: s.infoTab === 'notes' ? 'true' : 'false',
+      showNotes: function () { self.setState({ infoTab: 'notes' }); },
+      onDispatchNotes: function (e) {
+        if (!selRaw) return;
+        var o = Object.assign({}, self.state.overrides);
+        o[selRaw.id] = Object.assign({}, o[selRaw.id], { dispatchNotes: e.target.value });
+        self.setState({ overrides: o });
+      },
+      infoIsItin: s.infoTab === 'itin',
+      infoDetailsStr: (s.infoTab !== 'itin' && s.infoTab !== 'notes') ? 'true' : 'false',
+      infoItinStr: s.infoTab === 'itin' ? 'true' : 'false',
+      showDetails: function () { self.setState({ infoTab: 'details' }); },
+      showItin: function () { self.setState({ infoTab: 'itin' }); },
+      selOnLoc: selRaw && selRaw.status === 'onloc' ? 'true' : 'false',
+      selCxl: selRaw && selRaw.status === 'cancelled' ? 'true' : 'false',
+      markOnLoc: function () { setStatus('onloc'); },
+      selReported: selRaw && selRaw.actualReport ? 'true' : 'false',
+      reportedLabel: selRaw && selRaw.actualReport ? 'Reported ' + selRaw.actualReport : 'Reported',
+      markReported: function () {
+        if (!selRaw) return;
+        self.setReport(selRaw.id, selRaw.actualReport ? '' : nowTime(), true, 'actualReport');
+      },
+      markCxl: function () { setStatus('cancelled'); },
+      draftReport: s.draftReport || '',
+      onReportSel: function (e) { self.setState({ draftReport: e.target.value, savedFlash: false }); },
+      reportOptions: (s.draftReport && TIME_LIST.indexOf(s.draftReport) === -1) ? [{ value: '', label: 'Select time\u2026' }, { value: s.draftReport, label: s.draftReport }].concat(REPORT_OPTS || (REPORT_OPTS = TIME_LIST.map(function (x) { return { value: x, label: x }; }))) : (REPORT_OPTS_ALL || (REPORT_OPTS_ALL = [{ value: '', label: 'Select time\u2026' }].concat(TIME_LIST.map(function (x) { return { value: x, label: x }; })))),
+      termOpen: !!s.termOpen,
+      termOpenStr: s.termOpen ? 'true' : 'false',
+      toggleTerm: function () { self.setState({ termOpen: !self.state.termOpen, viewOpen: false, calTarget: null }); },
+      termAll: !s.termSel || s.termSel.length === TERMINALS.length,
+      termLabel: (!s.termSel || s.termSel.length === TERMINALS.length) ? 'All' : (s.termSel.length ? s.termSel.join(', ') : 'None'),
+      pickAllTerms: function () { var cur = self.state.termSel; self.setState({ termSel: (!cur || cur.length === TERMINALS.length) ? [] : TERMINALS.slice() }); },
+      termItems: TERMINALS.map(function (code) {
+        var names = { NJ: 'New Jersey', NY: 'New York', PA: 'Pennsylvania', CT: 'Connecticut', MA: 'Massachusetts' };
+        var sel = s.termSel || TERMINALS;
+        return {
+          label: code + ' \u2013 ' + names[code],
+          on: sel.indexOf(code) !== -1,
+          toggle: function () {
+            var cur = (self.state.termSel || TERMINALS).slice();
+            var i = cur.indexOf(code);
+            if (i === -1) cur.push(code); else cur.splice(i, 1);
+            self.setState({ termSel: TERMINALS.filter(function (x) { return cur.indexOf(x) !== -1; }) });
+          }
+        };
+      }),
+      viewOpen: !!s.viewOpen,
+      viewOpenStr: s.viewOpen ? 'true' : 'false',
+      toggleView: function () { self.setState({ viewOpen: !self.state.viewOpen, termOpen: false, calTarget: null }); },
+      viewLabel: ({ today: 'Today trips', away: 'Away trips', all: 'All trips' })[s.viewMode || 'today'],
+      viewItems: [['today', 'Today trips'], ['away', 'Away trips'], ['all', 'All trips']].map(function (v) {
+        return { label: v[1], sel: (s.viewMode || 'today') === v[0] ? 'true' : 'false', pick: function () { self.setState({ viewMode: v[0], viewOpen: false }); } };
+      }),
+      dupTrip: function () {
+        if (!selTrip) return;
+        var base = String(selTrip.contract).split('-')[0], used = {}, n = 1;
+        tripsAll.forEach(function (t) { used[t.contract] = 1; });
+        while (used[base + '-D' + n]) n++;
+        var id = 'd' + base + '_' + n + '_' + Date.now().toString(36) + Math.floor(Math.random() * 1e4);
+        var copy = Object.assign({}, selTrip, { busCount: 1, id: id, contract: base + '-D' + n, driver: '', bus: '', confirm: null, status: '', reportTime: '', actualReport: '', onLocAt: '', dispatchNotes: '', dupOf: base });
+        self.setState({ newTrips: self.state.newTrips.concat([copy]), selectedId: id, draftDriver: '', draftBus: '', draftReport: '', savedFlash: false, lastAdded: null, lastEdited: null, delArm: null });
+      },
+      cantDelete: !(selTrip && selTrip.dupOf),
+      delArmedStr: (selTrip && s.delArm === selTrip.id) ? 'true' : 'false',
+      delLabel: (selTrip && s.delArm === selTrip.id) ? 'Click again to delete' : 'Delete duplicate',
+      delDup: function () {
+        if (!selTrip || !selTrip.dupOf) return;
+        if (self.state.delArm !== selTrip.id) { self.setState({ delArm: selTrip.id }); return; }
+        var id = selTrip.id, base = selTrip.dupOf, baseTrip = null;
+        tripsAll.forEach(function (t) { if (t.contract === base) baseTrip = t; });
+        var o = Object.assign({}, self.state.overrides);
+        Object.keys(o).forEach(function (k) { if (k === id || k.indexOf(id + '#') === 0) delete o[k]; });
+        self.setState({
+          newTrips: self.state.newTrips.filter(function (t) { return t.id !== id; }), overrides: o, delArm: null,
+          selectedId: baseTrip ? baseTrip.id : null, draftDriver: baseTrip ? baseTrip.driver : '', draftBus: baseTrip ? baseTrip.bus : '', draftReport: baseTrip ? (baseTrip.reportTime || '') : ''
+        });
+      },
+      delCStep: (selTrip && s.delC && s.delC.id === selTrip.id) ? String(s.delC.step) : '0',
+      delCLabel: !(selTrip && s.delC && s.delC.id === selTrip.id) ? 'Delete contract' : (s.delC.step === 1 ? 'Confirm delete?' : 'Yes, permanently delete ' + selTrip.contract),
+      delContract: function () {
+        if (!selTrip) return;
+        var cur = self.state.delC;
+        if (!cur || cur.id !== selTrip.id) { self.setState({ delC: { id: selTrip.id, step: 1 } }); return; }
+        if (cur.step === 1) { self.setState({ delC: { id: selTrip.id, step: 2 } }); return; }
+        var id = selTrip.id, o = Object.assign({}, self.state.overrides);
+        Object.keys(o).forEach(function (k) { if (k.indexOf(id + '#') === 0) delete o[k]; });
+        o[id] = Object.assign({}, o[id], { deleted: true });
+        self.setState({ overrides: o, newTrips: self.state.newTrips.filter(function (t) { return t.id !== id; }), delC: null, selectedId: null, salesMode: 'view', lastAdded: null, lastEdited: null });
+      },
+      onBoard: s.tab === 'board',
+      onSales: s.tab === 'sales',
+      ctList: ctList,
+      ctCount: ctList.length + (ctList.length === 1 ? ' contract' : ' contracts'),
+      ctEmpty: ctList.length === 0,
+      ctQuery: s.ctQuery || '',
+      onCtQuery: function (e) { self.setState({ ctQuery: e.target.value }); },
+      ctBooked: ctList.filter(function (c) { return c.cStatus === 'booked'; }).length,
+      ctQuotes: ctList.filter(function (c) { return c.cStatus === 'quote'; }).length,
+      ctCancelled: ctList.filter(function (c) { return c.cStatus === 'cancelled'; }).length,
+      ctBalance: money(ctList.reduce(function (a, c) { return a + (c.balNum || 0); }, 0)),
+      ctOpen: !!s.ctOpen,
+      ctOpenStr: s.ctOpen ? 'true' : 'false',
+      toggleCt: function () { self.setState({ ctOpen: !self.state.ctOpen, calTarget: null, termOpen: false, viewOpen: false }); },
+      ctLabel: ({ all: 'All contracts', active: 'Active contracts', booked: 'Booked', quote: 'Quotes', cancelled: 'Cancelled' })[ctMode],
+      ctItems: [['all', 'All contracts'], ['active', 'Active contracts'], ['booked', 'Booked'], ['quote', 'Quotes'], ['cancelled', 'Cancelled']].map(function (v) {
+        return { label: v[1], sel: ctMode === v[0] ? 'true' : 'false', pick: function () { self.setState({ ctMode: v[0], ctOpen: false }); } };
+      }),
+      statusOptions: [['booked', 'Booked'], ['quote', 'Quote'], ['cancelled', 'Cancelled']].map(function (v) { return { value: v[0], label: v[1] }; }),
+      formPay: (function () { var pi = payInfo(s.form.price, s.form.deposit, s.form.paid, s.form.cStatus); return { balance: pi.balance === null ? '—' : money(pi.balance), status: pi.status, tone: pi.tone }; })(),
+      boardActive: s.tab === 'board' ? 'true' : 'false',
+      salesActive: s.tab === 'sales' ? 'true' : 'false',
+      boardCurrent: s.tab === 'board' ? 'page' : 'false',
+      salesCurrent: s.tab === 'sales' ? 'page' : 'false',
+      goBoard: function () { self.setState({ tab: 'board' }); },
+      goSales: function () { self.setState({ tab: 'sales', calTarget: null }); },
+      headerSub: s.tab === 'sales' ? 'Booking' : 'Charter trips · ' + dateLabel,
+      form: s.form,
+      on: on,
+      nextContract: nextContract,
+      sizeOptions: SIZE_OPTIONS.map(function (x) { return { value: x, label: x }; }),
+      reqDriverOptions: [{ value: '', label: 'No request' }].concat(DRIVERS.map(function (d) { return { value: d, label: d }; })),
+      salesErrors: s.salesErrors,
+      hasErrors: s.salesErrors.length > 0,
+      hasAdded: !!lastJob && s.selectedId === lastJob.id,
+      lastJob: lastJob || {},
+      recentJobs: s.newTrips.slice().reverse(),
+      noNewJobs: s.newTrips.length === 0,
+      tb: tb,
+      tl: tl,
+      oneWay: normTime(s.form.returnTime) === 'One way',
+      timeOpts: TIME_OPTS || (TIME_OPTS = TIME_LIST.map(function (x) { return { value: x }; })),
+      returnTimeOpts: RETURN_OPTS || (RETURN_OPTS = [{ value: 'One way' }].concat(TIME_LIST.map(function (x) { return { value: x }; }))),
+      stateOptions: [{ value: '', label: 'Select state…' }].concat(STATES.map(function (x) { return { value: x[0], label: x[1] + ' (' + x[0] + ')' }; })),
+      puCityOptions: cityOpts(s.form.pickupState),
+      deCityOptions: cityOpts(s.form.destState),
+      puCityDisabled: !s.form.pickupState,
+      deCityDisabled: !s.form.destState,
+      puZipHas: puZ.has, puZipTone: puZ.tone, puZipMsg: puZ.msg,
+      deZipHas: deZ.has, deZipTone: deZ.tone, deZipMsg: deZ.msg,
+      lookupQ: s.lookupQ,
+      onLookup: function (e) {
+        var q = String(e.target.value).toUpperCase().replace(/[^0-9D-]/g, '').slice(0, 10);
+        var hit = null;
+        tripsAll.forEach(function (t) { if (t.contract === q) hit = t; });
+        if (!hit) all.forEach(function (t) { if (t.contract === q) hit = t; });
+        if (hit) self.setState({ delC: null, lookupQ: q, selectedId: hit.id, salesMode: 'view', draftDriver: hit.driver, draftBus: hit.bus, savedFlash: false });
+        else self.setState({ lookupQ: q });
+      },
+      inView: s.salesMode !== 'insert' && s.salesMode !== 'edit',
+      inInsert: s.salesMode === 'insert' || s.salesMode === 'edit',
+      isInsertMode: s.salesMode !== 'edit',
+      formTitle: s.salesMode === 'edit' ? 'Edit contract' : 'Insert contract',
+      formContract: s.salesMode === 'edit' ? s.form.contract : '',
+      submitLabel: s.salesMode === 'edit' ? 'Save changes' : 'Add contract',
+      hasEdited: !!selTrip && s.lastEdited === selTrip.id,
+      startEdit: function () {
+        if (!selTrip) return;
+        self.setState({ salesMode: 'edit', editId: selTrip.id, form: formFromTrip(selTrip), salesErrors: [], lastEdited: null });
+      },
+      submitForm: function () {
+        if (self.state.salesMode !== 'edit') { addJob(); return; }
+        var f = self.state.form, errs = validateForm(f);
+        if (errs.length) { self.setState({ salesErrors: errs.map(function (x) { return { text: x }; }) }); return; }
+        var id = self.state.editId, o = Object.assign({}, self.state.overrides);
+        o[id] = Object.assign({}, o[id], tripFieldsFromForm(f));
+        self.setState({ overrides: o, salesMode: 'view', form: emptyForm(), salesErrors: [], selectedId: id, lastEdited: id, lastAdded: null });
+      },
+      hasCurrent: !!selRaw,
+      noCurrent: !selRaw,
+      startInsert: function () { self.setState({ salesMode: 'insert', salesErrors: [], form: self.state.salesMode === 'edit' ? emptyForm() : self.state.form, lastEdited: null }); },
+      cancelInsert: function () { self.setState({ salesMode: 'view', salesErrors: [], form: self.state.salesMode === 'edit' ? emptyForm() : self.state.form }); },
+      lkFound: !!lkRaw,
+      lkNotFound: lq.length >= 5 && !/[-D]$/.test(lq) && !lkRaw,
+      lk: lk,
+      lkq: lkq,
+      lkOpenOnBoard: function () {
+        if (!selRaw) return;
+        var key = tripKey(selRaw), p = key.split('-');
+        var inRange = key >= s.rangeStart && key <= s.rangeEnd;
+        self.setState({ tab: 'board', rangeStart: inRange ? s.rangeStart : key, rangeEnd: inRange ? s.rangeEnd : key, viewY: +p[0], viewM: +p[1] - 1, savedFlash: false, query: '' });
+      },
+      clearForm: function () { self.setState({ form: emptyForm(), salesErrors: [], lastAdded: null }); },
+      viewOnBoard: function () {
+        if (!lastJob) return;
+        var p = lastJob.dateKey.split('-');
+        self.setState({ tab: 'board', rangeStart: lastJob.dateKey, rangeEnd: lastJob.dateKey, viewY: +p[0], viewM: +p[1] - 1, selectedId: lastJob.id, draftDriver: '', draftBus: '', savedFlash: false, query: '' });
+      },
+      addJob: addJob,
+      sorter: sorter,
+      sdir: sdir,
+      gridCols: gridCols,
+      tableMin: tableMin,
+      rz: this.resizers(),
+      resetWidths: function () { self.setState({ widths: defaultWidths() }); },
+      resetOrder: function () { self.setState({ unitOrder: defaultUnitOrder() }); },
+      resetColumns: function () { self.setState({ unitOrder: defaultUnitOrder(), widths: defaultWidths() }); },
+      ord: ord,
+      drag: drag,
+      dragOn: dragOn,
+      dragging: !!s.dragUnit,
+      draggingStr: s.dragUnit ? 'true' : 'false',
+      dropX: s.dropIdx === null ? 0 : bounds[s.dropIdx],
+      density: this.props.density ?? 'comfortable',
+      query: s.query,
+      onQuery: function (e) { self.setState({ query: e.target.value }); },
+      totalCount: dayAll.length,
+      dateLabel: dateLabel,
+      nowDateLabel: new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+      ftDate: new Date(s.now || Date.now()).toLocaleDateString('en-US', { weekday: 'short', month: '2-digit', day: '2-digit', year: 'numeric' }),
+      ftTime: (function (d) { var p = function (n) { return (n < 10 ? '0' : '') + n; }; return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); })(new Date(s.now || Date.now())),
+      ftSession: (function (ms) { var t = Math.max(0, Math.floor(ms / 1000)), p = function (n) { return (n < 10 ? '0' : '') + n; }; return p(Math.floor(t / 3600)) + ':' + p(Math.floor(t / 60) % 60) + ':' + p(t % 60); })((s.now || Date.now()) - (self.sessionStart || Date.now())),
+      calOpen: !!s.calTarget,
+      calOpenStr: s.calOpen ? 'true' : 'false',
+      calDays: calDays,
+      monthLabel: MONTHS[s.viewM] + ' ' + s.viewY,
+      openStart: function () { self.setState({ calTarget: s.calTarget === 'start' ? null : 'start', termOpen: false, viewOpen: false }); },
+      openEnd: function () { self.setState({ calTarget: s.calTarget === 'end' ? null : 'end', termOpen: false, viewOpen: false }); },
+      startActive: s.calTarget === 'start' ? 'true' : 'false',
+      endActive: s.calTarget === 'end' ? 'true' : 'false',
+      startLabel: labelOf(s.rangeStart),
+      endLabel: labelOf(s.rangeEnd),
+      calHint: s.calTarget === 'end' ? 'Pick the last date of the range' : 'Pick a date to go to it',
+      prevMonth: function () { var m = s.viewM - 1, y = s.viewY; if (m < 0) { m = 11; y--; } self.setState({ viewM: m, viewY: y }); },
+      nextMonth: function () { var m = s.viewM + 1, y = s.viewY; if (m > 11) { m = 0; y++; } self.setState({ viewM: m, viewY: y }); },
+      goToday: function () { self.setState({ rangeStart: todayKey, rangeEnd: todayKey, calTarget: null, viewY: now.getFullYear(), viewM: now.getMonth() }); },
+      unassignedCount: unassigned,
+      pendingCount: pending,
+      rows: rows,
+      noRows: rows.length === 0,
+      hasSel: !!selRaw,
+      noSel: !selRaw,
+      sel: sel,
+      hasRequested: !!(selRaw && selRaw.requestedDriver),
+      driverOptions: driverOptions,
+      busOptions: busOptions,
+      draftDriver: s.draftDriver,
+      draftBus: s.draftBus,
+      onDriver: function (e) { self.setState({ draftDriver: e.target.value, savedFlash: false }); },
+      onBus: function (e) { self.setState({ draftBus: e.target.value, savedFlash: false }); },
+      initials: s.initials,
+      onInitials: function (e) { self.setState({ initials: e.target.value.toUpperCase() }); },
+      showWarn: showWarn,
+      warnText: warnText,
+      savedFlash: s.savedFlash,
+      reset: function () {
+        if (!selRaw) return;
+        var o = Object.assign({}, s.overrides);
+        o[selRaw.id] = Object.assign({}, o[selRaw.id], { driver: '', bus: '', reportTime: '' });
+        self.setState({ overrides: o, draftDriver: '', draftBus: '', draftReport: '', savedFlash: false });
+      },
+      save: function () {
+        if (!selRaw) return;
+        var o = Object.assign({}, s.overrides);
+        o[selRaw.id] = Object.assign({}, o[selRaw.id], { driver: s.draftDriver, bus: s.draftBus, reportTime: s.draftReport || '' });
+        self.setState({ overrides: o, savedFlash: true });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

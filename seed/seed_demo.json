@@ -1,0 +1,845 @@
+{
+  "_note": "CharterStack demo seed. Field names match docs/DATA_MODEL.md. Dates are YYYY-MM-DD around base_date; seed_sandbox() shifts them so base_date becomes today. Times are 24-hour HH:MM; return_time null means One way. unit1 holds the dispatch data for unit 1 of the contract; other units start blank.",
+  "base_date": "2026-11-09",
+  "terminals": [
+    {
+      "code": "NJ",
+      "name": "New Jersey"
+    },
+    {
+      "code": "NY",
+      "name": "New York"
+    },
+    {
+      "code": "PA",
+      "name": "Pennsylvania"
+    },
+    {
+      "code": "CT",
+      "name": "Connecticut"
+    },
+    {
+      "code": "MA",
+      "name": "Massachusetts"
+    }
+  ],
+  "size_options": [
+    "56-pax coach",
+    "56-pax coach WC",
+    "57-pax coach",
+    "57-pax coach WC",
+    "35-pax minicoach",
+    "35-pax minicoach WC",
+    "28-pax shuttle",
+    "28-pax shuttle WC"
+  ],
+  "drivers": [
+    {
+      "name": "Marcus Bell",
+      "phone": "(201) 555-0181"
+    },
+    {
+      "name": "Luis Ortega",
+      "phone": "(201) 555-0122"
+    },
+    {
+      "name": "Denise Carter",
+      "phone": "(973) 555-0147"
+    },
+    {
+      "name": "Ray Holloway",
+      "phone": "(201) 555-0163"
+    },
+    {
+      "name": "Priya Nair",
+      "phone": "(732) 555-0110"
+    },
+    {
+      "name": "Tom Kowalski",
+      "phone": "(201) 555-0195"
+    },
+    {
+      "name": "Andre Simmons",
+      "phone": "(973) 555-0138"
+    },
+    {
+      "name": "Gloria Mendez",
+      "phone": "(201) 555-0174"
+    },
+    {
+      "name": "Kevin Doyle",
+      "phone": "(551) 555-0129"
+    },
+    {
+      "name": "Sam Whitaker",
+      "phone": "(551) 555-0156"
+    }
+  ],
+  "buses": [
+    {
+      "number": "4512",
+      "seats": 56,
+      "model": "MCI J4500",
+      "has_wc_lift": false
+    },
+    {
+      "number": "4520",
+      "seats": 56,
+      "model": "MCI J4500",
+      "has_wc_lift": false
+    },
+    {
+      "number": "4533",
+      "seats": 57,
+      "model": "Prevost H3-45",
+      "has_wc_lift": true
+    },
+    {
+      "number": "4547",
+      "seats": 56,
+      "model": "Van Hool CX45",
+      "has_wc_lift": false
+    },
+    {
+      "number": "4561",
+      "seats": 56,
+      "model": "MCI J4500",
+      "has_wc_lift": false
+    },
+    {
+      "number": "3108",
+      "seats": 35,
+      "model": "Minicoach",
+      "has_wc_lift": false
+    },
+    {
+      "number": "3115",
+      "seats": 35,
+      "model": "Minicoach",
+      "has_wc_lift": false
+    },
+    {
+      "number": "2207",
+      "seats": 28,
+      "model": "Shuttle",
+      "has_wc_lift": false
+    }
+  ],
+  "contracts": [
+    {
+      "number": 24811,
+      "status": "booked",
+      "organization": "Hoboken Youth Soccer League",
+      "group_name": "U14 Travel Squad",
+      "passengers": 52,
+      "contact_name": "Coach Dana Price",
+      "contact_phone": "(201) 555-0142",
+      "begin_date": "2026-11-09",
+      "spot_time": "05:00",
+      "start_time": "05:30",
+      "return_date": "2026-11-09",
+      "return_time": "19:00",
+      "pickup_location": "Stevens Park",
+      "pickup_address": "Hudson St & 4th St",
+      "pickup_city": "Hoboken",
+      "pickup_state": "NJ",
+      "pickup_zip": "07030",
+      "dest_location": "Lehigh Valley Sports Complex",
+      "dest_address": "3100 Lehigh St",
+      "dest_city": "Allentown",
+      "dest_state": "PA",
+      "dest_zip": "18101",
+      "itinerary": "Mon 11/09  05:30  Depart – Stevens Park, Hoboken (Load equipment bags first)\nMon 11/09  07:30  Arrive – Lehigh Valley Sports Complex\nMon 11/09  17:30  Depart – Lehigh Valley Sports Complex\nMon 11/09  19:00  Arrive – Stevens Park, Hoboken",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach",
+      "requested_driver": "Marcus Bell",
+      "info": "12 large equipment duffels go in the bays. Two chaperones ride in the front row.",
+      "total_price": 2450,
+      "deposit_required": 500,
+      "total_paid": 2450,
+      "unit1": {
+        "driver": "Marcus Bell",
+        "bus": "4512",
+        "report_time": "04:15",
+        "confirm_initials": "AR",
+        "confirmed_at": "2026-11-04T10:12"
+      }
+    },
+    {
+      "number": 24814,
+      "status": "booked",
+      "organization": "Bergen County Senior Center",
+      "group_name": "Fall Foliage Day Trip",
+      "passengers": 44,
+      "contact_name": "Helen Russo",
+      "contact_phone": "(201) 555-0188",
+      "begin_date": "2026-11-09",
+      "spot_time": "06:15",
+      "start_time": "06:45",
+      "return_date": "2026-11-09",
+      "return_time": "18:30",
+      "pickup_location": "Bergen County Senior Center",
+      "pickup_address": "20 Main St",
+      "pickup_city": "Hackensack",
+      "pickup_state": "NJ",
+      "pickup_zip": "07601",
+      "dest_location": "Hershey Gardens",
+      "dest_address": "170 Hotel Rd",
+      "dest_city": "Hershey",
+      "dest_state": "PA",
+      "dest_zip": "17033",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach WC",
+      "requested_driver": "Denise Carter",
+      "info": "Wheelchair lift required for 2 passengers. Rest stop every 90 minutes.",
+      "total_price": 2900,
+      "deposit_required": 600,
+      "total_paid": 600,
+      "unit1": {
+        "driver": "Denise Carter",
+        "bus": "4533",
+        "report_time": "05:30",
+        "confirm_initials": "MK",
+        "confirmed_at": "2026-11-05T15:40"
+      }
+    },
+    {
+      "number": 24817,
+      "status": "booked",
+      "organization": "Union City Public Schools",
+      "group_name": "9th Grade Biology",
+      "passengers": 48,
+      "contact_name": "Ms. Alicia Gomez",
+      "contact_phone": "(201) 555-0117",
+      "begin_date": "2026-11-09",
+      "spot_time": "06:45",
+      "start_time": "07:15",
+      "return_date": "2026-11-09",
+      "return_time": "14:15",
+      "pickup_location": "Union City High School",
+      "pickup_address": "2500 Kennedy Blvd",
+      "pickup_city": "Union City",
+      "pickup_state": "NJ",
+      "pickup_zip": "07087",
+      "dest_location": "Liberty Science Center",
+      "dest_address": "222 Jersey City Blvd",
+      "dest_city": "Jersey City",
+      "dest_state": "NJ",
+      "dest_zip": "07305",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach",
+      "requested_driver": null,
+      "info": "Driver checks in at the main office on arrival. No food or drink on the bus.",
+      "total_price": 950,
+      "deposit_required": 0,
+      "total_paid": 0,
+      "unit1": {
+        "driver": null,
+        "bus": null,
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24820,
+      "status": "booked",
+      "organization": "Meridian Health Partners",
+      "group_name": "Regional Sales Conference",
+      "passengers": 30,
+      "contact_name": "Jordan Lee",
+      "contact_phone": "(732) 555-0164",
+      "begin_date": "2026-11-09",
+      "spot_time": "08:30",
+      "start_time": "09:00",
+      "return_date": "2026-11-11",
+      "return_time": "17:00",
+      "pickup_location": "Newark Liberty Intl., Terminal B arrivals",
+      "pickup_address": "3 Brewster Rd",
+      "pickup_city": "Newark",
+      "pickup_state": "NJ",
+      "pickup_zip": "07114",
+      "dest_location": "Hyatt Regency",
+      "dest_address": "2 Albany St",
+      "dest_city": "New Brunswick",
+      "dest_state": "NJ",
+      "dest_zip": "08901",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NY",
+      "size_requirement": "35-pax minicoach",
+      "requested_driver": "Andre Simmons",
+      "info": "Meet group at Door 3 with company sign. Luggage for 30.",
+      "total_price": 6200,
+      "deposit_required": 1500,
+      "total_paid": 6200,
+      "unit1": {
+        "driver": "Andre Simmons",
+        "bus": "3108",
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24823,
+      "status": "booked",
+      "organization": "St. Augustine Parish",
+      "group_name": "Pilgrimage (overnight)",
+      "passengers": 55,
+      "contact_name": "Fr. Miguel Santos",
+      "contact_phone": "(201) 555-0139",
+      "begin_date": "2026-11-09",
+      "spot_time": "11:00",
+      "start_time": "11:30",
+      "return_date": "2026-11-10",
+      "return_time": "20:00",
+      "pickup_location": "St. Augustine Church",
+      "pickup_address": "5900 Bergenline Ave",
+      "pickup_city": "West New York",
+      "pickup_state": "NJ",
+      "pickup_zip": "07093",
+      "dest_location": "National Shrine",
+      "dest_address": "400 Michigan Ave NE",
+      "dest_city": "Washington",
+      "dest_state": "DC",
+      "dest_zip": "20017",
+      "itinerary": "Mon 11/09  11:30  Depart – St. Augustine Church, West New York\nMon 11/09  14:00  Rest stop – Service plaza, I-95 MD (30 min)\nMon 11/09  16:30  Arrive – National Shrine, Washington DC\nMon 11/09  18:30  Hotel – Group hotel (Driver room booked)\nTue 11/10  09:00  Pickup – Group hotel\nTue 11/10  15:00  Depart – National Shrine, Washington DC\nTue 11/10  20:00  Arrive – St. Augustine Church, West New York",
+      "bus_count": 2,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach",
+      "requested_driver": "Luis Ortega",
+      "info": "Overnight trip; driver room is booked at the group hotel.",
+      "total_price": 11800,
+      "deposit_required": 3000,
+      "total_paid": 3000,
+      "unit1": {
+        "driver": "Luis Ortega",
+        "bus": null,
+        "report_time": "10:00",
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24826,
+      "status": "booked",
+      "organization": "Garden State College Athletics",
+      "group_name": "Women's Volleyball",
+      "passengers": 26,
+      "contact_name": "Coach Erin Walsh",
+      "contact_phone": "(848) 555-0102",
+      "begin_date": "2026-11-10",
+      "spot_time": "05:30",
+      "start_time": "06:00",
+      "return_date": "2026-11-11",
+      "return_time": "23:00",
+      "pickup_location": "GSC Field House",
+      "pickup_address": "1 Stadium Dr",
+      "pickup_city": "Piscataway",
+      "pickup_state": "NJ",
+      "pickup_zip": "08854",
+      "dest_location": "Bryce Jordan Center",
+      "dest_address": "127 Bryce Jordan Center",
+      "dest_city": "University Park",
+      "dest_state": "PA",
+      "dest_zip": "16802",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "PA",
+      "size_requirement": "35-pax minicoach",
+      "requested_driver": "Priya Nair",
+      "info": "Team brings its own cooler; allow it on board.",
+      "total_price": 4800,
+      "deposit_required": 1000,
+      "total_paid": 4800,
+      "unit1": {
+        "driver": "Priya Nair",
+        "bus": "3115",
+        "report_time": null,
+        "confirm_initials": "AR",
+        "confirmed_at": "2026-11-06T09:05"
+      }
+    },
+    {
+      "number": 24829,
+      "status": "booked",
+      "organization": "Hudson Corporate Events",
+      "group_name": "Client Appreciation Day",
+      "passengers": 40,
+      "contact_name": "Sasha Kim",
+      "contact_phone": "(201) 555-0171",
+      "begin_date": "2026-11-10",
+      "spot_time": "08:00",
+      "start_time": "08:30",
+      "return_date": "2026-11-10",
+      "return_time": "19:30",
+      "pickup_location": "Port Imperial Ferry Terminal",
+      "pickup_address": "4005 Port Imperial Blvd",
+      "pickup_city": "Weehawken",
+      "pickup_state": "NJ",
+      "pickup_zip": "07086",
+      "dest_location": "Atlantic City Convention Center",
+      "dest_address": "1 Convention Blvd",
+      "dest_city": "Atlantic City",
+      "dest_state": "NJ",
+      "dest_zip": "08401",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach",
+      "requested_driver": null,
+      "info": "Wi-Fi and USB charging required. Water bottles stocked by client.",
+      "total_price": 2600,
+      "deposit_required": 500,
+      "total_paid": 1200,
+      "unit1": {
+        "driver": null,
+        "bus": "4547",
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24832,
+      "status": "booked",
+      "organization": "North Bergen Little League",
+      "group_name": "Family Day Outing",
+      "passengers": 22,
+      "contact_name": "Rick Alvarez",
+      "contact_phone": "(201) 555-0156",
+      "begin_date": "2026-11-10",
+      "spot_time": "11:30",
+      "start_time": "12:00",
+      "return_date": "2026-11-10",
+      "return_time": "17:00",
+      "pickup_location": "Braddock Park",
+      "pickup_address": "8900 Tonnelle Ave",
+      "pickup_city": "North Bergen",
+      "pickup_state": "NJ",
+      "pickup_zip": "07047",
+      "dest_location": "MetLife Stadium, Lot E",
+      "dest_address": "1 MetLife Stadium Dr",
+      "dest_city": "East Rutherford",
+      "dest_state": "NJ",
+      "dest_zip": "07073",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "28-pax shuttle",
+      "requested_driver": "Tom Kowalski",
+      "info": "Drop at Lot E. Children under 12 on board.",
+      "total_price": 1100,
+      "deposit_required": 0,
+      "total_paid": 0,
+      "unit1": {
+        "driver": "Tom Kowalski",
+        "bus": "2207",
+        "report_time": "10:45",
+        "confirm_initials": "MK",
+        "confirmed_at": "2026-11-07T13:22"
+      }
+    },
+    {
+      "number": 24835,
+      "status": "booked",
+      "organization": "Hudson County Veterans Council",
+      "group_name": "Veterans Day Memorial",
+      "passengers": 50,
+      "contact_name": "Walt Brennan",
+      "contact_phone": "(201) 555-0193",
+      "begin_date": "2026-11-11",
+      "spot_time": "06:30",
+      "start_time": "07:00",
+      "return_date": "2026-11-11",
+      "return_time": "16:00",
+      "pickup_location": "Journal Square",
+      "pickup_address": "1 PATH Plaza",
+      "pickup_city": "Jersey City",
+      "pickup_state": "NJ",
+      "pickup_zip": "07306",
+      "dest_location": "Washington Crossing Historic Park",
+      "dest_address": "1112 River Rd",
+      "dest_city": "Washington Crossing",
+      "dest_state": "PA",
+      "dest_zip": "18977",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach",
+      "requested_driver": "Gloria Mendez",
+      "info": "Ceremony at 11 AM; bus must stay on site. Several passengers use walkers.",
+      "total_price": 2200,
+      "deposit_required": 500,
+      "total_paid": 500,
+      "unit1": {
+        "driver": "Gloria Mendez",
+        "bus": "4561",
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24838,
+      "status": "booked",
+      "organization": "Liberty Touring Co.",
+      "group_name": "Boston Weekend Tour",
+      "passengers": 54,
+      "contact_name": "Nadia Ferreira",
+      "contact_phone": "(212) 555-0128",
+      "begin_date": "2026-11-11",
+      "spot_time": "21:30",
+      "start_time": "22:00",
+      "return_date": "2026-11-14",
+      "return_time": "18:00",
+      "pickup_location": "Port Authority Bus Terminal, Gate 401",
+      "pickup_address": "625 8th Ave",
+      "pickup_city": "New York",
+      "pickup_state": "NY",
+      "pickup_zip": "10036",
+      "dest_location": "Faneuil Hall Marketplace",
+      "dest_address": "4 S Market St",
+      "dest_city": "Boston",
+      "dest_state": "MA",
+      "dest_zip": "02108",
+      "itinerary": "Wed 11/11  22:00  Depart – Port Authority Bus Terminal, Gate 401\nThu 11/12  03:30  Arrive – Faneuil Hall Marketplace, Boston\nSat 11/14  12:00  Depart – Faneuil Hall Marketplace, Boston\nSat 11/14  18:00  Arrive – Port Authority Bus Terminal",
+      "bus_count": 1,
+      "terminal": "NY",
+      "size_requirement": "56-pax coach",
+      "requested_driver": null,
+      "info": "Overnight stay; driver room booked at the group hotel.",
+      "total_price": 9400,
+      "deposit_required": 2500,
+      "total_paid": 9400,
+      "unit1": {
+        "driver": null,
+        "bus": null,
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24841,
+      "status": "quote",
+      "organization": "Weehawken Rotary Club",
+      "group_name": "Holiday Outing",
+      "passengers": 38,
+      "contact_name": "Linda Park",
+      "contact_phone": "(201) 555-0148",
+      "begin_date": "2026-11-21",
+      "spot_time": "07:30",
+      "start_time": "08:00",
+      "return_date": "2026-11-21",
+      "return_time": "18:00",
+      "pickup_location": "Weehawken Waterfront Park",
+      "pickup_address": "1 Port Imperial Blvd",
+      "pickup_city": "Weehawken",
+      "pickup_state": "NJ",
+      "pickup_zip": "07086",
+      "dest_location": "Crayola Experience",
+      "dest_address": "30 Centre Square",
+      "dest_city": "Easton",
+      "dest_state": "PA",
+      "dest_zip": "18042",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "56-pax coach",
+      "requested_driver": null,
+      "info": "Customer is comparing quotes; follow up by 11/16.",
+      "total_price": 2350,
+      "deposit_required": 500,
+      "total_paid": 0,
+      "unit1": {
+        "driver": null,
+        "bus": null,
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    },
+    {
+      "number": 24844,
+      "status": "cancelled",
+      "organization": "Secaucus Senior Club",
+      "group_name": "Museum Day",
+      "passengers": 30,
+      "contact_name": "Frank Russo",
+      "contact_phone": "(201) 555-0193",
+      "begin_date": "2026-11-10",
+      "spot_time": "09:30",
+      "start_time": "10:00",
+      "return_date": "2026-11-10",
+      "return_time": "16:00",
+      "pickup_location": "Secaucus Senior Center",
+      "pickup_address": "101 Centre Ave",
+      "pickup_city": "Secaucus",
+      "pickup_state": "NJ",
+      "pickup_zip": "07094",
+      "dest_location": "Newark Museum of Art",
+      "dest_address": "49 Washington St",
+      "dest_city": "Newark",
+      "dest_state": "NJ",
+      "dest_zip": "07102",
+      "itinerary": "",
+      "bus_count": 1,
+      "terminal": "NJ",
+      "size_requirement": "35-pax minicoach",
+      "requested_driver": null,
+      "info": "Cancelled by customer 11/08; deposit kept per policy.",
+      "total_price": 1650,
+      "deposit_required": 400,
+      "total_paid": 400,
+      "unit1": {
+        "driver": null,
+        "bus": null,
+        "report_time": null,
+        "confirm_initials": "",
+        "confirmed_at": null
+      }
+    }
+  ],
+  "states": [
+    {
+      "code": "NJ",
+      "name": "New Jersey"
+    },
+    {
+      "code": "NY",
+      "name": "New York"
+    },
+    {
+      "code": "PA",
+      "name": "Pennsylvania"
+    },
+    {
+      "code": "CT",
+      "name": "Connecticut"
+    },
+    {
+      "code": "DE",
+      "name": "Delaware"
+    },
+    {
+      "code": "MD",
+      "name": "Maryland"
+    },
+    {
+      "code": "DC",
+      "name": "District of Columbia"
+    },
+    {
+      "code": "VA",
+      "name": "Virginia"
+    },
+    {
+      "code": "MA",
+      "name": "Massachusetts"
+    }
+  ],
+  "zip_lookup": {
+    "10001": [
+      "New York",
+      "NY",
+      "New York County"
+    ],
+    "10036": [
+      "New York",
+      "NY",
+      "New York County"
+    ],
+    "10301": [
+      "Staten Island",
+      "NY",
+      "Richmond County"
+    ],
+    "10601": [
+      "White Plains",
+      "NY",
+      "Westchester County"
+    ],
+    "11201": [
+      "Brooklyn",
+      "NY",
+      "Kings County"
+    ],
+    "12207": [
+      "Albany",
+      "NY",
+      "Albany County"
+    ],
+    "14202": [
+      "Buffalo",
+      "NY",
+      "Erie County"
+    ],
+    "15222": [
+      "Pittsburgh",
+      "PA",
+      "Allegheny County"
+    ],
+    "16801": [
+      "State College",
+      "PA",
+      "Centre County"
+    ],
+    "16802": [
+      "University Park",
+      "PA",
+      "Centre County"
+    ],
+    "17033": [
+      "Hershey",
+      "PA",
+      "Dauphin County"
+    ],
+    "18101": [
+      "Allentown",
+      "PA",
+      "Lehigh County"
+    ],
+    "18977": [
+      "Washington Crossing",
+      "PA",
+      "Bucks County"
+    ],
+    "19103": [
+      "Philadelphia",
+      "PA",
+      "Philadelphia County"
+    ],
+    "19801": [
+      "Wilmington",
+      "DE",
+      "New Castle County"
+    ],
+    "20001": [
+      "Washington",
+      "DC",
+      "District of Columbia"
+    ],
+    "20017": [
+      "Washington",
+      "DC",
+      "District of Columbia"
+    ],
+    "21202": [
+      "Baltimore",
+      "MD",
+      "Baltimore City"
+    ],
+    "21401": [
+      "Annapolis",
+      "MD",
+      "Anne Arundel County"
+    ],
+    "22314": [
+      "Alexandria",
+      "VA",
+      "City of Alexandria"
+    ],
+    "07030": [
+      "Hoboken",
+      "NJ",
+      "Hudson County"
+    ],
+    "07093": [
+      "West New York",
+      "NJ",
+      "Hudson County"
+    ],
+    "07087": [
+      "Union City",
+      "NJ",
+      "Hudson County"
+    ],
+    "07047": [
+      "North Bergen",
+      "NJ",
+      "Hudson County"
+    ],
+    "07086": [
+      "Weehawken",
+      "NJ",
+      "Hudson County"
+    ],
+    "07302": [
+      "Jersey City",
+      "NJ",
+      "Hudson County"
+    ],
+    "07306": [
+      "Jersey City",
+      "NJ",
+      "Hudson County"
+    ],
+    "07305": [
+      "Jersey City",
+      "NJ",
+      "Hudson County"
+    ],
+    "07601": [
+      "Hackensack",
+      "NJ",
+      "Bergen County"
+    ],
+    "07102": [
+      "Newark",
+      "NJ",
+      "Essex County"
+    ],
+    "07114": [
+      "Newark",
+      "NJ",
+      "Essex County"
+    ],
+    "08901": [
+      "New Brunswick",
+      "NJ",
+      "Middlesex County"
+    ],
+    "08854": [
+      "Piscataway",
+      "NJ",
+      "Middlesex County"
+    ],
+    "07073": [
+      "East Rutherford",
+      "NJ",
+      "Bergen County"
+    ],
+    "08401": [
+      "Atlantic City",
+      "NJ",
+      "Atlantic County"
+    ],
+    "06103": [
+      "Hartford",
+      "CT",
+      "Hartford County"
+    ],
+    "06510": [
+      "New Haven",
+      "CT",
+      "New Haven County"
+    ],
+    "06902": [
+      "Stamford",
+      "CT",
+      "Fairfield County"
+    ],
+    "02108": [
+      "Boston",
+      "MA",
+      "Suffolk County"
+    ]
+  }
+}

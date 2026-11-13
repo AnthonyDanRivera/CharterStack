@@ -1,2 +1,103 @@
 # CharterStack
-Dispatch Board
+
+A dispatch board and booking system for a motorcoach charter company, built with Django REST Framework and React.
+
+**Live demo:** _add link after deploy_ — click **Try the demo**. No sign-up; you get a private copy of the sample data.
+
+![Dispatch board](design/screenshots/01-dispatch-board.png)
+
+## Why I built this
+
+I worked as a dispatcher and operations planner in the motorcoach charter business. Every day ran on a dispatch board: which trips go out, who is driving, which bus, when the driver reports, whether the trip is confirmed. CharterStack is my version of that tool, built to show how I turn real operations into software.
+
+## What it does
+
+**Booking** — sales creates charter contracts.
+- Insert, edit, view and delete contracts: group, contact, schedule, pickup and destination, itinerary, vehicles, pricing.
+- Contract status: Quote, Booked, Cancelled. Balance due and payment status are computed.
+- Contract list by date range, with status filter, search and lookup.
+
+**Dispatch board** — dispatch works the day's trips.
+- One row per bus. A two-bus contract shows as `24823-1` and `24823-2`.
+- Assign driver, bus and report time, with warnings when the bus is too small or has no wheelchair lift.
+- Stamp Reported and On location times, cancel, add confirmation initials and dispatch notes.
+- Filter by date range, terminal, and today / away / all trips. Search, sort, resize and reorder columns.
+- Export the current view to Excel.
+
+Quotes never reach the board; cancelled contracts stay visible in red.
+
+## How the demo works
+
+Clicking **Try the demo** creates a temporary user and copies the sample data for that user only. Every database query is scoped to the logged-in user, so visitors never see each other's changes. Sandboxes are deleted after 24 hours. Details: [docs/DEMO_SANDBOX.md](docs/DEMO_SANDBOX.md).
+
+## Tech stack
+
+| | |
+|---|---|
+| Backend | Python, Django, Django REST Framework, PostgreSQL |
+| Frontend | React, TypeScript, Vite, TanStack Query |
+| Testing | pytest, Vitest, GitHub Actions |
+| API docs | OpenAPI / Swagger at `/api/docs/` |
+
+## Data model
+
+```mermaid
+erDiagram
+    User ||--o{ Contract : owns
+    Contract ||--|{ TripUnit : "has 1..n"
+    Terminal ||--o{ Contract : "booked at"
+    Driver ||--o{ TripUnit : "assigned to"
+    Bus ||--o{ TripUnit : "assigned to"
+```
+
+A **Contract** is what sales books. A **TripUnit** is one bus on that contract and one row on the dispatch board. Full details: [docs/DATA_MODEL.md](docs/DATA_MODEL.md).
+
+## Run it locally
+
+_Claude Code: fill this in during Phase 0 and keep it current._
+
+```bash
+# backend
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py seed_reference
+python manage.py runserver
+
+# frontend (second terminal)
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173 and click **Try the demo**.
+
+## Tests
+
+```bash
+cd backend && pytest
+cd frontend && npm test
+```
+
+Every business rule in [docs/BUSINESS_RULES.md](docs/BUSINESS_RULES.md) has a named test, and sandbox isolation has its own test suite.
+
+## Documentation
+
+- [Product spec](docs/SPEC.md)
+- [UI guide](docs/UI_GUIDE.md)
+- [Data model](docs/DATA_MODEL.md)
+- [Business rules](docs/BUSINESS_RULES.md)
+- [API](docs/API.md)
+- [Demo sandbox](docs/DEMO_SANDBOX.md)
+- [Build plan](docs/BUILD_PLAN.md)
+
+## Screenshots
+
+| Booking: contract view | Booking: contract form |
+|---|---|
+| ![Contract view](design/screenshots/02-booking-contract-view.png) | ![Contract form](design/screenshots/03-booking-contract-form.png) |
+
+## Author
+
+Anthony Rivera — _add portfolio and LinkedIn links_

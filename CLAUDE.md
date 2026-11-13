@@ -1,0 +1,50 @@
+# CharterStack — instructions for Claude Code
+
+CharterStack is a charter-bus dispatch board and booking app: a portfolio project built with Django REST Framework and React. Read `docs/SPEC.md` first, then the doc for whatever you are working on.
+
+## Where things are
+- `docs/SPEC.md` — scope and definition of done.
+- `docs/BUILD_PLAN.md` — phases. Work on one phase at a time, in order.
+- `docs/DATA_MODEL.md`, `docs/BUSINESS_RULES.md`, `docs/API.md`, `docs/DEMO_SANDBOX.md` — backend.
+- `docs/UI_GUIDE.md`, `design/` — frontend look and behavior. `design/Main.dc.html` is a prototype to read, not code to copy.
+- `seed/seed_demo.json` — sample data.
+
+## Stack
+Django 5 + Django REST Framework + PostgreSQL (SQLite locally) · drf-spectacular · pytest-django · React + Vite + TypeScript · TanStack Query · Vitest · GitHub Actions.
+
+## Commands
+Backend (from `backend/`):
+- `python manage.py runserver` — API on :8000
+- `python manage.py migrate && python manage.py seed_reference`
+- `pytest` — all backend tests
+- `ruff check . && ruff format --check .`
+
+Frontend (from `frontend/`):
+- `npm run dev` — app on :5173, proxies `/api` to :8000
+- `npm test` · `npm run lint` · `npm run build`
+
+Keep this section accurate when commands change.
+
+## Rules that must not be broken
+1. **Sandbox isolation.** Every query on `Contract` or `TripUnit` filters by `owner=request.user`. Use `OwnedModelViewSet`. Never write `Contract.objects.all()` or `.get(pk=...)` in a view. Another owner's object returns 404.
+2. **Business rules live in Django.** Payment status, balance, effective status, display numbers, warnings, counts, day labels and time normalization are computed in the backend and tested with pytest. React displays what the API returns.
+3. **Every rule in `docs/BUSINESS_RULES.md` has a test** named with its ID, for example `test_r12_payment_status_deposit_paid`.
+4. **24-hour times everywhere.** `HH:MM`. No AM/PM in UI, API or exports.
+5. **No real auth features.** No sign-up, passwords, or roles. Demo login only.
+6. **Match the design.** Colors, sizes, labels and wording come from `docs/UI_GUIDE.md` and the prototype's final CSS. Plain text, no badges or pills, no emoji, no new visual ideas unless asked.
+
+## Conventions
+- Python: ruff defaults, type hints on service functions, docstrings on anything implementing a business rule (mention the rule ID).
+- Put multi-step logic in `charters/services.py`; keep views and serializers thin.
+- API field names are `snake_case`. Frontend types mirror the API shapes in `docs/API.md`.
+- React: function components, one component per file, colocated CSS modules or a single `tokens.css` + component CSS. No UI library; the look is custom and small.
+- Server state through TanStack Query; UI state (open popovers, column order, widths) in component state, with column order and widths persisted to localStorage.
+- User-facing text uses the exact strings from the UI guide.
+- Commits: small, present tense, one concern each ("Add contract lookup endpoint").
+
+## How to work with me (the owner)
+- I come from bus dispatch operations and I am building this to show full-stack skills. Explain non-obvious technical choices briefly as you make them.
+- Before starting a phase, list what you will build and ask about anything unclear. After finishing, summarize what was built, what was tested, and anything you chose that the docs did not specify.
+- If the docs and the prototype disagree, follow the docs and tell me.
+- Do not add features that are listed as out of scope in `docs/SPEC.md`.
+- Update `README.md` and this file when setup steps, commands or structure change.
