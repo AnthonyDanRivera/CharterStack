@@ -99,10 +99,10 @@ export default function Landing() {
           </span>
           <div>
             <h2 id="made-by-name">Anthony Rivera</h2>
-            <p className="lp-made-tagline">Logistics planner who builds software.</p>
+            <p className="lp-made-tagline">Software developer.</p>
             <p className="lp-made-text">
-              Hi, I&rsquo;m Anthony. I started as a dispatcher, now work as a logistics planner in
-              the charter bus business, and also build software and websites.
+              Hi, I&rsquo;m Anthony. I&rsquo;m a software developer who started as a dispatcher and
+              now works as a logistics planner in the charter bus business.
             </p>
             <a
               className="lp-btn lp-btn-ghost lp-btn-sm"
