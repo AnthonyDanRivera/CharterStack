@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { BoardRow } from '../api/types'
 import Icon from '../components/Icon'
-import PaletteToggle from './PaletteToggle'
 
 type Props = {
   selected: BoardRow | null
@@ -89,7 +88,6 @@ export default function ActionBar(props: Props) {
         </button>
       </div>
       <div className="tgroup bgroup">
-        <PaletteToggle />
         <button type="button" className="tbtn" onClick={props.onResetColumns}>
           Reset columns
         </button>

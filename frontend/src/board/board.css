@@ -232,47 +232,25 @@
   background: var(--row-dup);
 }
 .row[data-dup='true']:hover {
-  background: var(--row-dup-hover);
+  background: #d6e5fa;
 }
 .row[data-status='onloc'] {
   background: var(--row-onloc);
 }
 .row[data-status='onloc']:hover {
-  background: var(--row-onloc-hover);
+  background: #d2edd8;
 }
 .row[data-status='onloc'][data-selected='true'] {
-  background: var(--row-onloc-selected);
+  background: #cdebd4;
 }
 .row[data-status='cancelled'] {
   background: var(--row-cancelled);
 }
 .row[data-status='cancelled']:hover {
-  background: var(--row-cancelled-hover);
+  background: #f7d3cf;
 }
 .row[data-status='cancelled'][data-selected='true'] {
-  background: var(--row-cancelled-selected);
-}
-/* Color is never the only signal: cancelled rows are also muted and struck through. */
-.row[data-status='cancelled'] > div {
-  color: #6b7380;
-  text-decoration: line-through;
-}
-.row[data-status='cancelled'] > .initcell {
-  text-decoration: none;
-}
-.row[data-status='cancelled'] .needed {
-  color: inherit;
-}
-.bgroup .st-palette[data-on='true'] {
-  background: #eaf1fc;
-  border-color: #8ab0e3;
-  color: var(--blue-text);
-  font-weight: 600;
-}
-.late-word {
-  margin-left: 4px;
-  font-size: 11.5px;
-  font-weight: 600;
+  background: #f5cdc8;
 }
 .needed {
   color: var(--red);
@@ -411,10 +389,10 @@
   flex: none;
 }
 .st-onloc .sw {
-  background: var(--swatch-onloc);
+  background: #9fd8ac;
 }
 .st-cxl .sw {
-  background: var(--swatch-cancelled);
+  background: #f0a49b;
 }
 .bgroup .st-rep[data-on='true'] {
   background: #eaf1fc;
@@ -424,12 +402,12 @@
 }
 .bgroup .st-onloc[data-on='true'] {
   background: var(--row-onloc);
-  border-color: var(--swatch-onloc-border);
+  border-color: #7dbf8d;
   font-weight: 600;
 }
 .bgroup .st-cxl[data-on='true'] {
   background: var(--row-cancelled);
-  border-color: var(--swatch-cancelled-border);
+  border-color: #e2877c;
   font-weight: 600;
 }
 .bgroup .tdel[data-armed='2'] {

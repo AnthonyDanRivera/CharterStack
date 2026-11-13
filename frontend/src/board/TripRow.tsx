@@ -39,7 +39,6 @@ export default function TripRow(props: Props) {
         return row.actual_report_time ? (
           <span className="actual" data-late={row.actual_report_late}>
             {row.actual_report_time}
-            {row.actual_report_late && <span className="late-word">late</span>}
             <button
               type="button"
               className="actclr"

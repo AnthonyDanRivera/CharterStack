@@ -29,17 +29,8 @@
 
   --row-selected: #3a424d;
   --row-dup: #e2edfc;
-  --row-dup-hover: #d6e5fa;
   --row-onloc: #dff3e3;
-  --row-onloc-hover: #d2edd8;
-  --row-onloc-selected: #cdebd4;
   --row-cancelled: #fbe1de;
-  --row-cancelled-hover: #f7d3cf;
-  --row-cancelled-selected: #f5cdc8;
-  --swatch-onloc: #9fd8ac;
-  --swatch-onloc-border: #7dbf8d;
-  --swatch-cancelled: #f0a49b;
-  --swatch-cancelled-border: #e2877c;
   --note-text: #8f3b06;
   --note-bg: #fdebdd;
 
@@ -48,22 +39,4 @@
   --line-soft: #eaedf1;
   --box-bg: #f7f8fa;
   --ro-bg: #f6f8fa;
-}
-
-/* Color-blind palette (docs/UI_GUIDE.md): red/green swapped for orange/blue. */
-:root[data-palette='cb'] {
-  --red: #b04a00;
-  --green: #0b5394;
-  --row-dup: #ece8f7;
-  --row-dup-hover: #e2dcf2;
-  --row-onloc: #d7e7f7;
-  --row-onloc-hover: #c9ddf2;
-  --row-onloc-selected: #c2d8f0;
-  --row-cancelled: #fce4c6;
-  --row-cancelled-hover: #f9d9b0;
-  --row-cancelled-selected: #f7d2a3;
-  --swatch-onloc: #7fb2e5;
-  --swatch-onloc-border: #5a96d2;
-  --swatch-cancelled: #f2b26b;
-  --swatch-cancelled-border: #d9923f;
 }

@@ -186,21 +186,6 @@ Title "Insert contract" or "Edit contract 24817". Same sections and order as vie
 - **Buttons:** **Add contract** / **Save changes** (primary) and **Cancel**. There is no "Clear form" button.
 - Validation errors appear as a list above the buttons, using the exact messages from the prototype's `validateForm` function.
 
-## Color is never the only signal
-
-- Cancelled board rows use muted, struck-through text (like cancelled contracts in the Booking list), not only the red background. The initials input is not struck through.
-- A late actual report time shows the word "late" after the time (`05:28 late`), not only red text.
-- On location rows already show their time in the On location column; duplicates already read `-D1` in the contract number; Unassigned, Needed and payment statuses are words.
-
-**Color-blind palette.** A toggle button "Color-blind palette" sits in the action bar's right group, before Reset columns. It uses `aria-pressed` and is remembered per browser in localStorage. When on, the whole app swaps red and green for colors that stay distinct with red-green color blindness:
-| Use | Default | Color-blind palette |
-|---|---|---|
-| On location row / swatch | green `#DFF3E3` / `#9FD8AC` | blue `#D7E7F7` / `#7FB2E5` |
-| Cancelled row / swatch | red `#FBE1DE` / `#F0A49B` | orange `#FCE4C6` / `#F2B26B` |
-| Duplicate row | blue `#E2EDFC` | lilac `#ECE8F7` (so it never looks like On location) |
-| Warning text (Unassigned, Needed, counts, late, Unpaid) | red `#C0261B` | vermillion `#B04A00` |
-| Paid in full | green `#1B5530` | blue `#0B5394` |
-
 ## Accessibility and interaction details to keep
 - Every control is reachable and usable by keyboard; popovers close on Escape and on outside click.
 - Sort buttons, resize handles and drag handles have `aria-label`s (see prototype).
