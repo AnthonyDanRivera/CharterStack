@@ -101,8 +101,8 @@ export default function Landing() {
             <h2 id="made-by-name">Anthony Rivera</h2>
             <p className="lp-made-tagline">Logistics planner who builds software.</p>
             <p className="lp-made-text">
-              Hi, I&rsquo;m Anthony. I started as a dispatcher and now work as a logistics planner
-              in the charter bus business. I also build software and websites.
+              Hi, I&rsquo;m Anthony. I started as a dispatcher, now work as a logistics planner in
+              the charter bus business, and also build software and websites.
             </p>
             <a
               className="lp-btn lp-btn-ghost lp-btn-sm"

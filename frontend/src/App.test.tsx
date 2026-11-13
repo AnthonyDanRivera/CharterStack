@@ -129,7 +129,7 @@ test('landing page has one Made by block linking the portfolio in a new tab', as
   expect(external[0].getAttribute('rel')).toContain('noopener')
   expect(screen.getByText('Logistics planner who builds software.')).toBeInTheDocument()
   expect(
-    screen.getByText(/started as a dispatcher and now work as a logistics planner/),
+    screen.getByText(/started as a dispatcher, now work as a logistics planner/),
   ).toBeInTheDocument()
 })
 
