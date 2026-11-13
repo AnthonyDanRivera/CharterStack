@@ -69,8 +69,8 @@ export default function Landing() {
           A <span className="lp-accent">TMS</span> for charter bus companies.
         </h1>
         <p className="lp-lead">
-          Book a trip and it lands on the dispatch board, one row per bus. Assign drivers and buses,
-          stamp report times, and export the day to Excel.
+          Book a trip and it shows up on the dispatch board. Each bus gets its own row with a driver
+          and report time.
         </p>
         <div className="lp-actions">
           <button type="button" className="lp-btn" onClick={start} disabled={starting}>
