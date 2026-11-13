@@ -170,15 +170,19 @@ test('deleting the last contract shows the pick-a-contract message', async () =>
   expect(await screen.findByText(/Pick a contract from the list/)).toBeInTheDocument()
 })
 
-test('search sits in the toolbar and contract lookup after Open on board', async () => {
+test('search in the toolbar; lookup left of the buttons; title under the header', async () => {
   renderTab()
-  await heading(24811)
+  const title = await heading(24811)
   const toolbar = screen.getByRole('region', { name: 'Toolbar' })
   expect(within(toolbar).getByRole('searchbox', { name: 'Search contracts' })).toBeInTheDocument()
   expect(within(screen.getByRole('status')).queryByLabelText('Contract lookup')).toBeNull()
-  const openOnBoard = screen.getByRole('button', { name: 'Open on board' })
+
   const lookup = screen.getByLabelText('Contract lookup')
-  expect(
-    openOnBoard.compareDocumentPosition(lookup) & Node.DOCUMENT_POSITION_FOLLOWING,
-  ).toBeTruthy()
+  const insert = screen.getByRole('button', { name: 'Insert contract' })
+  const openOnBoard = screen.getByRole('button', { name: 'Open on board' })
+  const follows = (a: Node, b: Node) =>
+    Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
+  expect(follows(lookup, insert)).toBe(true) // lookup first in the header row
+  expect(follows(openOnBoard, title)).toBe(true) // title below the header row
+  expect(follows(title, screen.getByText('Job'))).toBe(true) // and above Job
 })

@@ -156,7 +156,7 @@ See `design/screenshots/02-booking-contract-view.png` and `03-booking-contract-f
 3. **Status bar under the table:** **12** contracts · **10** booked · **1** quotes · **1** cancelled · **$18,600.00** balance due (cancelled and balance numbers in red).
 
 ### Contract surface — view mode
-Header row: "Contract **24817**" (number in monospace bold) with the status as small grey text beside it (red when cancelled). Buttons on the right: **+ Insert contract** (secondary), **Edit contract** (primary), **Delete contract** (three-click, rule R10), **Open on board** (switches tab and selects the contract's first unit), then the **Contract lookup** label with a 130px input (placeholder "e.g. 24817"); "No contract 99999 found." appears beside it in orange when there is no match.
+Header row: on the left the **Contract lookup** label with a 130px input (placeholder "e.g. 24817"); "No contract 99999 found." appears beside it in orange when there is no match. Buttons on the right: **+ Insert contract** (secondary), **Edit contract** (primary), **Delete contract** (three-click, rule R10), **Open on board** (switches tab and selects the contract's first unit). A thin line under the header row, then the title "Contract **24817**" (number in monospace bold) with the status as small grey text beside it (red when cancelled), directly above the Job section.
 
 Below, read-only sections. Each section has a small blue title, and each field is a small grey label above a light grey read-only box. Five fields per row.
 
@@ -170,7 +170,7 @@ Below, read-only sections. Each section has a small blue title, and each field i
 | Vehicle & driver | Number of buses, Terminal, Size requirement, Requested driver, then Info (full width) |
 | Pricing | Total price, Deposit required, Total paid (incl. deposit), Balance due, Payment status |
 | Dispatch | Single-bus contracts: Driver, Driver phone, Report time, Actual report, Bus, Confirmation. Multi-bus: a one-line note "This contract has 2 buses (24823-1 to 24823-2 on the dispatch board). Driver, bus and report details are set per bus there." |
-| Dispatch notes | One box (no dash when empty) |
+| Dispatch notes | One box under the section title (no dash when empty) |
 
 A contract is always open. On first visit it is the first contract in the list (or, if the dates and filter show none, the lowest-numbered contract in the sandbox). Deleting the open contract opens the next contract by number, or the previous one if it was the highest. Only when the sandbox has no contracts at all: "Pick a contract from the list, or look one up, to see it here." and an Insert contract button.
 

@@ -53,12 +53,7 @@ export default function ContractView(props: Props) {
   return (
     <>
       <div className="ct-head">
-        <h2>
-          Contract <span className="mono">{c.number}</span>
-          <span className="cst" data-cs={c.status}>
-            {STATUS_LABEL[c.status]}
-          </span>
-        </h2>
+        {props.lookup}
         <div className="ct-actions">
           <button type="button" className="btn2" onClick={props.onInsert}>
             <Icon name="plus" />
@@ -82,9 +77,15 @@ export default function ContractView(props: Props) {
           >
             Open on board
           </button>
-          {props.lookup}
         </div>
       </div>
+
+      <h2 className="ct-title">
+        Contract <span className="mono">{c.number}</span>
+        <span className="cst" data-cs={c.status}>
+          {STATUS_LABEL[c.status]}
+        </span>
+      </h2>
 
       <fieldset className="fs">
         <legend className="lg">Job</legend>
