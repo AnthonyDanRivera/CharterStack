@@ -8,7 +8,7 @@ A dispatch board and booking system for a motorcoach charter company, built with
 
 ## Why I built this
 
-I worked as a logistics planner in the motorcoach charter business, matching trips, buses and drivers every day. That work ran on a booking system and a dispatch board: which trips go out, who is driving, which bus, when the driver reports, whether the trip is confirmed. CharterStack is my version of that tool, built to show how I turn real operations into software.
+I work as a logistics planner in the motorcoach charter business, matching trips, buses and drivers every day. That work runs on a booking system and a dispatch board: which trips go out, who is driving, which bus, when the driver reports, whether the trip is confirmed. CharterStack is my version of that tool, built to show how I turn real operations into software.
 
 ## What it does
 

@@ -99,9 +99,9 @@ export default function Landing() {
           </span>
           <div>
             <h2 id="made-by-name">Anthony Rivera</h2>
-            <p className="lp-made-tagline">Logistics planner turned developer.</p>
+            <p className="lp-made-tagline">Logistics planner who builds software.</p>
             <p className="lp-made-text">
-              Hi, I&rsquo;m Anthony. I planned charter bus operations as a logistics planner,
+              Hi, I&rsquo;m Anthony. I&rsquo;m a logistics planner in the charter bus business,
               matching trips, buses and drivers every day, so I built the planning tool I wanted to
               use.
             </p>
