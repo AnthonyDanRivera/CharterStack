@@ -16,9 +16,9 @@ A dense, desktop internal tool: closer to a real TMS than a modern marketing app
 |---|---|
 | Font | `'Segoe UI', Tahoma, Arial, sans-serif`, base 12px; table text 12.5px |
 | Monospace (contract numbers) | `Consolas, 'Courier New', monospace` |
-| Page background | `#EEF1F5` |
-| Surface (panels, table) | `#FFFFFF`, border `1px solid #CDD4DC`, radius 4px |
-| Toolbar / header-row background | `#F7F8FA` / `#F3F5F8` |
+| Page background | `#E9EDF2` with a light dot grid: 1.2px dots `rgba(31, 58, 95, 0.24)` every 16px, fixed while scrolling. Never behind table text, only behind the surfaces. |
+| Surface (panels, table) | `#FFFFFF`, border `1px solid #C7CFD9`, radius 8px, soft shadow `0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08)` so it lifts off the dotted background |
+| Toolbar and action bar / table header row | `#EEF3F9` (faint blue-grey) / `#E8EDF3`, so controls, headers and trip rows read as separate bands |
 | App header bar | `#1F3A5F`, white text |
 | Text | `#1B1F24`; secondary `#4A525D`; muted `#5B6470`; placeholder dash `#8E97A3` |
 | Primary blue (buttons, focus, Trip information tabs) | `#2F6BC0`; hover `#2759A3`; active inner-tab text `#1A4C8C` |
@@ -46,7 +46,7 @@ Top to bottom:
 
 ## Dispatch board tab
 
-See `design/screenshots/01-dispatch-board.png`. One white surface containing, top to bottom: toolbar, status bar, trip table, action bar, then the trip detail area.
+See `design/screenshots/01-dispatch-board.png`. Two white surfaces on the dotted page background, 16px apart: the board (toolbar, status bar, trip table, action bar), then the trip detail area as its own surface below it.
 
 ### Toolbar (left to right)
 - **‹** previous period button.

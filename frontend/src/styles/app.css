@@ -7,7 +7,11 @@
 }
 body {
   margin: 0;
-  background: var(--page-bg);
+  /* Light dot grid behind the surfaces, so white panels stand out from the page. */
+  background-color: var(--page-bg);
+  background-image: radial-gradient(var(--page-dot) 1.2px, transparent 1.6px);
+  background-size: 16px 16px;
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--font);
   font-size: 12px;
@@ -140,10 +144,11 @@ textarea {
 
 /* ---- Surfaces, toolbar, status bar ---- */
 .surface {
-  margin: 10px 14px 20px;
+  margin: 16px 16px 20px;
   background: var(--surface);
   border: 1px solid var(--surface-border);
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: var(--surface-shadow);
 }
 .surface + .surface {
   margin-top: 0;
@@ -156,7 +161,7 @@ textarea {
   padding: 6px 10px;
   border-bottom: 1px solid var(--line);
   background: var(--toolbar-bg);
-  border-radius: 4px 4px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 .tgroup {
   display: flex;

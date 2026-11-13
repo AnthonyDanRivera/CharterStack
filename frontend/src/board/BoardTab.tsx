@@ -87,100 +87,107 @@ export default function BoardTab(props: Props) {
   }
 
   return (
-    <div className="surface">
-      <section aria-label="Toolbar" className="tbar">
-        <DateRangeControl range={props.range} onChange={props.onRangeChange} />
-        <span className="tsep" aria-hidden="true" />
-        <div className="tgroup">
-          <TerminalFilter
-            terminals={props.allTerminals}
-            selected={props.terminals}
-            label={props.terminalLabel}
-            onChange={props.onTerminalsChange}
+    <>
+      <div className="surface">
+        <section aria-label="Toolbar" className="tbar">
+          <DateRangeControl range={props.range} onChange={props.onRangeChange} />
+          <span className="tsep" aria-hidden="true" />
+          <div className="tgroup">
+            <TerminalFilter
+              terminals={props.allTerminals}
+              selected={props.terminals}
+              label={props.terminalLabel}
+              onChange={props.onTerminalsChange}
+            />
+            <MenuButton value={view} options={VIEWS} onChange={setView} />
+          </div>
+          <span className="tnote">
+            {board.data ? `Refreshed ${fmtEntered(board.data.refreshed_at)}` : ''}
+          </span>
+          <button type="button" className="tbtn tdrop" onClick={() => board.refetch()}>
+            <Icon name="refresh" />
+            Refresh
+          </button>
+        </section>
+
+        <div className="sbar" role="status">
+          <span className="cnt">
+            <b>{board.data?.counts.trips ?? 0}</b> trips
+          </span>
+          <span className="cnt">
+            <b className="red">{board.data?.counts.need_driver_or_bus ?? 0}</b> need driver or bus
+          </span>
+          <span className="cnt">
+            <b className="red">{board.data?.counts.pending_confirmation ?? 0}</b> pending
+            confirmation
+          </span>
+          <label htmlFor="trip-search" className="sr">
+            Search trips
+          </label>
+          <input
+            id="trip-search"
+            type="search"
+            className="field search"
+            placeholder="Search contract, org, group, driver…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
           />
-          <MenuButton value={view} options={VIEWS} onChange={setView} />
         </div>
-        <span className="tnote">
-          {board.data ? `Refreshed ${fmtEntered(board.data.refreshed_at)}` : ''}
-        </span>
-        <button type="button" className="tbtn tdrop" onClick={() => board.refetch()}>
-          <Icon name="refresh" />
-          Refresh
-        </button>
-      </section>
 
-      <div className="sbar" role="status">
-        <span className="cnt">
-          <b>{board.data?.counts.trips ?? 0}</b> trips
-        </span>
-        <span className="cnt">
-          <b className="red">{board.data?.counts.need_driver_or_bus ?? 0}</b> need driver or bus
-        </span>
-        <span className="cnt">
-          <b className="red">{board.data?.counts.pending_confirmation ?? 0}</b> pending confirmation
-        </span>
-        <label htmlFor="trip-search" className="sr">
-          Search trips
-        </label>
-        <input
-          id="trip-search"
-          type="search"
-          className="field search"
-          placeholder="Search contract, org, group, driver…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-      </div>
-
-      <section aria-label="Trips">
-        {board.isError && !board.data ? (
-          <p className="state error">
-            Couldn&apos;t load trips.
-            <button type="button" className="linkbtn" onClick={() => board.refetch()}>
-              Retry
-            </button>
-          </p>
-        ) : board.isPending ? (
-          <p className="state">Loading trips…</p>
-        ) : (
-          <TripTable
-            rows={rows}
-            order={layout.order}
-            widths={layout.widths}
-            sort={sort.key}
-            dir={sort.dir}
-            selectedId={props.selectedId}
-            onSort={onSort}
-            onOrderChange={layout.setOrder}
-            onWidthChange={layout.setWidth}
-            onSelect={props.onSelect}
-            onClearActual={(id) => action.mutate({ id, action: 'reported', body: { clear: true } })}
-            onInitials={(id, initials) =>
-              patch.mutate({ id, patch: { confirm_initials: initials } })
+        <section aria-label="Trips">
+          {board.isError && !board.data ? (
+            <p className="state error">
+              Couldn&apos;t load trips.
+              <button type="button" className="linkbtn" onClick={() => board.refetch()}>
+                Retry
+              </button>
+            </p>
+          ) : board.isPending ? (
+            <p className="state">Loading trips…</p>
+          ) : (
+            <TripTable
+              rows={rows}
+              order={layout.order}
+              widths={layout.widths}
+              sort={sort.key}
+              dir={sort.dir}
+              selectedId={props.selectedId}
+              onSort={onSort}
+              onOrderChange={layout.setOrder}
+              onWidthChange={layout.setWidth}
+              onSelect={props.onSelect}
+              onClearActual={(id) =>
+                action.mutate({ id, action: 'reported', body: { clear: true } })
+              }
+              onInitials={(id, initials) =>
+                patch.mutate({ id, patch: { confirm_initials: initials } })
+              }
+            />
+          )}
+          {mutationError && (
+            <p className="state error" role="alert">
+              {errorMessages(mutationError).join(' ')}
+            </p>
+          )}
+          <ActionBar
+            selected={selected}
+            busy={busy}
+            onReported={() => run('reported')}
+            onOnLocation={() => run('on-location')}
+            onCancel={() => run('cancel')}
+            onDuplicate={() => run('duplicate')}
+            onDeleteDuplicate={() =>
+              selected && remove.mutate(selected.id, { onSuccess: () => props.onSelect(null) })
             }
+            onExport={exportExcel}
+            onResetColumns={layout.reset}
           />
-        )}
-        {mutationError && (
-          <p className="state error" role="alert">
-            {errorMessages(mutationError).join(' ')}
-          </p>
-        )}
-        <ActionBar
-          selected={selected}
-          busy={busy}
-          onReported={() => run('reported')}
-          onOnLocation={() => run('on-location')}
-          onCancel={() => run('cancel')}
-          onDuplicate={() => run('duplicate')}
-          onDeleteDuplicate={() =>
-            selected && remove.mutate(selected.id, { onSuccess: () => props.onSelect(null) })
-          }
-          onExport={exportExcel}
-          onResetColumns={layout.reset}
-        />
-      </section>
-
-      <TripDetail unitId={selected ? selected.id : null} />
-    </div>
+        </section>
+      </div>
+      {/* Its own card, so the dotted page background shows between board and details. */}
+      <div className="surface">
+        <TripDetail unitId={selected ? selected.id : null} />
+      </div>
+    </>
   )
 }

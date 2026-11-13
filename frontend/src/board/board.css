@@ -419,7 +419,7 @@
 
 /* Trip detail */
 .detail {
-  border-top: 1px solid var(--line);
+  border-radius: 8px;
 }
 .detail-cols {
   display: flex;

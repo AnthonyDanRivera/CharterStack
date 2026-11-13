@@ -3,11 +3,13 @@
   --font: 'Segoe UI', Tahoma, Arial, sans-serif;
   --mono: Consolas, 'Courier New', monospace;
 
-  --page-bg: #eef1f5;
+  --page-bg: #e9edf2;
+  --page-dot: rgba(31, 58, 95, 0.24);
   --surface: #ffffff;
-  --surface-border: #cdd4dc;
-  --toolbar-bg: #f7f8fa;
-  --header-row-bg: #f3f5f8;
+  --surface-border: #c7cfd9;
+  --surface-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 8px 24px rgba(16, 24, 40, 0.08);
+  --toolbar-bg: #eef3f9;
+  --header-row-bg: #e8edf3;
   --app-header: #1f3a5f;
 
   --text: #1b1f24;
