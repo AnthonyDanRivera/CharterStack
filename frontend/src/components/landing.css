@@ -1,4 +1,4 @@
-/* Landing page: the app's navy and blue, plain text, no badges. */
+/* Landing page: the app's navy and blue, plain text. */
 
 .lp {
   min-height: 100vh;
@@ -7,7 +7,6 @@
   flex-direction: column;
 }
 
-/* Top bar */
 .lp-bar {
   background: var(--app-header);
   color: #fff;
@@ -15,69 +14,37 @@
   padding: 0 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-.lp-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 700;
-}
-.lp-bar-link {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12.5px;
-  text-decoration: none;
-}
-.lp-bar-link:hover {
-  color: #fff;
-  text-decoration: underline;
 }
 
 /* Hero */
 .lp-hero {
-  background: linear-gradient(180deg, var(--app-header) 0%, #24456f 100%);
+  background: var(--app-header);
   color: #fff;
-  padding: 56px 24px 150px;
+  padding: 48px 24px 140px;
 }
 .lp-hero-inner {
-  max-width: 760px;
+  max-width: 860px;
   margin: 0 auto;
   text-align: center;
 }
-.lp-kicker {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #9fc0ec;
-}
 .lp-hero h1 {
   margin: 0;
-  font-size: 34px;
+  font-size: 32px;
   line-height: 1.2;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 .lp-lead {
   margin: 14px auto 0;
-  max-width: 620px;
+  max-width: 600px;
   font-size: 15px;
   line-height: 23px;
   color: rgba(255, 255, 255, 0.85);
 }
-.lp-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 24px;
-}
 .lp-cta {
+  margin-top: 24px;
   height: 42px;
-  padding: 0 26px;
+  padding: 0 28px;
   border: 0;
   border-radius: 4px;
   background: #fff;
@@ -85,7 +52,6 @@
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 .lp-cta:hover {
   background: #eaf1fc;
@@ -94,23 +60,12 @@
   opacity: 0.75;
   cursor: default;
 }
-.lp-ghost {
-  height: 42px;
-  padding: 0 20px;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 4px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.lp-ghost:hover {
-  background: rgba(255, 255, 255, 0.1);
+.lp-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 .lp-note {
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   font-size: 12.5px;
   color: rgba(255, 255, 255, 0.7);
 }
@@ -123,147 +78,76 @@
   color: #a61b12;
   font-size: 12.5px;
 }
-.lp-hero :focus-visible,
-.lp-bar :focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-}
 
 /* Screenshot, overlapping the hero */
 .lp-shot {
   padding: 0 24px;
-  margin-top: -110px;
+  margin-top: -100px;
 }
-.lp-frame {
-  max-width: 1080px;
-  margin: 0 auto;
-  background: #fff;
-  border: 1px solid var(--surface-border);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 18px 48px rgba(16, 24, 40, 0.22);
-}
-.lp-frame-bar {
-  height: 26px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  background: var(--header-row-bg);
-  border-bottom: 1px solid var(--line);
-}
-.lp-frame-bar span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #c9d1da;
-}
-.lp-frame img {
+.lp-shot img {
   display: block;
+  max-width: 1080px;
   width: 100%;
   height: auto;
+  margin: 0 auto;
+  border: 1px solid var(--surface-border);
+  border-radius: 6px;
+  box-shadow: 0 12px 36px rgba(16, 24, 40, 0.2);
 }
 
-/* Features */
-.lp-features {
+/* How it's built */
+.lp-stack {
   max-width: 1080px;
-  margin: 40px auto 0;
+  width: 100%;
+  margin: 48px auto 0;
   padding: 0 24px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  box-sizing: border-box;
 }
-.lp-feature {
-  background: #fff;
-  border: 1px solid var(--surface-border);
-  border-radius: 4px;
-  padding: 18px 20px;
-}
-.lp-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  background: #eaf1fc;
-  color: var(--blue);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.lp-feature h2 {
-  margin: 12px 0 6px;
-  font-size: 15px;
+.lp-stack > h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
   color: var(--text);
 }
-.lp-feature p {
+.lp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+}
+.lp-item {
+  background: #fff;
+  border: 1px solid var(--surface-border);
+  border-left: 3px solid var(--blue);
+  border-radius: 4px;
+  padding: 14px 18px;
+}
+.lp-item h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+.lp-item p {
   margin: 0;
   font-size: 13px;
   line-height: 20px;
   color: var(--text-2);
 }
 
-/* About */
-.lp-about {
-  margin: 40px 0 0;
-  padding: 40px 24px;
-  background: #fff;
-  border-top: 1px solid var(--surface-border);
-  border-bottom: 1px solid var(--surface-border);
-}
-.lp-about-inner {
-  max-width: 720px;
-  margin: 0 auto;
-  text-align: center;
-}
-.lp-about h2 {
-  margin: 0;
-  font-size: 22px;
-  color: var(--text);
-}
-.lp-about p {
-  margin: 12px 0 0;
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--label);
-}
-.lp-link-btn {
-  height: 38px;
-  padding: 0 18px;
-  display: inline-flex;
-  align-items: center;
-  border-radius: 4px;
-  background: var(--blue);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.lp-link-btn:hover {
-  background: var(--blue-hover);
-}
-.lp-text-btn {
-  border: 0;
-  background: none;
-  padding: 0 6px;
-  color: var(--blue-text);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
 /* Footer */
 .lp-foot {
-  margin-top: auto;
+  margin-top: 48px;
   padding: 18px 24px;
+  border-top: 1px solid var(--surface-border);
+  background: #fff;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: 12.5px;
+  color: var(--text-2);
 }
 .lp-foot a {
   color: var(--blue-text);
+  font-weight: 600;
   text-decoration: none;
 }
 .lp-foot a:hover {
@@ -272,9 +156,6 @@
 
 @media (max-width: 760px) {
   .lp-hero h1 {
-    font-size: 26px;
-  }
-  .lp-features {
-    grid-template-columns: minmax(0, 1fr);
+    font-size: 25px;
   }
 }

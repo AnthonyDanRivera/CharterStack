@@ -6,6 +6,7 @@ import BookingTab from '../booking/BookingTab'
 import { todayIso } from '../lib/dates'
 import type { DateRange } from './DateRangeControl'
 import Icon from './Icon'
+import Logo from './Logo'
 import SessionStrip from './SessionStrip'
 
 type Tab = 'board' | 'booking'
@@ -38,8 +39,9 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
   return (
     <div className="app">
       <header className="app-header">
-        <Icon name="bus" size={20} />
-        <h1>CharterStack</h1>
+        <h1>
+          <Logo />
+        </h1>
         <span className="header-sep" aria-hidden="true" />
         <nav className="tabs" aria-label="Views">
           <button

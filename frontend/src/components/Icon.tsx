@@ -1,13 +1,5 @@
 // Line icons copied from the prototype's inline SVGs.
 const PATHS = {
-  bus: (
-    <>
-      <rect x="3" y="4" width="18" height="13" rx="2" />
-      <path d="M3 11h18" />
-      <path d="M7 17v2" />
-      <path d="M17 17v2" />
-    </>
-  ),
   board: (
     <>
       <rect x="3" y="4" width="18" height="16" rx="2" />
