@@ -87,7 +87,7 @@ export default function BoardTab(props: Props) {
 
   return (
     <>
-      <div className="surface">
+      <div className="surface board-surface">
         <section aria-label="Toolbar" className="tbar">
           <DateRangeControl range={props.range} onChange={props.onRangeChange} />
           <span className="tsep" aria-hidden="true" />
@@ -132,7 +132,7 @@ export default function BoardTab(props: Props) {
           />
         </div>
 
-        <section aria-label="Trips">
+        <section aria-label="Trips" className="trips-section">
           {board.isError && !board.data ? (
             <p className="state error">
               Couldn&apos;t load trips.
@@ -180,7 +180,7 @@ export default function BoardTab(props: Props) {
         </section>
       </div>
       {/* Its own card, so the dotted page background shows between board and details. */}
-      <div className="surface">
+      <div className="surface detail-surface">
         <TripDetail unitId={selected ? selected.id : null} />
       </div>
     </>

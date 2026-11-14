@@ -50,6 +50,18 @@ textarea {
 .app-main {
   flex: 1;
 }
+/* Dispatch board: fit the window so the trip details always stay visible and the
+   trip table scrolls inside itself. */
+.app[data-tab='board'] {
+  height: 100vh;
+  min-height: 0;
+}
+.app[data-tab='board'] .app-main {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
 .app-header {
   background: var(--app-header);
   color: #fff;

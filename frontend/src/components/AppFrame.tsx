@@ -37,7 +37,7 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
   }
 
   return (
-    <div className="app">
+    <div className="app" data-tab={tab}>
       <header className="app-header">
         <h1>
           <Logo size={28} />
@@ -56,20 +56,20 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
           <button
             type="button"
             className="tab"
-            data-active={tab === 'booking'}
-            aria-current={tab === 'booking' ? 'page' : undefined}
-            onClick={() => setTab('booking')}
-          >
-            Booking
-          </button>
-          <button
-            type="button"
-            className="tab"
             data-active={tab === 'buses'}
             aria-current={tab === 'buses' ? 'page' : undefined}
             onClick={() => setTab('buses')}
           >
             Bus board
+          </button>
+          <button
+            type="button"
+            className="tab"
+            data-active={tab === 'booking'}
+            aria-current={tab === 'booking' ? 'page' : undefined}
+            onClick={() => setTab('booking')}
+          >
+            Booking
           </button>
         </nav>
       </header>
