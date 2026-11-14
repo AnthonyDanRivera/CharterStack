@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Contract, Location, Reference } from '../api/types'
 import Dash from '../components/Dash'
-import Icon from '../components/Icon'
 import { fmtEntered, fmtLong, fmtMoney } from '../lib/dates'
 import DeleteContractButton from './DeleteContractButton'
 import ReadOnlyField from './ReadOnlyField'
@@ -56,7 +55,6 @@ export default function ContractView(props: Props) {
         {props.lookup}
         <div className="ct-actions">
           <button type="button" className="btn2" onClick={props.onInsert}>
-            <Icon name="plus" />
             Insert contract
           </button>
           <button type="button" className="btn" onClick={props.onEdit}>

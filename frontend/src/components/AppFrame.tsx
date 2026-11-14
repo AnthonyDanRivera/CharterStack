@@ -5,7 +5,6 @@ import BoardTab from '../board/BoardTab'
 import BookingTab from '../booking/BookingTab'
 import { todayIso } from '../lib/dates'
 import type { DateRange } from './DateRangeControl'
-import Icon from './Icon'
 import Logo from './Logo'
 import SessionStrip from './SessionStrip'
 
@@ -51,7 +50,6 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
             aria-current={tab === 'board' ? 'page' : undefined}
             onClick={() => setTab('board')}
           >
-            <Icon name="board" />
             Dispatch board
           </button>
           <button
@@ -61,7 +59,6 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
             aria-current={tab === 'booking' ? 'page' : undefined}
             onClick={() => setTab('booking')}
           >
-            <Icon name="plus" />
             Booking
           </button>
         </nav>

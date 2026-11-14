@@ -9,7 +9,6 @@ import {
 } from '../api/hooks'
 import type { Contract, ContractFilter, ContractRow } from '../api/types'
 import DateRangeControl, { type DateRange } from '../components/DateRangeControl'
-import Icon from '../components/Icon'
 import MenuButton from '../components/MenuButton'
 import { fmtMoney } from '../lib/dates'
 import ContractFormView from './ContractFormView'
@@ -75,7 +74,6 @@ export default function BookingTab({ range, onRangeChange, onOpenOnBoard }: Prop
         <div className="ct-empty">
           <p>Pick a contract from the list, or look one up, to see it here.</p>
           <button type="button" className="btn2" onClick={() => setMode({ kind: 'insert' })}>
-            <Icon name="plus" />
             Insert contract
           </button>
         </div>

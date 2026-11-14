@@ -57,7 +57,6 @@ export default function DateRangeControl({
             aria-haspopup="true"
             onClick={() => toggle('start')}
           >
-            <Icon name="calendar" className="calicon" />
             <span style={{ display: 'flex', flexDirection: 'column' }}>
               <span className="lbl">Start date</span>
               <span className="val">{fmtLong(range.start)}</span>

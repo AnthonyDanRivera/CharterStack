@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { BoardRow } from '../api/types'
-import Icon from '../components/Icon'
 
 type Props = {
   selected: BoardRow | null
@@ -35,7 +34,6 @@ export default function ActionBar(props: Props) {
           disabled={none}
           onClick={props.onReported}
         >
-          <Icon name="clock" />
           {reported ? `Reported ${reported}` : 'Reported'}
         </button>
         <button
@@ -61,7 +59,6 @@ export default function ActionBar(props: Props) {
           Cancelled
         </button>
         <button type="button" className="tbtn" disabled={none} onClick={props.onDuplicate}>
-          <Icon name="copy" />
           Duplicate
         </button>
         <button
@@ -78,12 +75,10 @@ export default function ActionBar(props: Props) {
           }}
           onBlur={() => setArmedFor(null)}
         >
-          <Icon name="trash" />
           {armed ? 'Click again to delete' : 'Delete duplicate'}
         </button>
         <span className="tsep" aria-hidden="true" />
         <button type="button" className="tbtn" onClick={props.onExport}>
-          <Icon name="excel" />
           Export to Excel
         </button>
       </div>

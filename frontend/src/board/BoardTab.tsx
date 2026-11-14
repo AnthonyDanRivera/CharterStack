@@ -11,7 +11,6 @@ import {
 } from '../api/hooks'
 import type { SortDir, Terminal, TripView } from '../api/types'
 import DateRangeControl, { type DateRange } from '../components/DateRangeControl'
-import Icon from '../components/Icon'
 import MenuButton from '../components/MenuButton'
 import { fmtEntered } from '../lib/dates'
 import ActionBar from './ActionBar'
@@ -105,7 +104,6 @@ export default function BoardTab(props: Props) {
             {board.data ? `Refreshed ${fmtEntered(board.data.refreshed_at)}` : ''}
           </span>
           <button type="button" className="tbtn tdrop" onClick={() => board.refetch()}>
-            <Icon name="refresh" />
             Refresh
           </button>
         </section>

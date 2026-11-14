@@ -10,6 +10,8 @@ The source of truth for the look is the prototype in `design/Main.dc.html` and t
 
 ## Overall look
 
+**No decorative icons.** Buttons and tabs are text only. The only glyphs kept are ones that are the control itself: the ‹ › previous/next and month arrows, the ▾ chevron on dropdowns, the × that clears an actual report time, the drag grip on paired column headers, and the small status color swatches on On location and Cancelled.
+
 A dense, desktop internal tool: closer to a real TMS than a modern marketing app. Plain, small text, thin borders, no cards with big shadows, no badges or pills, no emoji.
 
 | Token | Value |
@@ -57,7 +59,7 @@ See `design/screenshots/01-dispatch-board.png`. Two white surfaces on the dotted
 - Vertical separator.
 - **Terminal: All ▾** — opens a popover titled "Show terminals" with an "All terminals" checkbox, a divider, five checkboxes (`NJ – New Jersey`, `NY – New York`, `PA – Pennsylvania`, `CT – Connecticut`, `MA – Massachusetts`) and a "Done" button. Behavior: rule R27.
 - **Today trips ▾** — dropdown with Today trips, Away trips, All trips (rule R25).
-- Pushed to the far right: small grey text `Refreshed 11/12 21:04`, then a **Refresh** button with a circular-arrow icon. Refresh refetches the board and updates the time.
+- Pushed to the far right: small grey text `Refreshed 11/12 21:04`, then a **Refresh** button. Refresh refetches the board and updates the time.
 
 All popovers close when the user clicks anywhere outside them. Only one is open at a time.
 
@@ -112,12 +114,12 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 
 ### Action bar (under the table)
 Left group, all disabled when no row is selected:
-- **Reported** (clock icon) — toggles the actual report stamp; label becomes "Reported 05:28" and the button tints blue when set.
+- **Reported** — toggles the actual report stamp; label becomes "Reported 05:28" and the button tints blue when set.
 - **On location** (green swatch) — toggles; button tints light green `#DFF3E3` when on.
 - **Cancelled** (red swatch) — toggles; button tints light red `#FBE1DE` when on.
-- **Duplicate** (copy icon).
-- **Delete duplicate** (trash icon) — enabled only for a selected duplicate; first click turns it red and reads "Click again to delete".
-- Separator, then **Export to Excel** (file icon) — downloads `CharterStack-board-YYYY-MM-DD.xlsx` with the rows currently shown, in the current column order and sort, bold frozen header row with filters. Blank driver/bus/initials export as `Unassigned`, `Needed`, `Pending`.
+- **Duplicate**.
+- **Delete duplicate** — enabled only for a selected duplicate; first click turns it red and reads "Click again to delete".
+- Separator, then **Export to Excel** — downloads `CharterStack-board-YYYY-MM-DD.xlsx` with the rows currently shown, in the current column order and sort, bold frozen header row with filters. Blank driver/bus/initials export as `Unassigned`, `Needed`, `Pending`.
 
 Right: **Reset columns**.
 

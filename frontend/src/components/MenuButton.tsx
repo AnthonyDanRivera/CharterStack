@@ -25,7 +25,6 @@ export default function MenuButton<T extends string>({ value, options, onChange 
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
-        <Icon name="list" />
         {current?.label}
         <Icon name="chevron" className="chev" strokeWidth={2} />
       </button>

@@ -38,7 +38,6 @@ export default function TerminalFilter({ terminals, selected, label, onChange }:
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
-        <Icon name="terminal" />
         Terminal: {label}
         <Icon name="chevron" className="chev" strokeWidth={2} />
       </button>
