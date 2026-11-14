@@ -14,7 +14,6 @@ type Props = {
   onOrderChange: (order: string[]) => void
   onWidthChange: (key: LeafKey, width: number) => void
   onSelect: (id: number) => void
-  onClearActual: (id: number) => void
   onInitials: (id: number, initials: string) => void
 }
 
@@ -46,7 +45,6 @@ export default function TripTable(props: Props) {
             gridTemplate={template}
             selected={row.id === props.selectedId}
             onSelect={() => props.onSelect(row.id)}
-            onClearActual={() => props.onClearActual(row.id)}
             onInitials={(initials) => props.onInitials(row.id, initials)}
           />
         ))}

@@ -26,7 +26,7 @@ export default function MenuButton<T extends string>({ value, options, onChange 
         onClick={() => setOpen((o) => !o)}
       >
         {current?.label}
-        <Icon name="chevron" className="chev" strokeWidth={2} />
+        <Icon name="chevron" className="chev" />
       </button>
       {open && (
         <div className="dpop narrow" role="menu">

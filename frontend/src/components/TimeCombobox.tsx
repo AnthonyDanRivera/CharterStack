@@ -109,7 +109,7 @@ export default function TimeCombobox({ id, value, onChange, placeholder, oneWay,
           setOpen((o) => !o)
         }}
       >
-        <Icon name="chevron" size={14} strokeWidth={2} />
+        <Icon name="chevron" size={14} />
       </button>
       {open && options.length > 0 && (
         <div className="combolist" role="listbox" id={listId} ref={list}>

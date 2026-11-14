@@ -68,7 +68,7 @@ These rules live in the Django backend (model methods, serializers, or a small `
 - Too small: bus seats < passengers per bus, where passengers per bus = `ceil(passengers / bus_count)`. Text: "Bus #3108 seats 35; this group has 48 passengers." (multi-bus: "…; each bus needs about 28 seats.")
 - No lift: the contract's size requirement ends in `WC` and the bus has no lift. Text: "Bus #4512 has no wheelchair lift; this trip needs WC."
 
-**R19 — Reported.** The Reported button stamps `actual_report_time` with the current local time, to the minute. Pressing it again clears it. The × in the Actual report cell also clears it. The button label becomes "Reported 05:28" when set. The time shows red when it is later than `report_time`.
+**R19 — Reported.** The Reported button stamps `actual_report_time` with the current local time, to the minute. Pressing it again clears it. The button label becomes "Reported 05:28" when set. The time shows red when it is later than `report_time`.
 
 **R20 — On location.** The On location button sets `status = onloc` and stamps `on_location_time` with the current time. Pressing it again clears both. Row turns green. The On location time is always black.
 

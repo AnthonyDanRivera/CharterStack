@@ -49,13 +49,13 @@ export default function CalendarPopover({ target, start, end, onPick, onToday }:
           onClick={() => move(-1)}
           aria-label="Previous month"
         >
-          <Icon name="left" size={18} strokeWidth={2} />
+          <Icon name="left" size={18} />
         </button>
         <span>
           {MONTH_NAMES[view.m]} {view.y}
         </span>
         <button type="button" className="calnav" onClick={() => move(1)} aria-label="Next month">
-          <Icon name="right" size={18} strokeWidth={2} />
+          <Icon name="right" size={18} />
         </button>
       </div>
       <p className="calhint">

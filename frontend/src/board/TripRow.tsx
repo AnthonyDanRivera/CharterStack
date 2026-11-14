@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import type { BoardRow } from '../api/types'
 import Dash from '../components/Dash'
-import Icon from '../components/Icon'
 import { fmtEntered, fmtUS } from '../lib/dates'
 import type { LeafKey } from './columns'
 import InitialsInput from './InitialsInput'
@@ -12,13 +11,12 @@ type Props = {
   gridTemplate: string
   selected: boolean
   onSelect: () => void
-  onClearActual: () => void
   onInitials: (initials: string) => void
 }
 
 /** One board row. Values come from the API as-is; only dates are formatted. */
 export default function TripRow(props: Props) {
-  const { row, leafs, gridTemplate, selected, onSelect, onClearActual, onInitials } = props
+  const { row, leafs, gridTemplate, selected, onSelect, onInitials } = props
   const sizeBase = row.size_requirement.replace(/ WC$/, '')
 
   const cell = (key: LeafKey): ReactNode => {
@@ -39,18 +37,6 @@ export default function TripRow(props: Props) {
         return row.actual_report_time ? (
           <span className="actual" data-late={row.actual_report_late}>
             {row.actual_report_time}
-            <button
-              type="button"
-              className="actclr"
-              aria-label={`Clear actual report time for contract ${row.display_number}`}
-              onClick={(e) => {
-                e.stopPropagation()
-                onSelect()
-                onClearActual()
-              }}
-            >
-              <Icon name="close" size={12} strokeWidth={2.2} />
-            </button>
           </span>
         ) : (
           <Dash />
@@ -140,7 +126,7 @@ export default function TripRow(props: Props) {
       {leafs.map((key, i) => (
         <div
           key={key}
-          className={`c-${key}${key === 'confInit' || key === 'actualReport' ? ' initcell' : ''}${
+          className={`c-${key}${key === 'confInit' ? ' initcell' : ''}${
             i > 0 && isSplit(key) ? ' split' : ''
           }`}
           style={{ gridColumn: i + 1 }}

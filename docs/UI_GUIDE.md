@@ -10,7 +10,7 @@ The source of truth for the look is the prototype in `design/Main.dc.html` and t
 
 ## Overall look
 
-**No decorative icons.** Buttons and tabs are text only. The only glyphs kept are ones that are the control itself: the ‹ › previous/next and month arrows, the ▾ chevron on dropdowns, the × that clears an actual report time, the drag grip on paired column headers, and the small status color swatches on On location and Cancelled.
+**No decorative icons.** Buttons and tabs are text only. The few glyphs that are the control itself are custom-drawn in the logo's style (solid shapes, rounded corners), not stock line icons: small filled carets for the ‹ › previous/next and month arrows and the ▾ on dropdowns, and a three-bar grip (echoing the logo's staggered bars) on paired column headers. The status color swatches on On location and Cancelled stay as small rounded squares.
 
 A dense, desktop internal tool: closer to a real TMS than a modern marketing app. Plain, small text, thin borders, no cards with big shadows, no badges or pills, no emoji.
 
@@ -80,7 +80,7 @@ A CSS grid with a sticky header, horizontally scrollable when columns exceed the
 | 3 | Terminal | 86 | Two-letter code |
 | 4 | **Begin date / start time** (pair) | 86 + 68 | Begin date `11/09/2026`; Start time `07:15` |
 | 5 | Report time | 78 | Planned report time or dash |
-| 6 | Actual report | 78 | Stamped time with a small × to clear; red when later than report time |
+| 6 | Actual report | 78 | Stamped time; red when later than report time. Cleared by pressing Reported again. |
 | 7 | Spot | 60 | |
 | 8 | On location | 84 | Stamped time, always black, or dash |
 | 9 | Organization | 108 | |
@@ -115,8 +115,8 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 ### Action bar (under the table)
 Left group, all disabled when no row is selected:
 - **Reported** — toggles the actual report stamp; label becomes "Reported 05:28" and the button tints blue when set.
-- **On location** (green swatch) — toggles; button tints light green `#DFF3E3` when on.
-- **Cancelled** (red swatch) — toggles; button tints light red `#FBE1DE` when on.
+- **On location** (green swatch) — toggles; when on, the button turns solid dark green `#2E7D4F` with white text.
+- **Cancelled** (red swatch) — toggles; when on, the button turns solid dark red `#B3261E` with white text.
 - **Duplicate**.
 - **Delete duplicate** — enabled only for a selected duplicate; first click turns it red and reads "Click again to delete".
 - Separator, then **Export to Excel** — downloads `CharterStack-board-YYYY-MM-DD.xlsx` with the rows currently shown, in the current column order and sort, bold frozen header row with filters. Blank driver/bus/initials export as `Unassigned`, `Needed`, `Pending`.

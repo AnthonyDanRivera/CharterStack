@@ -154,9 +154,6 @@ export default function BoardTab(props: Props) {
               onOrderChange={layout.setOrder}
               onWidthChange={layout.setWidth}
               onSelect={props.onSelect}
-              onClearActual={(id) =>
-                action.mutate({ id, action: 'reported', body: { clear: true } })
-              }
               onInitials={(id, initials) =>
                 patch.mutate({ id, patch: { confirm_initials: initials } })
               }

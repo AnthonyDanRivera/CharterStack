@@ -39,7 +39,7 @@ export default function TerminalFilter({ terminals, selected, label, onChange }:
         onClick={() => setOpen((o) => !o)}
       >
         Terminal: {label}
-        <Icon name="chevron" className="chev" strokeWidth={2} />
+        <Icon name="chevron" className="chev" />
       </button>
       {open && (
         <div className="dpop" role="dialog" aria-label="Show terminals">

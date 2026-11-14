@@ -273,62 +273,7 @@
 .row[data-status] .seats,
 .row[data-status] .dash,
 .row[data-status] .ntext,
-.row[data-status] .actclr {
-  color: rgba(255, 255, 255, 0.78);
-}
-.row[data-status] .actclr:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-/* The dark selection outline would vanish on these rows; use white instead. */
-.row[data-status][data-selected='true'] {
-  box-shadow:
-    inset 0 0 0 2px #fff,
-    inset 0 0 0 3px rgba(0, 0, 0, 0.35);
-}
-.needed {
-  color: var(--red);
-}
-.seats {
-  color: var(--text-muted);
-  font-size: 12px;
-  margin-top: 3px;
-}
-.wc {
-  font-weight: 700;
-}
-.onloc-time {
-  color: #000;
-  white-space: nowrap;
-}
-.actual {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
-.actual[data-late='true'] {
-  color: var(--red);
-  font-weight: 600;
-}
-.actclr {
-  width: 18px;
-  height: 18px;
-  padding: 0;
-  border: 0;
-  border-radius: 3px;
-  background: transparent;
-  color: var(--text-dash);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.actclr:hover {
-  background: #eef1f5;
-  color: var(--text);
-}
-.initin {
+.row[data-status] .initin {
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
@@ -434,16 +379,28 @@
   color: var(--blue-text);
   font-weight: 600;
 }
-/* Pressed status buttons keep a light tint; only the trip rows use the dark colors. */
+/* Pressed status buttons: solid dark color with white text, matching the trip rows. */
 .bgroup .st-onloc[data-on='true'] {
-  background: #dff3e3;
-  border-color: #7dbf8d;
+  background: #2e7d4f;
+  border-color: #256b42;
+  color: #fff;
   font-weight: 600;
 }
+.bgroup .st-onloc[data-on='true']:hover {
+  background: #256b42;
+}
 .bgroup .st-cxl[data-on='true'] {
-  background: #fbe1de;
-  border-color: #e2877c;
+  background: #b3261e;
+  border-color: #981f18;
+  color: #fff;
   font-weight: 600;
+}
+.bgroup .st-cxl[data-on='true']:hover {
+  background: #981f18;
+}
+.bgroup .st-onloc[data-on='true'] .sw,
+.bgroup .st-cxl[data-on='true'] .sw {
+  border-color: rgba(255, 255, 255, 0.7);
 }
 .bgroup .tdel[data-armed='2'] {
   background: #fbe1de;
