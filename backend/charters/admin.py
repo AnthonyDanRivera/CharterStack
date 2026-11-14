@@ -24,8 +24,8 @@ class DriverAdmin(admin.ModelAdmin):
 
 @admin.register(Bus)
 class BusAdmin(admin.ModelAdmin):
-    list_display = ["number", "seats", "model", "has_wc_lift", "is_active"]
-    list_filter = ["is_active", "has_wc_lift", "seats"]
+    list_display = ["number", "terminal", "seats", "model", "has_wc_lift", "is_active"]
+    list_filter = ["terminal", "is_active", "has_wc_lift", "seats"]
     search_fields = ["number", "model"]
 
 

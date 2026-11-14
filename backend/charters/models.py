@@ -52,6 +52,10 @@ class Bus(models.Model):
     model = models.CharField(max_length=40)
     has_wc_lift = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    # Home terminal, for the Bus board (R34). Null = not assigned to a yard yet.
+    terminal = models.ForeignKey(
+        "Terminal", on_delete=models.SET_NULL, null=True, blank=True, related_name="buses"
+    )
 
     class Meta:
         ordering = ["number"]

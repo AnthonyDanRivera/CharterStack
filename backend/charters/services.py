@@ -53,6 +53,7 @@ def seed_reference(data: dict[str, Any] | None = None) -> dict[str, int]:
         Terminal.objects.update_or_create(code=t["code"], defaults={"name": t["name"]})
     for d in data["drivers"]:
         Driver.objects.update_or_create(name=d["name"], defaults={"phone": d["phone"]})
+    terminals = {t.code: t for t in Terminal.objects.all()}
     for b in data["buses"]:
         Bus.objects.update_or_create(
             number=b["number"],
@@ -60,6 +61,7 @@ def seed_reference(data: dict[str, Any] | None = None) -> dict[str, int]:
                 "seats": b["seats"],
                 "model": b["model"],
                 "has_wc_lift": b.get("has_wc_lift", False),
+                "terminal": terminals.get(b.get("terminal", "")),
             },
         )
     for zip_code, (city, state, county) in data["zip_lookup"].items():
@@ -155,9 +157,9 @@ def seed_sandbox(
     """Copy the sample contracts into `user`'s sandbox, dated around `today`.
 
     Every date moves by the same number of days so the seed's `base_date` becomes
-    `today`. Each contract gets `bus_count` regular units; the seed's dispatch data
-    (`unit1`) goes on unit 1 and other units start blank. Confirmation timestamps
-    are read as local times in `tz` and shift by the same days.
+    `today`. Each contract gets `bus_count` regular units. Dispatch data comes from
+    `units` (one entry per bus) or `unit1` (unit 1 only, the rest start blank).
+    Confirmation timestamps are read as local times in `tz` and shift by the same days.
     """
     data = data if data is not None else load_seed()
     if not Terminal.objects.exists():
@@ -217,19 +219,19 @@ def seed_sandbox(
 
     units: list[TripUnit] = []
     for contract, row in zip(contracts, data["contracts"], strict=True):
-        seeded = row.get("unit1") or {}
-        confirmed_at = None
-        if seeded.get("confirmed_at"):
-            local = dt.datetime.fromisoformat(seeded["confirmed_at"]) + shift
-            confirmed_at = local.replace(tzinfo=tz)
+        # Dispatch data: `units` (one entry per bus) or `unit1` (unit 1 only).
+        seeded_units = row.get("units") or [row.get("unit1") or {}]
         for n in range(1, contract.bus_count + 1):
             unit = TripUnit(owner=user, contract=contract, unit_number=n)
-            if n == 1:
+            seeded = seeded_units[n - 1] if n <= len(seeded_units) else {}
+            if seeded:
                 unit.driver = drivers.get(seeded.get("driver") or "")
                 unit.bus = buses.get(seeded.get("bus") or "")
                 unit.report_time = _time(seeded.get("report_time"))
                 unit.confirm_initials = seeded.get("confirm_initials") or ""
-                unit.confirmed_at = confirmed_at
+                if seeded.get("confirmed_at"):
+                    local = dt.datetime.fromisoformat(seeded["confirmed_at"]) + shift
+                    unit.confirmed_at = local.replace(tzinfo=tz)
             units.append(unit)
     TripUnit.objects.bulk_create(units)
     return contracts

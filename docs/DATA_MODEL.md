@@ -33,7 +33,8 @@ erDiagram
 | `number` | CharField, unique | `4512`. Displayed as `#4512` |
 | `seats` | PositiveSmallIntegerField | 28, 35, 56 or 57 in the sample data |
 | `model` | CharField | `MCI J4500` |
-| `has_wc_lift` | BooleanField, default False | Only bus 4533 in the sample data |
+| `has_wc_lift` | BooleanField, default False | 4533 in the test seed; one coach per terminal plus a few smaller buses in the demo seed |
+| `terminal` | FK → Terminal, null | Home terminal (yard). Groups buses on the Bus board (R34). Null = not assigned to a yard |
 | `is_active` | BooleanField, default True | |
 
 ### ZipCode (optional table; a JSON constant is also acceptable)

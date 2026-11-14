@@ -62,6 +62,20 @@ def make_unit():
 
 
 @pytest.fixture(autouse=True)
+def _test_seed(settings):
+    """Tests run against the small fixed seed so they can assert exact numbers.
+
+    Visitors get the bigger seed/seed_demo.json; tests use seed/seed_test.json.
+    """
+    from charters.services import load_seed
+
+    settings.SEED_FILE = settings.BASE_DIR.parent / "seed" / "seed_test.json"
+    load_seed.cache_clear()
+    yield
+    load_seed.cache_clear()
+
+
+@pytest.fixture(autouse=True)
 def _clear_throttle_cache():
     """Throttle counters live in the cache; reset them so tests don't throttle each other."""
     from django.core.cache import cache
