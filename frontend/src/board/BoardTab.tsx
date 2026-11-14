@@ -15,10 +15,12 @@ import MenuButton from '../components/MenuButton'
 import { fmtEntered } from '../lib/dates'
 import ActionBar from './ActionBar'
 import { leafOrder, type LeafKey } from './columns'
+import TableGrip from './TableGrip'
 import TerminalFilter from './TerminalFilter'
 import TripDetail from './TripDetail'
 import TripTable from './TripTable'
 import { useColumnLayout } from './useColumnLayout'
+import { useTableHeight } from './useTableHeight'
 import './board.css'
 
 const VIEWS: { value: TripView; label: string }[] = [
@@ -43,6 +45,7 @@ export default function BoardTab(props: Props) {
   const [q, setQ] = useState('')
   const [sort, setSort] = useState<{ key: LeafKey | null; dir: SortDir }>({ key: null, dir: 'asc' })
   const layout = useColumnLayout()
+  const [tableHeight, setTableHeight] = useTableHeight()
 
   const allSelected = props.terminals.length === props.allTerminals.length
   const params: BoardParams = {
@@ -87,7 +90,7 @@ export default function BoardTab(props: Props) {
 
   return (
     <>
-      <div className="surface board-surface">
+      <div className="surface board-surface" data-extended={tableHeight !== null}>
         <section aria-label="Toolbar" className="tbar">
           <DateRangeControl range={props.range} onChange={props.onRangeChange} />
           <span className="tsep" aria-hidden="true" />
@@ -143,21 +146,25 @@ export default function BoardTab(props: Props) {
           ) : board.isPending ? (
             <p className="state">Loading trips…</p>
           ) : (
-            <TripTable
-              rows={rows}
-              order={layout.order}
-              widths={layout.widths}
-              sort={sort.key}
-              dir={sort.dir}
-              selectedId={props.selectedId}
-              onSort={onSort}
-              onOrderChange={layout.setOrder}
-              onWidthChange={layout.setWidth}
-              onSelect={props.onSelect}
-              onInitials={(id, initials) =>
-                patch.mutate({ id, patch: { confirm_initials: initials } })
-              }
-            />
+            <>
+              <TripTable
+                height={tableHeight}
+                rows={rows}
+                order={layout.order}
+                widths={layout.widths}
+                sort={sort.key}
+                dir={sort.dir}
+                selectedId={props.selectedId}
+                onSort={onSort}
+                onOrderChange={layout.setOrder}
+                onWidthChange={layout.setWidth}
+                onSelect={props.onSelect}
+                onInitials={(id, initials) =>
+                  patch.mutate({ id, patch: { confirm_initials: initials } })
+                }
+              />
+              <TableGrip onChange={setTableHeight} />
+            </>
           )}
           {mutationError && (
             <p className="state error" role="alert">

@@ -85,15 +85,21 @@ def place_line(location: str, address: str, city: str, state: str, zip_code: str
     return f"{street}, {tail}" if street else tail
 
 
+def short_place_line(location: str, city: str, state: str) -> str:
+    """Board form of a place, no street address or ZIP: `Union City High School, Union City, NJ`."""
+    tail = f"{city}, {state}"
+    return f"{location.strip()}, {tail}" if location.strip() else tail
+
+
 def pickup_line(c: Contract) -> str:
-    """Board Pickup column, also searched by R28."""
+    """Full pickup line for Trip information, also searched by R28."""
     return place_line(
         c.pickup_location, c.pickup_address, c.pickup_city, c.pickup_state, c.pickup_zip
     )
 
 
 def destination_line(c: Contract) -> str:
-    """Board Destination column, also searched by R28."""
+    """Full destination line for Trip information, also searched by R28."""
     return place_line(c.dest_location, c.dest_address, c.dest_city, c.dest_state, c.dest_zip)
 
 
@@ -308,8 +314,8 @@ def board_row(unit: TripUnit, start: dt.date, end: dt.date) -> dict[str, Any]:
         "on_location_time": format_hhmm(unit.on_location_time),
         "organization": c.organization,
         "group_name": c.group_name,
-        "pickup": pickup_line(c),
-        "destination": destination_line(c),
+        "pickup": short_place_line(c.pickup_location, c.pickup_city, c.pickup_state),
+        "destination": short_place_line(c.dest_location, c.dest_city, c.dest_state),
         "return_date": c.return_date.isoformat(),
         "return_time": format_hhmm(c.return_time),
         "driver": unit.driver.name if unit.driver else None,

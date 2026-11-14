@@ -223,6 +223,8 @@ def unit_detail(unit: TripUnit, start: dt.date, end: dt.date) -> dict:
     row = board.public(board.board_row(unit, start, end))
     row.update(
         {
+            "pickup": board.pickup_line(c),
+            "destination": board.destination_line(c),
             "passengers": c.passengers,
             "contact_name": c.contact_name,
             "contact_phone": c.contact_phone,

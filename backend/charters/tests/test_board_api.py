@@ -87,13 +87,28 @@ def test_board_row_shape(api, T):
     assert row["day_label"] == "1/1"
     assert row["terminal"] == "NJ"
     assert (row["start_time"], row["spot_time"], row["report_time"]) == ("05:30", "05:00", "04:15")
-    assert row["pickup"] == "Stevens Park, Hudson St & 4th St, Hoboken, NJ 07030"
-    assert row["destination"] == "Lehigh Valley Sports Complex, 3100 Lehigh St, Allentown, PA 18101"
+    assert row["pickup"] == "Stevens Park, Hoboken, NJ"
+    assert row["destination"] == "Lehigh Valley Sports Complex, Allentown, PA"
     assert (row["driver"], row["driver_phone"]) == ("Marcus Bell", "(201) 555-0181")
     assert (row["bus"], row["bus_seats"]) == ("4512", 56)
     assert row["confirm_initials"] == "AR"
     assert row["status"] == ""
     assert row["actual_report_late"] is False
+
+
+def test_unit_detail_has_full_addresses(api, T):
+    data = api.get(f"/api/units/{unit_id('24811')}/").json()
+    assert data["pickup"] == "Stevens Park, Hudson St & 4th St, Hoboken, NJ 07030"
+    assert (
+        data["destination"] == "Lehigh Valley Sports Complex, 3100 Lehigh St, Allentown, PA 18101"
+    )
+
+
+def test_short_place_line_without_location_name():
+    from charters.board import short_place_line
+
+    assert short_place_line("", "Hoboken", "NJ") == "Hoboken, NJ"
+    assert short_place_line(" Stevens Park ", "Hoboken", "NJ") == "Stevens Park, Hoboken, NJ"
 
 
 def test_refreshed_at_in_visitor_time_zone(demo_client, T):
@@ -500,6 +515,7 @@ def test_r27_empty_means_none(api, T):
         ("u14", ["24811"]),  # group
         ("stevens park", ["24811"]),  # pickup
         ("allentown", ["24811"]),  # destination
+        ("3100 lehigh", ["24811"]),  # street address, hidden on the board
         ("marcus", ["24811"]),  # driver
         ("4533", ["24814"]),  # bus number
         ("zzz", []),

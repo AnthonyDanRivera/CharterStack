@@ -147,8 +147,8 @@ Response:
     "begin_date": "2026-11-09", "start_time": "07:15", "spot_time": "06:45",
     "report_time": null, "actual_report_time": null, "actual_report_late": false, "on_location_time": null,
     "organization": "Union City Public Schools", "group_name": "9th Grade Biology",
-    "pickup": "Union City High School, 2500 Kennedy Blvd, Union City, NJ 07087",
-    "destination": "Liberty Science Center, 222 Jersey City Blvd, Jersey City, NJ 07305",
+    "pickup": "Union City High School, Union City, NJ",
+    "destination": "Liberty Science Center, Jersey City, NJ",
     "return_date": "2026-11-09", "return_time": "14:15",
     "driver": null, "driver_phone": null,
     "bus": null, "bus_seats": null,
@@ -158,10 +158,10 @@ Response:
   }]
 }
 ```
-`status` is the effective status: `cancelled` when the contract is cancelled (rule R07). Quotes never appear. `refreshed_at` is in the `X-Timezone` zone. `start`/`end` default to today in that zone; one alone means a single day; `end` before `start`, an unknown `view` or an unknown `sort` key is 400. Rows come back in the requested sort (default: contract number, regular units, then duplicates).
+`pickup` and `destination` are the short board form: location name, city and state, without the street address or ZIP. Search (R28) still matches the full address. `status` is the effective status: `cancelled` when the contract is cancelled (rule R07). Quotes never appear. `refreshed_at` is in the `X-Timezone` zone. `start`/`end` default to today in that zone; one alone means a single day; `end` before `start`, an unknown `view` or an unknown `sort` key is 400. Rows come back in the requested sort (default: contract number, regular units, then duplicates).
 
 ### `GET /api/units/{id}/`
-One unit with everything the Trip information and Assign panels need: the board row fields plus `passengers`, `contact_name`, `contact_phone`, `info`, `itinerary`, `requested_driver` (id) and `requested_driver_name`, `bus_count`, and the unit's saved `driver_id` and `bus_id` (the row's `driver` / `bus` are display values: name and bus number). Its `day_label` is for today.
+One unit with everything the Trip information and Assign panels need: the board row fields plus `passengers`, `contact_name`, `contact_phone`, `info`, `itinerary`, `requested_driver` (id) and `requested_driver_name`, `bus_count`, and the unit's saved `driver_id` and `bus_id` (the row's `driver` / `bus` are display values: name and bus number). Its `day_label` is for today. Here `pickup` and `destination` are the full one-line places with street address and ZIP (`Union City High School, 2500 Kennedy Blvd, Union City, NJ 07087`).
 
 ### `PATCH /api/units/{id}/`
 Updates dispatch fields. Any subset of: `driver` (id or null), `bus` (id or null), `report_time` (loose input as in R02; `""` or null clears it; bad input is 400 `{"report_time": ["Enter a valid time"]}`), `confirm_initials`, `dispatch_notes`. The server normalizes initials and manages `confirmed_at` (rule R22). Response is the unit plus:

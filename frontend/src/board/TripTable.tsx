@@ -15,6 +15,8 @@ type Props = {
   onWidthChange: (key: LeafKey, width: number) => void
   onSelect: (id: number) => void
   onInitials: (id: number, initials: string) => void
+  /** Height set with the grab bar; null fits the window. */
+  height?: number | null
 }
 
 /** The trip grid: sticky two-row header and one row per unit, scrolling sideways. */
@@ -24,7 +26,10 @@ export default function TripTable(props: Props) {
   const minWidth = leafs.reduce((s, l) => s + props.widths[l], 0)
 
   return (
-    <div className="tablewrap">
+    <div
+      className="tablewrap"
+      style={props.height ? { height: props.height, flex: 'none' } : undefined}
+    >
       <div style={{ minWidth }}>
         <div className="thead">
           <TableHeader

@@ -69,7 +69,9 @@ A white row directly under the toolbar.
 - Right: search box, 300px, placeholder "Search contract, org, group, driver…".
 
 ### Trip table
-A CSS grid with a sticky header. On the Dispatch board tab the page fits the window: the trip table fills the space between the status bar and the action bar and scrolls inside itself (vertically with the mouse wheel, and sideways when columns exceed the width), with the header row staying in place; the Trip information and Assign panels below always stay visible, and the session strip stays at the bottom. The table never shrinks below about 200px tall. Thin vertical lines between all columns and horizontal lines between rows.
+A CSS grid with a sticky header. On the Dispatch board tab the page fits the window: the trip table fills the space between the status bar and the action bar and scrolls inside itself (vertically with the mouse wheel, and sideways when columns exceed the width), with the header row staying in place; the Trip information and Assign panels below always stay visible, and the session strip stays at the bottom. The table never shrinks below about 200px tall.
+
+A thin grab bar along the bottom edge of the table (under the last row, above the action bar) resizes it: drag it down to make the table taller and show more trips, which pushes the Trip information panel below the window (the page then scrolls to reach it); drag it up to make it shorter. Up and Down arrow keys move it in 40px steps when it has focus. Double-clicking it returns the table to fitting the window. The chosen height is remembered per browser in localStorage. Thin vertical lines between all columns and horizontal lines between rows.
 
 **Columns, default order and default widths (px):**
 
@@ -84,7 +86,7 @@ A CSS grid with a sticky header. On the Dispatch board tab the page fits the win
 | 7 | Spot | 60 | |
 | 8 | On location | 84 | Stamped time, always black, or dash |
 | 9 | Organization | 108 | |
-| 10 | **Pickup / Destination** (pair) | 122 + 122 | Full text: `Union City High School, 2500 Kennedy Blvd, Union City, NJ 07087`. Wraps. |
+| 10 | **Pickup / Destination** (pair) | 122 + 122 | Location name and town, no street address or ZIP: `Union City High School, Union City, NJ` (just `Hoboken, NJ` when there is no location name). Wraps. The full address is in Trip information. |
 | 11 | Group name | 96 | |
 | 12 | Driver | 98 | Name, or **Unassigned** in red |
 | 13 | **Bus # / Size req.** (pair) | 66 + 84 | Bus: `#4512` with `56 seats` in small grey under it, or **Needed** in red. Size: `56-pax coach`, with **WC** in bold when a lift is needed. |
@@ -107,6 +109,7 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 
 **Row behavior:**
 - Row text is regular weight (only the contract number, WC, and the red Unassigned/Needed labels stand out).
+- Rows are compact so more trips fit: 3px top and bottom cell padding, 16px line height, a 20px tall Initials input, and Dispatch notes cut off after two lines.
 - Clicking anywhere in a row selects it, including empty cells. Focusing the Initials input also selects the row.
 - Selected row: dark 2px inset outline, no fill change. Hover: very light grey.
 - Row backgrounds by state: duplicate = light blue; on location = dark green with white text; cancelled = dark red with white text. Status color wins over duplicate color. On those dark rows, labels that are red elsewhere (Unassigned, Needed, a late actual report) turn bold white, secondary grey text turns translucent white, the initials input and notes checkbox turn see-through with white text and a faint white border (solid white only while typing in the input), and a selected row gets a white inset outline instead of the dark one.
