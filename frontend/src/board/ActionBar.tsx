@@ -44,7 +44,6 @@ export default function ActionBar(props: Props) {
           disabled={none}
           onClick={props.onOnLocation}
         >
-          <span className="sw" aria-hidden="true" />
           On location
         </button>
         <button
@@ -55,7 +54,6 @@ export default function ActionBar(props: Props) {
           disabled={none}
           onClick={props.onCancel}
         >
-          <span className="sw" aria-hidden="true" />
           Cancelled
         </button>
         <button type="button" className="tbtn" disabled={none} onClick={props.onDuplicate}>
