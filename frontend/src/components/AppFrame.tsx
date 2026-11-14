@@ -39,7 +39,7 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
     <div className="app">
       <header className="app-header">
         <h1>
-          <Logo />
+          <Logo size={28} />
         </h1>
         <span className="header-sep" aria-hidden="true" />
         <nav className="tabs" aria-label="Views">

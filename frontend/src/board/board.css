@@ -272,8 +272,65 @@
 }
 .row[data-status] .seats,
 .row[data-status] .dash,
-.row[data-status] .ntext,
+.row[data-status] .ntext {
+  color: rgba(255, 255, 255, 0.78);
+}
+/* On dark rows, form controls blend in instead of showing as white boxes. */
 .row[data-status] .initin {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+.row[data-status] .initin::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+.row[data-status] .initin:focus {
+  background: #fff;
+  color: var(--text);
+}
+.row[data-status] .ncheck {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.row[data-status] .ncheck[data-on='true'] {
+  background: #fff;
+  border-color: #fff;
+}
+.row[data-status] .ncheck[data-on='true']::before {
+  border-color: var(--text);
+}
+/* The dark selection outline would vanish on these rows; use white instead. */
+.row[data-status][data-selected='true'] {
+  box-shadow:
+    inset 0 0 0 2px #fff,
+    inset 0 0 0 3px rgba(0, 0, 0, 0.35);
+}
+.needed {
+  color: var(--red);
+}
+.seats {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+.wc {
+  font-weight: 700;
+}
+.onloc-time {
+  color: #000;
+  white-space: nowrap;
+}
+.actual {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.actual[data-late='true'] {
+  color: var(--red);
+  font-weight: 600;
+}
+.initin {
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;

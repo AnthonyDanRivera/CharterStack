@@ -53,8 +53,8 @@ textarea {
 .app-header {
   background: var(--app-header);
   color: #fff;
-  height: 40px;
-  padding: 0 14px;
+  height: 52px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -81,6 +81,12 @@ textarea {
   letter-spacing: -0.01em;
   color: #fff;
 }
+.app-header .logo {
+  gap: 10px;
+}
+.app-header .logo-word {
+  font-size: 19px;
+}
 .header-sep {
   width: 1px;
   height: 20px;
@@ -93,13 +99,13 @@ textarea {
   gap: 4px;
 }
 .tab {
-  height: 28px;
-  padding: 0 12px;
+  height: 34px;
+  padding: 0 14px;
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
   color: rgba(255, 255, 255, 0.75);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 500;
   display: flex;
   align-items: center;

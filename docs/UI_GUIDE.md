@@ -38,7 +38,7 @@ Times are 24-hour `HH:MM`. Board dates are `MM/DD/YYYY` with no weekday. Empty v
 
 Top to bottom:
 
-1. **Header bar with tabs** — one dark navy bar (`#1F3A5F`, 40px tall). On the left: the CharterStack logo (a blue `#2F6BC0` rounded square with three staggered white bars, like rows on a board) and "CharterStack" in bold white, then a thin divider, then the two tabs "Dispatch board" and "Booking". Tabs are white text at 75% opacity on the navy. The active tab inverts: a white rectangle (28px tall, 4px radius, centered in the bar) with navy `#1F3A5F` semi-bold text. Hover on an inactive tab brings it to full white with a faint light background. (Changed from separate header and tab rows to save vertical space for the trip table; the screenshots in `design/screenshots/` still show the old two-row frame.)
+1. **Header bar with tabs** — one dark navy bar (`#1F3A5F`, 52px tall). On the left: the CharterStack logo (28px mark, 19px wordmark) (a blue `#2F6BC0` rounded square with three staggered white bars, like rows on a board) and "CharterStack" in bold white, then a thin divider, then the two tabs "Dispatch board" and "Booking". Tabs are white text at 75% opacity on the navy. The active tab inverts: a white rectangle (28px tall, 4px radius, centered in the bar) with navy `#1F3A5F` semi-bold text. Hover on an inactive tab brings it to full white with a faint light background. (Changed from separate header and tab rows to save vertical space for the trip table; the screenshots in `design/screenshots/` still show the old two-row frame.)
 2. **Tab content** (below).
 3. **Session strip** — a thin grey bar at the very bottom of the page, small text, label in grey then value:
    `Date Thu 11/12/2026 · Time 21:04:37 · User Demo User · Terminal All · Session DEMO-8F3K2 · Session time 00:12:45 · Server demo-server`
@@ -109,7 +109,7 @@ Columns 1 to 13 fit in a 1440px window without scrolling.
 - Row text is regular weight (only the contract number, WC, and the red Unassigned/Needed labels stand out).
 - Clicking anywhere in a row selects it, including empty cells. Focusing the Initials input also selects the row.
 - Selected row: dark 2px inset outline, no fill change. Hover: very light grey.
-- Row backgrounds by state: duplicate = light blue; on location = dark green with white text; cancelled = dark red with white text. Status color wins over duplicate color. On those dark rows, labels that are red elsewhere (Unassigned, Needed, a late actual report) turn bold white, secondary grey text turns translucent white, the initials input stays white, and a selected row gets a white inset outline instead of the dark one.
+- Row backgrounds by state: duplicate = light blue; on location = dark green with white text; cancelled = dark red with white text. Status color wins over duplicate color. On those dark rows, labels that are red elsewhere (Unassigned, Needed, a late actual report) turn bold white, secondary grey text turns translucent white, the initials input and notes checkbox turn see-through with white text and a faint white border (solid white only while typing in the input), and a selected row gets a white inset outline instead of the dark one.
 - Empty state: "No trips match these dates or search."
 
 ### Action bar (under the table)
