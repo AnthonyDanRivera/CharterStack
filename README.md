@@ -24,6 +24,10 @@ I'm a freelance web developer who started as a dispatcher and now also works as 
 - Filter by date range, terminal, and today / away / all trips. Search, sort, resize and reorder columns.
 - Export the current view to Excel.
 
+**Bus board** — the fleet by terminal.
+- Pick a terminal; buses are laid out one row per model, numbers increasing left to right.
+- Each bus shows the trips and drivers it has in the date range, or Available.
+
 Quotes never reach the board; cancelled contracts stay visible in red.
 
 ## How the demo works

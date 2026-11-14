@@ -3,12 +3,13 @@ import { useReference } from '../api/hooks'
 import type { SessionInfo } from '../api/types'
 import BoardTab from '../board/BoardTab'
 import BookingTab from '../booking/BookingTab'
+import BusBoardTab from '../buses/BusBoardTab'
 import { todayIso } from '../lib/dates'
 import type { DateRange } from './DateRangeControl'
 import Logo from './Logo'
 import SessionStrip from './SessionStrip'
 
-type Tab = 'board' | 'booking'
+type Tab = 'board' | 'booking' | 'buses'
 
 /**
  * Header, tabs, tab content and session strip. Holds the state both tabs
@@ -61,6 +62,15 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
           >
             Booking
           </button>
+          <button
+            type="button"
+            className="tab"
+            data-active={tab === 'buses'}
+            aria-current={tab === 'buses' ? 'page' : undefined}
+            onClick={() => setTab('buses')}
+          >
+            Bus board
+          </button>
         </nav>
       </header>
       <main className="app-main">
@@ -77,8 +87,10 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
             selectedId={boardSelection}
             onSelect={setBoardSelection}
           />
-        ) : (
+        ) : tab === 'booking' ? (
           <BookingTab range={range} onRangeChange={setRange} onOpenOnBoard={openOnBoard} />
+        ) : (
+          <BusBoardTab range={range} onRangeChange={setRange} />
         )}
       </main>
       <SessionStrip session={session} terminalLabel={terminalLabel} />

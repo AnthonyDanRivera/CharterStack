@@ -38,7 +38,7 @@ Times are 24-hour `HH:MM`. Board dates are `MM/DD/YYYY` with no weekday. Empty v
 
 Top to bottom:
 
-1. **Header bar with tabs** — one dark navy bar (`#1F3A5F`, 52px tall). On the left: the CharterStack logo (28px mark, 19px wordmark) (a blue `#2F6BC0` rounded square with three staggered white bars, like rows on a board) and "CharterStack" in bold white, then a thin divider, then the two tabs "Dispatch board" and "Booking". Tabs are white text at 75% opacity on the navy. The active tab inverts: a white rectangle (28px tall, 4px radius, centered in the bar) with navy `#1F3A5F` semi-bold text. Hover on an inactive tab brings it to full white with a faint light background. (Changed from separate header and tab rows to save vertical space for the trip table; the screenshots in `design/screenshots/` still show the old two-row frame.)
+1. **Header bar with tabs** — one dark navy bar (`#1F3A5F`, 52px tall). On the left: the CharterStack logo (28px mark, 19px wordmark) (a blue `#2F6BC0` rounded square with three staggered white bars, like rows on a board) and "CharterStack" in bold white, then a thin divider, then the three tabs "Dispatch board", "Booking" and "Bus board". Tabs are white text at 75% opacity on the navy. The active tab inverts: a white rectangle (28px tall, 4px radius, centered in the bar) with navy `#1F3A5F` semi-bold text. Hover on an inactive tab brings it to full white with a faint light background. (Changed from separate header and tab rows to save vertical space for the trip table; the screenshots in `design/screenshots/` still show the old two-row frame.)
 2. **Tab content** (below).
 3. **Session strip** — a thin grey bar at the very bottom of the page, small text, label in grey then value:
    `Date Thu 11/12/2026 · Time 21:04:37 · User Demo User · Terminal All · Session DEMO-8F3K2 · Session time 00:12:45 · Server demo-server`
@@ -142,6 +142,16 @@ Two panels side by side: Trip information (about 75% width) and Assign driver & 
 - **Report time** select: "Select time…" then every 15 minutes from 00:00 to 23:45.
 - **Assign** (primary blue) and **Reset** buttons; a small "Assigned" confirmation appears after saving.
 - **Booking terminal** section below a divider: two read-only boxes, **Terminal** (`NJ`) and **Total buses** (`2`).
+
+## Bus board tab
+
+One white surface on the dotted page background. Rules R34 and R35.
+
+1. **Toolbar:** the same ‹ Start/End date › Today controls as the other tabs (same shared range), a separator, then the terminal buttons **NJ NY PA CT MA**: one joined button group, exactly one selected (NJ when the tab opens). The selected button is solid blue `#2F6BC0` with white text; the others are white. Buttons use `aria-pressed`.
+2. **Status bar:** **14** buses · **3** available, and the terminal's full name on the right (`New Jersey`).
+3. **Rows:** one row per bus model, largest first (as the API orders them). On the left of each row: the model name in bold with its seats in grey under it (`MCI J4500` / `56 seats`). To the right, the buses as tiles left to right in increasing bus-number order, wrapping to a new line when needed.
+4. **Bus tile** (168px wide): `#4512` in monospace bold, `56 seats` in grey (`· WC lift` in bold when it has a lift), then either its trips in the range, one per line as `24811  Marcus Bell` (contract number in monospace bold, then the driver, or `No driver`; with a multi-day range the day `Mon 11/09` sits between them), or **Available** in green. Assigned tiles have a 3px blue left edge; available tiles a 3px green left edge and a very light green fill.
+5. Empty state: "No buses at this terminal." Error: "Couldn't load buses. Retry".
 
 ## Booking tab
 

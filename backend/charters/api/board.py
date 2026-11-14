@@ -19,7 +19,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from charters import board
-from charters.models import TEXT_LIMIT, Bus, Driver, TripUnit
+from charters.models import TEXT_LIMIT, Bus, Driver, Terminal, TripUnit
 from charters.timeutil import today_in
 
 from .ownership import OwnedGenericViewSet, owned
@@ -352,3 +352,49 @@ class UnitViewSet(
         except board.DuplicateLimitReached as exc:
             raise ValidationError({"detail": "Demo limit reached."}) from exc
         return self.detail_response(dup, code=status.HTTP_201_CREATED)
+
+
+# ---------------------------------------------------------------------------
+# Bus board
+# ---------------------------------------------------------------------------
+
+
+class BusBoardParams(serializers.Serializer):
+    terminal = serializers.CharField(required=False, default="NJ")
+    start = serializers.DateField(required=False)
+    end = serializers.DateField(required=False)
+
+
+class BusBoardResponseSerializer(serializers.Serializer):
+    terminal = serializers.DictField(child=serializers.CharField())
+    start = serializers.DateField()
+    end = serializers.DateField()
+    counts = serializers.DictField(child=serializers.IntegerField())
+    rows = serializers.ListField(child=serializers.DictField())
+
+
+@extend_schema(
+    summary="Bus board",
+    description="R34/R35: a terminal's buses, one row per model in bus-number order, "
+    "with their trips in the date range.",
+    parameters=[
+        OpenApiParameter("terminal", str, description="Terminal code (default NJ)"),
+        OpenApiParameter("start", OpenApiTypes.DATE, description="Range start (default today)"),
+        OpenApiParameter("end", OpenApiTypes.DATE, description="Range end (default today)"),
+    ],
+    responses=BusBoardResponseSerializer,
+)
+@api_view(["GET"])
+def bus_board_view(request: Request) -> Response:
+    params = BusBoardParams(data=request.query_params)
+    params.is_valid(raise_exception=True)
+    data = params.validated_data
+    today = today_in_request()
+    start = data.get("start") or data.get("end") or today
+    end = data.get("end") or data.get("start") or today
+    if end < start:
+        raise ValidationError({"end": ["End date can't be before the start date."]})
+    terminal = Terminal.objects.filter(code=data["terminal"].strip().upper()).first()
+    if terminal is None:
+        raise ValidationError({"terminal": ["Unknown terminal."]})
+    return Response(board.bus_board(owned(TripUnit, request.user), terminal, start, end))

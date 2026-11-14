@@ -31,9 +31,10 @@ In scope:
 1. Demo login with a private, auto-expiring sandbox per visitor. See `DEMO_SANDBOX.md`.
 2. Booking: contract list with date range, status filter, search and lookup; insert, view, edit and delete contracts; pricing; contract status (Booked, Quote, Cancelled).
 3. Dispatch board: trip table with date range, terminal filter, trip view filter, search, sorting, resizable and draggable columns; trip information panel; assign driver, bus and report time; Reported, On location and Cancelled actions; confirmation initials; dispatch notes; duplicates; multi-bus contracts; Excel export.
-4. Session strip at the bottom of the page.
-5. Django admin for reference data (drivers, buses, terminals), protected by a real superuser password.
-6. Documentation: README, API docs, data model diagram, docstrings on business rules.
+4. Bus board: one terminal's fleet at a time (terminal buttons), one row per bus model in increasing bus-number order, each bus showing its trips in the shared date range or Available.
+5. Session strip at the bottom of the page.
+6. Django admin for reference data (drivers, buses, terminals), protected by a real superuser password.
+7. Documentation: README, API docs, data model diagram, docstrings on business rules.
 
 Out of scope for v1 (do not build unless asked):
 

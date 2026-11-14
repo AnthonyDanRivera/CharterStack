@@ -107,3 +107,9 @@ These rules live in the Django backend (model methods, serializers, or a small `
 **R32 — Contract list filter.** All contracts, Active contracts (not cancelled), Booked, Quotes, Cancelled. Combined with the shared date range and the search box.
 
 **R33 — Booking status bar** shows: number of contracts, booked, quotes, cancelled, and total balance due across the listed contracts (cancelled contracts contribute $0).
+
+## Bus board
+
+**R34 — Fleet layout.** The Bus board shows one terminal at a time: the active buses whose home terminal is that terminal. Buses are grouped into one row per bus model. Rows are ordered by seats, largest first (coaches, then minicoaches, then shuttles), then by model name. Within a row, buses are ordered by bus number, numerically increasing from left to right (`3102` before `3121`, `4508` before `4512`). Inactive buses and buses with no home terminal are not shown.
+
+**R35 — Bus assignments.** For the shared date range, each bus lists the trip units it is assigned to whose contract's `[begin_date, return_date]` overlaps the range (same overlap as R24), ordered by begin date and start time. Quotes are never listed (R07), and cancelled units (by their own status or their contract's, R07) do not count, since the bus is free. A bus with no listed trips is **Available**. The status line counts buses and available buses for the terminal. Assignments only ever come from the visitor's own sandbox.

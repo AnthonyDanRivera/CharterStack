@@ -235,3 +235,14 @@ def test_board_and_export_only_show_own_units(a_and_b):
     assert a.get("/api/board/", {"q": "only in b"}).json()["rows"] == []
     ws = load_workbook(BytesIO(a.get("/api/board/export.xlsx", {"q": "only in b"}).content)).active
     assert ws.max_row == 1
+
+
+def test_bus_board_only_lists_own_assignments(a_and_b):
+    a, a_user, _, b_user = a_and_b
+    # Both sandboxes put 24811 on bus 4512 today; A must only see its own unit.
+    data = a.get("/api/buses/board/").json()
+    shown = [x["unit_id"] for r in data["rows"] for bus in r["buses"] for x in bus["assignments"]]
+    own = set(TripUnit.objects.filter(owner_id=a_user).values_list("id", flat=True))
+    theirs = set(TripUnit.objects.filter(owner_id=b_user).values_list("id", flat=True))
+    assert shown and set(shown) <= own
+    assert not set(shown) & theirs

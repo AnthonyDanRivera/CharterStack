@@ -8,6 +8,7 @@ import {
 import { api, ApiError, type Query } from './client'
 import type {
   Board,
+  BusBoard,
   Contract,
   ContractFilter,
   ContractList,
@@ -113,6 +114,7 @@ export function invalidateTrips(client: QueryClient) {
   client.invalidateQueries({ queryKey: ['unit'] })
   client.invalidateQueries({ queryKey: ['contracts'] })
   client.invalidateQueries({ queryKey: ['contract'] })
+  client.invalidateQueries({ queryKey: ['bus-board'] })
 }
 
 export function usePatchUnit() {
@@ -153,6 +155,16 @@ export function fetchBusWarnings(unitId: number, busId: number | null): Promise<
   return api<{ warnings: string[] }>(`/api/units/${unitId}/check/`, {
     query: { bus: busId ?? undefined },
   }).then((r) => r.warnings)
+}
+
+// --- Bus board ---------------------------------------------------------------
+
+export function useBusBoard(p: { terminal: string; start: string; end: string }) {
+  return useQuery({
+    queryKey: ['bus-board', p],
+    queryFn: () => api<BusBoard>('/api/buses/board/', { query: p }),
+    placeholderData: keepPreviousData,
+  })
 }
 
 // --- Contracts -------------------------------------------------------------

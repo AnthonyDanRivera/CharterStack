@@ -182,3 +182,32 @@ export type Pricing = {
   payment_status: string
   payment_tone: PaymentTone
 }
+
+// --- Bus board (R34, R35) ---------------------------------------------------
+
+export type BusAssignment = {
+  unit_id: number
+  display_number: string
+  driver: string | null
+  begin_date: string
+  return_date: string
+  start_time: string
+  organization: string
+}
+
+export type BusBoardBus = {
+  id: number
+  number: string
+  seats: number
+  has_wc_lift: boolean
+  available: boolean
+  assignments: BusAssignment[]
+}
+
+export type BusBoard = {
+  terminal: Terminal
+  start: string
+  end: string
+  counts: { buses: number; available: number }
+  rows: { model: string; seats: number; buses: BusBoardBus[] }[]
+}

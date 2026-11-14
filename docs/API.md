@@ -183,6 +183,28 @@ All return the updated unit.
 
 Stamps use the server clock converted to the visitor's time zone. The frontend sends its IANA time zone in an `X-Timezone` header (for example `America/New_York`); default is `America/New_York`.
 
+## Bus board
+
+### `GET /api/buses/board/?terminal=NJ&start=2026-11-09&end=2026-11-09`
+Rules R34 and R35. `terminal` defaults to `NJ`; an unknown code is 400. `start`/`end` work as on `/api/board/` (default today in the `X-Timezone` zone).
+
+```json
+{
+  "terminal": { "code": "NJ", "name": "New Jersey" },
+  "start": "2026-11-09", "end": "2026-11-09",
+  "counts": { "buses": 13, "available": 6 },
+  "rows": [{
+    "model": "Prevost H3-45", "seats": 57,
+    "buses": [{
+      "id": 3, "number": "4527", "seats": 57, "has_wc_lift": true, "available": false,
+      "assignments": [{ "unit_id": 77, "display_number": "24814", "driver": "Denise Carter",
+                        "begin_date": "2026-11-09", "return_date": "2026-11-09", "start_time": "06:45",
+                        "organization": "Bergen County Senior Center" }]
+    }]
+  }]
+}
+```
+
 ### `GET /api/board/export.xlsx`
 Same query parameters as `/api/board/`, plus `columns` (comma-separated column keys in display order; omitted = all, unknown key = 400) and optional `widths` (px, same order, so resized columns export at their board width). Returns an Excel file built with openpyxl: bold, frozen header row with auto-filter, column widths proportional to the board's, blank driver/bus/initials written as `Unassigned` / `Needed` / `Pending`. Filename `CharterStack-board-{start}.xlsx`.
 

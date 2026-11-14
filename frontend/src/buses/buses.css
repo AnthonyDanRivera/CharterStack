@@ -1,0 +1,129 @@
+/* Bus board: terminal buttons, one row per bus model, bus tiles left to right. */
+
+.term-buttons {
+  display: inline-flex;
+  border: 1px solid #c3cbd5;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+.term-btn {
+  height: 28px;
+  min-width: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-left: 1px solid #dde2e8;
+  background: transparent;
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.term-btn:first-child {
+  border-left: 0;
+}
+.term-btn:hover {
+  background: #f1f4f8;
+}
+.term-btn[aria-pressed='true'] {
+  background: var(--blue);
+  color: #fff;
+}
+.bus-terminal-name {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.bus-rows {
+  padding: 4px 14px 16px;
+}
+.bus-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.bus-row:last-child {
+  border-bottom: 0;
+}
+.bus-model {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bus-model span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.bus-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.bus-tile {
+  width: 168px;
+  min-height: 92px;
+  padding: 10px 12px;
+  border: 1px solid var(--surface-border);
+  border-left: 3px solid var(--blue);
+  border-radius: 6px;
+  background: #fff;
+}
+.bus-tile[data-available='true'] {
+  border-left-color: var(--green);
+  background: #f6fbf7;
+}
+.bus-num {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: #000;
+}
+.bus-meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.bus-meta strong {
+  color: var(--text);
+}
+.bus-free {
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--green);
+}
+.bus-trips {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bus-trips li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  font-size: 12.5px;
+  line-height: 17px;
+}
+.bus-trip-no {
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.bus-trip-day {
+  color: var(--text-muted);
+}
+.bus-trip-driver {
+  color: var(--label);
+}

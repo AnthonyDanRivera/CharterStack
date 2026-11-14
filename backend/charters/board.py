@@ -482,3 +482,72 @@ def export_workbook(rows: list[dict[str, Any]], columns: list[str], widths: list
     ws.freeze_panes = "A2"
     ws.auto_filter.ref = ws.dimensions
     return wb
+
+
+# ---------------------------------------------------------------------------
+# Bus board (R34, R35)
+# ---------------------------------------------------------------------------
+
+
+def bus_number_key(number: str) -> tuple:
+    """R34: bus numbers sort numerically (`3102` < `4508` < `4512`); text ones after."""
+    return (0, int(number), "") if number.isdigit() else (1, 0, number)
+
+
+def bus_board(units: QuerySet[TripUnit], terminal, start: dt.date, end: dt.date) -> dict[str, Any]:
+    """R34/R35: a terminal's active buses, one row per model, with their trips in range.
+
+    `units` must already be scoped to the visitor's sandbox. Rows are ordered by
+    seats (largest first) then model name; buses by number, increasing. A bus's
+    assignments are its non-quote, non-cancelled units overlapping the range.
+    """
+    buses = list(Bus.objects.filter(is_active=True, terminal=terminal))
+    assigned: dict[int, list[TripUnit]] = {b.pk: [] for b in buses}
+    in_range = units.filter(
+        bus__in=buses,
+        contract__begin_date__lte=end,
+        contract__return_date__gte=start,
+    ).exclude(contract__status=Contract.Status.QUOTE)
+    for unit in in_range.select_related("contract", "driver"):
+        if not is_cancelled(unit):
+            assigned[unit.bus_id].append(unit)
+
+    rows: dict[str, dict[str, Any]] = {}
+    for bus in sorted(buses, key=lambda b: bus_number_key(b.number)):
+        trips = sorted(
+            assigned[bus.pk], key=lambda u: (u.contract.begin_date, u.contract.start_time)
+        )
+        row = rows.setdefault(bus.model, {"model": bus.model, "seats": bus.seats, "buses": []})
+        row["seats"] = max(row["seats"], bus.seats)
+        row["buses"].append(
+            {
+                "id": bus.pk,
+                "number": bus.number,
+                "seats": bus.seats,
+                "has_wc_lift": bus.has_wc_lift,
+                "available": not trips,
+                "assignments": [
+                    {
+                        "unit_id": u.pk,
+                        "display_number": u.display_number,
+                        "driver": u.driver.name if u.driver else None,
+                        "begin_date": u.contract.begin_date.isoformat(),
+                        "return_date": u.contract.return_date.isoformat(),
+                        "start_time": format_hhmm(u.contract.start_time),
+                        "organization": u.contract.organization,
+                    }
+                    for u in trips
+                ],
+            }
+        )
+    ordered = sorted(rows.values(), key=lambda r: (-r["seats"], r["model"]))
+    return {
+        "terminal": {"code": terminal.code, "name": terminal.name},
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "counts": {
+            "buses": len(buses),
+            "available": sum(1 for r in ordered for b in r["buses"] if b["available"]),
+        },
+        "rows": ordered,
+    }
