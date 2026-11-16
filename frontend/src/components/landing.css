@@ -196,18 +196,19 @@
 .lp-section-first {
   padding-top: 72px;
 }
-.lp-grid-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-@media (max-width: 860px) {
-  .lp-grid-3 {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 .lp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
+}
+/* What it does: four cards as two by two. After .lp-grid so it wins. */
+.lp-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 860px) {
+  .lp-grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .lp-card {
   background: #fff;

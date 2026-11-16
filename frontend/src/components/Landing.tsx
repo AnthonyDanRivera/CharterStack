@@ -15,6 +15,10 @@ const FEATURES: { title: string; text: string }[] = [
     text: 'One row per bus. Assign drivers, buses and report times, stamp Reported and On location, confirm with initials, and export the day to Excel.',
   },
   {
+    title: 'Bus board',
+    text: 'Pick a terminal to see its fleet, one row per bus model in bus number order. Each bus shows the trips and drivers it has for the chosen dates, or Available.',
+  },
+  {
     title: 'Built-in checks',
     text: 'Pick a bus and it warns you if it’s too small for the group or has no wheelchair lift. Late report times turn red, and the board counts trips still needing a driver, a bus or a confirmation.',
   },
@@ -104,7 +108,7 @@ export default function Landing({
 
       <section className="lp-section lp-section-first" aria-labelledby="features-title">
         <h2 id="features-title">What it does</h2>
-        <div className="lp-grid lp-grid-3">
+        <div className="lp-grid lp-grid-2">
           {FEATURES.map((item) => (
             <div key={item.title} className="lp-card">
               <h3>{item.title}</h3>
