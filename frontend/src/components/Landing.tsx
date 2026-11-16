@@ -4,6 +4,7 @@ import Logo from './Logo'
 import './landing.css'
 
 const SITE = 'https://anthonydanrivera.com'
+const REPO = 'https://github.com/AnthonyDanRivera/CharterStack'
 
 const FEATURES: { title: string; text: string }[] = [
   {
@@ -69,6 +70,9 @@ export default function Landing({
           <div className="lp-nav-links">
             <a href="#stack">How it&rsquo;s built</a>
             <a href="#made-by">Made by</a>
+            <a href={REPO} target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
             <button type="button" className="lp-btn lp-btn-sm" onClick={start} disabled={starting}>
               {label}
             </button>
@@ -159,6 +163,9 @@ export default function Landing({
       <footer className="lp-foot">
         <Logo size={18} />
         <span>Django REST Framework · React · TypeScript · PostgreSQL</span>
+        <a href={REPO} target="_blank" rel="noopener noreferrer">
+          Source on GitHub
+        </a>
       </footer>
     </div>
   )

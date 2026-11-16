@@ -127,11 +127,19 @@ test('landing page has one Made by block linking the portfolio in a new tab', as
   const external = screen
     .getAllByRole('link')
     .filter((l) => l.getAttribute('href')?.startsWith('http'))
-  expect(external).toHaveLength(1)
-  expect(external[0]).toHaveTextContent('Visit my portfolio')
-  expect(external[0]).toHaveAttribute('href', 'https://anthonydanrivera.com')
-  expect(external[0]).toHaveAttribute('target', '_blank')
-  expect(external[0].getAttribute('rel')).toContain('noopener')
+  expect(external.map((l) => l.textContent)).toEqual([
+    'GitHub',
+    'Visit my portfolio',
+    'Source on GitHub',
+  ])
+  const portfolio = external[1]
+  expect(portfolio).toHaveAttribute('href', 'https://anthonydanrivera.com')
+  for (const link of external) {
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
+  }
+  for (const link of [external[0], external[2]])
+    expect(link).toHaveAttribute('href', 'https://github.com/AnthonyDanRivera/CharterStack')
   expect(screen.getByText('Freelance web developer.')).toBeInTheDocument()
   expect(
     screen.getByText(

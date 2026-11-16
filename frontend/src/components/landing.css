@@ -306,6 +306,14 @@
   font-size: 13px;
   color: var(--lp-muted);
 }
+.lp-foot a {
+  color: var(--lp-text);
+  font-weight: 500;
+  text-decoration: none;
+}
+.lp-foot a:hover {
+  color: var(--lp-ink);
+}
 
 @media (max-width: 640px) {
   .lp-nav-links a {
