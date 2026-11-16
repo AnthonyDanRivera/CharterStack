@@ -2,7 +2,7 @@
 
 A transportation management system (TMS) for a motorcoach charter company: booking, a dispatch board and a bus board, built with Django REST Framework and React.
 
-This is a portfolio project, not a commercial product. It runs on sample data and leaves out what a real deployment needs (see [What a production version would need](#what-a-production-version-would-need)).
+This is a portfolio project, not a commercial product. It runs on sample data.
 
 **Live demo:** _add link after deploy_ — click **Try the demo**. No sign-up; you get a private copy of the sample data.
 
@@ -111,17 +111,6 @@ seed/       sample data copied into each sandbox
 Dockerfile  one image: builds the frontend, then serves it from Django with WhiteNoise
 render.yaml Render blueprint: web service, daily cleanup cron, PostgreSQL
 ```
-
-## What a production version would need
-
-The demo covers the daily booking and dispatch workflow. A charter company using it for real would also need:
-
-- Real user accounts with roles for sales, dispatch and management, instead of the one-click demo login.
-- Hours-of-service checks so a driver can't be assigned past their legal limits.
-- A hard block on assigning a driver or bus that is already on an overlapping trip (the demo only warns about bus size and lift).
-- A change history on every trip, and trip completion with actual return times.
-- Invoicing, payment processing and customer confirmation emails.
-- Live updates between dispatchers' screens.
 
 ## Run it locally
 
