@@ -180,6 +180,10 @@ Every business rule in [docs/BUSINESS_RULES.md](docs/BUSINESS_RULES.md) has a na
 
 ## Screenshots
 
+| Dispatch board: trip information | Bus board |
+|---|---|
+| ![Trip information](docs/screenshots/trip-information.jpg) | ![Bus board](docs/screenshots/bus-board.jpg) |
+
 | Booking: contract view | Booking: contract form |
 |---|---|
 | ![Contract view](docs/screenshots/booking-contract-view.jpg) | ![Contract form](docs/screenshots/booking-contract-form.jpg) |
