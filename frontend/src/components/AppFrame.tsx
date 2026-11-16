@@ -16,7 +16,13 @@ type Tab = 'board' | 'booking' | 'buses'
  * share: the date range, the board's terminal filter (shown in the strip)
  * and which unit "Open on board" should select.
  */
-export default function AppFrame({ session }: { session: SessionInfo }) {
+export default function AppFrame({
+  session,
+  onHome,
+}: {
+  session: SessionInfo
+  onHome?: () => void
+}) {
   const [tab, setTab] = useState<Tab>('board')
   const [range, setRange] = useState<DateRange>(() => ({ start: todayIso(), end: todayIso() }))
   const reference = useReference()
@@ -40,7 +46,14 @@ export default function AppFrame({ session }: { session: SessionInfo }) {
     <div className="app" data-tab={tab}>
       <header className="app-header">
         <h1>
-          <Logo size={28} />
+          <button
+            type="button"
+            className="home-link"
+            title="Back to the home page"
+            onClick={onHome}
+          >
+            <Logo size={28} />
+          </button>
         </h1>
         <span className="header-sep" aria-hidden="true" />
         <nav className="tabs" aria-label="Views">

@@ -44,10 +44,18 @@ const STACK: { title: string; text: string }[] = [
 ]
 
 /** The page before login: what CharterStack is, how it's built, and who made it. */
-export default function Landing() {
+export default function Landing({
+  hasSession = false,
+  onResume,
+}: {
+  hasSession?: boolean
+  onResume?: () => void
+}) {
   const login = useDemoLogin()
-  const start = () => login.mutate()
+  // With a live session, the buttons go back to the visitor's own data.
+  const start = () => (hasSession ? onResume?.() : login.mutate())
   const starting = login.isPending
+  const label = hasSession ? 'Back to the demo' : 'Try the demo'
 
   return (
     <div className="lp">
@@ -58,7 +66,7 @@ export default function Landing() {
             <a href="#stack">How it&rsquo;s built</a>
             <a href="#made-by">Made by</a>
             <button type="button" className="lp-btn lp-btn-sm" onClick={start} disabled={starting}>
-              Try the demo
+              {label}
             </button>
           </div>
         </div>
@@ -74,7 +82,7 @@ export default function Landing() {
         </p>
         <div className="lp-actions">
           <button type="button" className="lp-btn" onClick={start} disabled={starting}>
-            {starting ? 'Starting…' : 'Try the demo'}
+            {starting ? 'Starting…' : label}
           </button>
           <a className="lp-btn lp-btn-ghost" href="#stack">
             How it&rsquo;s built

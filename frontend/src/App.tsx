@@ -1,12 +1,14 @@
+import { useState } from 'react'
 import { useSession } from './api/hooks'
 import AppFrame from './components/AppFrame'
 import Landing from './components/Landing'
 import './styles/tokens.css'
 import './styles/app.css'
 
-/** Landing page without a session; the app with one. */
+/** Landing page without a session; the app with one, unless the visitor clicked the logo to go home. */
 export default function App() {
   const session = useSession()
+  const [home, setHome] = useState(false)
   if (session.isPending) return <p className="state">Loading…</p>
   if (session.isError)
     return (
@@ -17,5 +19,15 @@ export default function App() {
         </button>
       </p>
     )
-  return session.data ? <AppFrame session={session.data} /> : <Landing />
+  if (session.data && !home)
+    return (
+      <AppFrame
+        session={session.data}
+        onHome={() => {
+          setHome(true)
+          window.scrollTo(0, 0)
+        }}
+      />
+    )
+  return <Landing hasSession={!!session.data} onResume={() => setHome(false)} />
 }

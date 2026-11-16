@@ -152,6 +152,22 @@ test('Try the demo creates a session and shows the app frame', async () => {
   expect(login.headers['X-Timezone']).toBeTruthy()
 })
 
+test('the logo goes back to the landing page and Back to the demo keeps the session', async () => {
+  loggedIn = true
+  renderApp()
+  await screen.findByText('24817')
+  await userEvent.click(screen.getByRole('button', { name: 'CharterStack' }))
+  expect(
+    screen.getByRole('heading', { name: 'A TMS for charter bus companies.' }),
+  ).toBeInTheDocument()
+  const back = screen.getAllByRole('button', { name: 'Back to the demo' })
+  expect(back).toHaveLength(2)
+  expect(screen.queryByRole('button', { name: 'Try the demo' })).not.toBeInTheDocument()
+  await userEvent.click(back[1])
+  expect(await screen.findByText('24817')).toBeInTheDocument()
+  expect(calls.some((c) => c.url === '/api/demo-login/')).toBe(false)
+})
+
 test('an existing session goes straight to the board with its rows and counts', async () => {
   loggedIn = true
   renderApp()
