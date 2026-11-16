@@ -4,7 +4,7 @@ A transportation management system (TMS) for a motorcoach charter company: booki
 
 This is a portfolio project, not a commercial product. It runs on sample data.
 
-**Live demo:** _add link after deploy_ — click **Try the demo**. No sign-up; you get a private copy of the sample data.
+**Live demo:** [charterstack.onrender.com](https://charterstack.onrender.com) — click **Try the demo**. No sign-up; you get a private copy of the sample data.
 
 ![Dispatch board](docs/screenshots/dispatch-board.jpg)
 
