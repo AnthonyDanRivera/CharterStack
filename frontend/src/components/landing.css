@@ -57,6 +57,11 @@
   font-weight: 500;
   text-decoration: none;
 }
+.lp-gh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .lp-nav-links a:hover {
   color: var(--lp-ink);
 }

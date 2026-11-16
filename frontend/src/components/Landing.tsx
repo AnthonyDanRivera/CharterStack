@@ -1,5 +1,6 @@
 import { errorMessages } from '../api/client'
 import { useDemoLogin } from '../api/hooks'
+import GitHubMark from './GitHubMark'
 import Logo from './Logo'
 import './landing.css'
 
@@ -46,6 +47,10 @@ const STACK: { title: string; text: string }[] = [
     title: 'Deployment',
     text: 'One Docker image. Django serves the built React app through WhiteNoise behind gunicorn, so the site and API share an origin. Excel export is generated server-side with openpyxl.',
   },
+  {
+    title: 'Hosting',
+    text: 'Runs on Render from a render.yaml blueprint: one web service, a managed PostgreSQL database and a daily cron job that clears old demos. Fixed-price plans with one instance, so the bill can’t scale up on its own.',
+  },
 ]
 
 /** The page before login: what CharterStack is, how it's built, and who made it. */
@@ -70,7 +75,8 @@ export default function Landing({
           <div className="lp-nav-links">
             <a href="#stack">How it&rsquo;s built</a>
             <a href="#made-by">Made by</a>
-            <a href={REPO} target="_blank" rel="noopener noreferrer">
+            <a className="lp-gh" href={REPO} target="_blank" rel="noopener noreferrer">
+              <GitHubMark />
               GitHub
             </a>
             <button type="button" className="lp-btn lp-btn-sm" onClick={start} disabled={starting}>
@@ -163,7 +169,8 @@ export default function Landing({
       <footer className="lp-foot">
         <Logo size={18} />
         <span>Django REST Framework · React · TypeScript · PostgreSQL</span>
-        <a href={REPO} target="_blank" rel="noopener noreferrer">
+        <a className="lp-gh" href={REPO} target="_blank" rel="noopener noreferrer">
+          <GitHubMark size={15} />
           Source on GitHub
         </a>
       </footer>
