@@ -152,6 +152,9 @@
   font-size: 13px;
   color: var(--lp-muted);
 }
+.lp-note + .lp-note {
+  margin-top: 4px;
+}
 .lp-error {
   max-width: 520px;
   margin: 14px auto 0;

@@ -1,6 +1,8 @@
 # CharterStack
 
-A dispatch board and booking system for a motorcoach charter company, built with Django REST Framework and React.
+A transportation management system (TMS) for a motorcoach charter company: booking, a dispatch board and a bus board, built with Django REST Framework and React.
+
+This is a portfolio project, not a commercial product. It runs on sample data and leaves out what a real deployment needs (see [What a production version would need](#what-a-production-version-would-need)).
 
 **Live demo:** _add link after deploy_ — click **Try the demo**. No sign-up; you get a private copy of the sample data.
 
@@ -23,6 +25,10 @@ I'm a freelance web developer who started as a dispatcher and now also works as 
 - Stamp Reported and On location times, cancel, add confirmation initials and dispatch notes.
 - Filter by date range, terminal, and today / away / all trips. Search, sort, resize and reorder columns.
 - Export the current view to Excel.
+
+**Bus board** — one terminal's fleet at a time.
+- One row per bus model, buses in increasing number order.
+- Each bus shows its trips and drivers for the chosen dates, or Available.
 
 **Bus board** — the fleet by terminal.
 - Pick a terminal; buses are laid out one row per model, numbers increasing left to right.
@@ -105,6 +111,17 @@ seed/       sample data copied into each sandbox
 Dockerfile  one image: builds the frontend, then serves it from Django with WhiteNoise
 render.yaml Render blueprint: web service, daily cleanup cron, PostgreSQL
 ```
+
+## What a production version would need
+
+The demo covers the daily booking and dispatch workflow. A charter company using it for real would also need:
+
+- Real user accounts with roles for sales, dispatch and management, instead of the one-click demo login.
+- Hours-of-service checks so a driver can't be assigned past their legal limits.
+- A hard block on assigning a driver or bus that is already on an overlapping trip (the demo only warns about bus size and lift).
+- A change history on every trip, and trip completion with actual return times.
+- Invoicing, payment processing and customer confirmation emails.
+- Live updates between dispatchers' screens.
 
 ## Run it locally
 

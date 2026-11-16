@@ -109,6 +109,8 @@ test('landing page without a session', async () => {
       'No sign-up. You get a private copy of the sample data that resets after 24 hours.',
     ),
   ).toBeInTheDocument()
+  expect(screen.getByText('A portfolio project, not a commercial product.')).toBeInTheDocument()
+  expect(screen.getByText(/A transportation management system \(TMS\)/)).toBeInTheDocument()
 })
 
 test('landing page has one Made by block linking the portfolio in a new tab', async () => {

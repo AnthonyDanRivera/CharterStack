@@ -81,8 +81,8 @@ export default function Landing({
           A <span className="lp-accent">TMS</span> for charter bus companies.
         </h1>
         <p className="lp-lead">
-          Book a trip and it shows up on the dispatch board. Each bus gets its own row with a driver
-          and report time.
+          A transportation management system (TMS) for booking charters and dispatching buses. Each
+          booked bus gets its own row on the dispatch board with a driver and report time.
         </p>
         <div className="lp-actions">
           <button type="button" className="lp-btn" onClick={start} disabled={starting}>
@@ -95,6 +95,7 @@ export default function Landing({
         <p className="lp-note">
           No sign-up. You get a private copy of the sample data that resets after 24 hours.
         </p>
+        <p className="lp-note">A portfolio project, not a commercial product.</p>
         {login.isError && (
           <p className="lp-error" role="alert">
             {errorMessages(login.error).join(' ')}
