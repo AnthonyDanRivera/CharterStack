@@ -27,12 +27,8 @@ I'm a freelance web developer who started as a dispatcher and now also works as 
 - Export the current view to Excel.
 
 **Bus board** — one terminal's fleet at a time.
-- One row per bus model, buses in increasing number order.
+- One row per bus model, bus numbers increasing left to right.
 - Each bus shows its trips and drivers for the chosen dates, or Available.
-
-**Bus board** — the fleet by terminal.
-- Pick a terminal; buses are laid out one row per model, numbers increasing left to right.
-- Each bus shows the trips and drivers it has in the date range, or Available.
 
 Quotes never reach the board; cancelled contracts stay visible in red.
 
